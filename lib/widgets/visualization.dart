@@ -85,6 +85,14 @@ class _VisualizationTabState extends State<VisualizationTab> {
                       titlesData: const FlTitlesData(
                         leftTitles: AxisTitles(
                           sideTitles: SideTitles(showTitles: true),
+                          axisNameWidget: Text(
+                              'Weights [kg]',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                              ),
+                            ),
                         ),
                         bottomTitles: const AxisTitles(
                           sideTitles: SideTitles(showTitles: true),
