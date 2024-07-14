@@ -16,14 +16,21 @@ class _VariableSetterState extends State<VariableSetter> {
   final _variableValueController = TextEditingController();
   final DatabaseHelper _dbHelper = DatabaseHelper();
 
+  final List<String> _predefinedVariables = ["Benchpress", "Pullup", "Knee Lift"];
+  String? _selectedPredefinedVariable;
+
   Future<void> _addVariable() async {
     if (_formKey.currentState!.validate()) {
+      final variableName = _selectedPredefinedVariable ?? _variableNameController.text;
       await _dbHelper.insertVariable(
-        _variableNameController.text,
+        variableName,
         _variableValueController.text,
       );
       _variableNameController.clear();
       _variableValueController.clear();
+      setState(() {
+        _selectedPredefinedVariable = null;
+      });
       widget.onVariableAdded();
     }
   }
@@ -34,12 +41,28 @@ class _VariableSetterState extends State<VariableSetter> {
       key: _formKey,
       child: Column(
         children: [
+          DropdownButtonFormField<String>(
+            decoration: InputDecoration(labelText: 'Select Predefined Variable'),
+            items: _predefinedVariables.map((variable) {
+              return DropdownMenuItem<String>(
+                value: variable,
+                child: Text(variable),
+              );
+            }).toList(),
+            onChanged: (value) {
+              setState(() {
+                _selectedPredefinedVariable = value;
+                _variableNameController.clear();
+              });
+            },
+            value: _selectedPredefinedVariable,
+          ),
           TextFormField(
             controller: _variableNameController,
-            decoration: InputDecoration(labelText: 'Variable Name'),
+            decoration: InputDecoration(labelText: 'Variable Name (or enter custom)'),
             validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter a variable name';
+              if (_selectedPredefinedVariable == null && (value == null || value.isEmpty)) {
+                return 'Please enter a variable name or select one';
               }
               return null;
             },
