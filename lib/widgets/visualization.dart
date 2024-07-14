@@ -21,8 +21,8 @@ class _VisualizationTabState extends State<VisualizationTab> {
   }
 
   Future<void> _fetchExerciseNames() async {
-    final exercises = await _dbHelper.getExercises();
-    final names = exercises.map((exercise) => exercise['name'] as String).toSet().toList();
+    final variables = await _dbHelper.getExercises();
+    final names = variables.map((exercise) => exercise['exercise'] as String).toSet().toList();
     setState(() {
       _exerciseNames = names;
     });
@@ -30,10 +30,10 @@ class _VisualizationTabState extends State<VisualizationTab> {
 
   Future<void> _fetchDataPoints(String exerciseName) async {
     final exercises = await _dbHelper.getExercises();
-    final filteredExercises = exercises.where((exercise) => exercise['name'] == exerciseName).toList();
+    final filteredExercises = exercises.where((exercise) => exercise['exercise'] == exerciseName).toList();
 
     final dataPoints = filteredExercises.asMap().entries.map((entry) {
-      return FlSpot(entry.key.toDouble(), double.parse(entry.value['value']));
+      return FlSpot(entry.key.toDouble(), double.parse(entry.value['weight']));
     }).toList();
 
     setState(() {
