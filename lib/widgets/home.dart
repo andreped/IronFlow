@@ -29,8 +29,8 @@ class _VariableStoreHomePageState extends State<VariableStoreHomePage> {
     setState(() {});
   }
 
-  Future<List<Map<String, dynamic>>> _getVariables() async {
-    return await _dbHelper.getVariables();
+  Future<List<Map<String, dynamic>>> _getExercises() async {
+    return await _dbHelper.getExercises();
   }
 
   @override
@@ -61,13 +61,13 @@ class _VariableStoreHomePageState extends State<VariableStoreHomePage> {
             Padding(
               padding: EdgeInsets.all(16.0),
               child: ExerciseSetter(
-                onVariableAdded: () {
+                onExerciseAdded: () {
                   setState(() {});
                 },
               ),
             ),
             FutureBuilder<List<Map<String, dynamic>>>(
-              future: _getVariables(),
+              future: _getExercises(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
                   return Center(child: CircularProgressIndicator());

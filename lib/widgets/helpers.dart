@@ -3,9 +3,9 @@ import 'database.dart';
 import 'constants.dart';
 
 class ExerciseSetter extends StatefulWidget {
-  final Function() onVariableAdded;
+  final Function() onExerciseAdded;
 
-  ExerciseSetter({required this.onVariableAdded});
+  ExerciseSetter({required this.onExerciseAdded});
 
   @override
   _ExerciseSetterState createState() => _ExerciseSetterState();
@@ -13,25 +13,25 @@ class ExerciseSetter extends StatefulWidget {
 
 class _ExerciseSetterState extends State<ExerciseSetter> {
   final _formKey = GlobalKey<FormState>();
-  final _variableNameController = TextEditingController();
-  final _variableValueController = TextEditingController();
+  final _exerciseNameController = TextEditingController();
+  final _exerciseValueController = TextEditingController();
   final DatabaseHelper _dbHelper = DatabaseHelper();
 
-  String? _selectedPredefinedVariable;
+  String? _selectedPredefinedExercise;
 
   Future<void> _addExercise() async {
     if (_formKey.currentState!.validate()) {
-      final variableName = _selectedPredefinedVariable ?? _variableNameController.text;
-      await _dbHelper.insertVariable(
-        variableName,
-        _variableValueController.text,
+      final exerciseName = _selectedPredefinedExercise ?? _exerciseNameController.text;
+      await _dbHelper.insertExercise(
+        exerciseName,
+        _exerciseValueController.text,
       );
-      _variableNameController.clear();
-      _variableValueController.clear();
+      _exerciseNameController.clear();
+      _exerciseValueController.clear();
       setState(() {
-        _selectedPredefinedVariable = null;
+        _selectedPredefinedExercise = null;
       });
-      widget.onVariableAdded();
+      widget.onExerciseAdded();
     }
   }
 
@@ -45,7 +45,7 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
             height: 72, // Adjust the height as needed
             child: DropdownButtonFormField<String>(
               decoration: InputDecoration(labelText: 'Select Predefined Exercise'),
-              items: predefinedVariables.map((String value) {
+              items: predefinedExercises.map((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
                   child: Text(value),
@@ -53,18 +53,18 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
               }).toList(),
               onChanged: (value) {
                 setState(() {
-                  _selectedPredefinedVariable = value;
-                  _variableNameController.clear();
+                  _selectedPredefinedExercise = value;
+                  _exerciseNameController.clear();
                 });
               },
-              value: _selectedPredefinedVariable,
+              value: _selectedPredefinedExercise,
               isExpanded: true,
               iconSize: 24.0,
               icon: Icon(Icons.arrow_drop_down),
               elevation: 16,
               style: TextStyle(color: Colors.black),
               validator: (value) {
-                if (_selectedPredefinedVariable == null && (value == null || value.isEmpty)) {
+                if (_selectedPredefinedExercise == null && (value == null || value.isEmpty)) {
                   return 'Please enter an exercise name or select one';
                 }
                 return null;
@@ -72,7 +72,7 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
               dropdownColor: Colors.white,
               // Limit the number of items shown
               selectedItemBuilder: (BuildContext context) {
-                return predefinedVariables.take(dropdownVisibleItemCount).map<Widget>((String value) {
+                return predefinedExercises.take(dropdownVisibleItemCount).map<Widget>((String value) {
                   return Text(value);
                 }).toList();
               },
@@ -81,17 +81,17 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
             ),
           ),
           TextFormField(
-            controller: _variableNameController,
+            controller: _exerciseNameController,
             decoration: InputDecoration(labelText: 'Exercise Name (or enter custom)'),
             validator: (value) {
-              if (_selectedPredefinedVariable == null && (value == null || value.isEmpty)) {
+              if (_selectedPredefinedExercise == null && (value == null || value.isEmpty)) {
                 return 'Please enter an exercise name or select one';
               }
               return null;
             },
           ),
           TextFormField(
-            controller: _variableValueController,
+            controller: _exerciseValueController,
             decoration: InputDecoration(labelText: 'Exercise Value'),
             keyboardType: TextInputType.number,
             validator: (value) {

@@ -1,4 +1,4 @@
-const List<String> predefinedVariables = [
+const List<String> predefinedExercises = [
   "Benchpress",
   "Pull-up",
   "Squats",

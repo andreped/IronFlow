@@ -21,7 +21,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
   }
 
   Future<void> _fetchVariableNames() async {
-    final variables = await _dbHelper.getVariables();
+    final variables = await _dbHelper.getExercises();
     final names = variables.map((variable) => variable['name'] as String).toSet().toList();
     setState(() {
       _variableNames = names;
@@ -29,7 +29,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
   }
 
   Future<void> _fetchDataPoints(String variableName) async {
-    final variables = await _dbHelper.getVariables();
+    final variables = await _dbHelper.getExercises();
     final filteredVariables = variables.where((variable) => variable['name'] == variableName).toList();
 
     final dataPoints = filteredVariables.asMap().entries.map((entry) {
