@@ -52,7 +52,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
       child: Column(
         children: [
           DropdownButton<String>(
-            hint: Text('Select an exercise'),
+            hint: const Text('Select an exercise'),
             value: _selectedExercise,
             onChanged: (newValue) {
               setState(() {
@@ -67,10 +67,10 @@ class _VisualizationTabState extends State<VisualizationTab> {
               );
             }).toList(),
           ),
-          SizedBox(height: 16.0),
+          const SizedBox(height: 16.0),
           Expanded(
             child: _dataPoints.isEmpty
-                ? Center(child: Text('No data available'))
+                ? const Center(child: Text('No data available'))
                 : LineChart(
                     LineChartData(
                       lineBarsData: [
@@ -82,11 +82,11 @@ class _VisualizationTabState extends State<VisualizationTab> {
                           belowBarData: BarAreaData(show: false),
                         ),
                       ],
-                      titlesData: FlTitlesData(
+                      titlesData: const FlTitlesData(
                         leftTitles: AxisTitles(
                           sideTitles: SideTitles(showTitles: true),
                         ),
-                        bottomTitles: AxisTitles(
+                        bottomTitles: const AxisTitles(
                           sideTitles: SideTitles(showTitles: true),
                           axisNameWidget: Text(
                               'Days',
@@ -99,7 +99,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
                         ),
                       ),
                       borderData: FlBorderData(show: true),
-                      gridData: FlGridData(show: true),
+                      gridData: const FlGridData(show: true),
                     ),
                   ),
           ),
