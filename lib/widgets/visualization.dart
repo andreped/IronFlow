@@ -89,7 +89,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
                             reservedSize: 40, // Add padding on the left for numbers and text
                             getTitlesWidget: (value, meta) {
                               return Text(
-                                value.toString(),
+                                value.toInt().toString(),
                                 style: const TextStyle(
                                   color: Colors.black,
                                   fontWeight: FontWeight.bold,
