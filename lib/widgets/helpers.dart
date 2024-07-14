@@ -1,25 +1,25 @@
 import 'package:flutter/material.dart';
 import 'database.dart';
+import 'constants.dart';
 
-class VariableSetter extends StatefulWidget {
+class ExerciseSetter extends StatefulWidget {
   final Function() onVariableAdded;
 
-  VariableSetter({required this.onVariableAdded});
+  ExerciseSetter({required this.onVariableAdded});
 
   @override
-  _VariableSetterState createState() => _VariableSetterState();
+  _ExerciseSetterState createState() => _ExerciseSetterState();
 }
 
-class _VariableSetterState extends State<VariableSetter> {
+class _ExerciseSetterState extends State<ExerciseSetter> {
   final _formKey = GlobalKey<FormState>();
   final _variableNameController = TextEditingController();
   final _variableValueController = TextEditingController();
   final DatabaseHelper _dbHelper = DatabaseHelper();
 
-  final List<String> _predefinedVariables = ["Benchpress", "Pullup", "Knee Lift"];
   String? _selectedPredefinedVariable;
 
-  Future<void> _addVariable() async {
+  Future<void> _addExercise() async {
     if (_formKey.currentState!.validate()) {
       final variableName = _selectedPredefinedVariable ?? _variableNameController.text;
       await _dbHelper.insertVariable(
@@ -41,39 +41,62 @@ class _VariableSetterState extends State<VariableSetter> {
       key: _formKey,
       child: Column(
         children: [
-          DropdownButtonFormField<String>(
-            decoration: InputDecoration(labelText: 'Select Predefined Variable'),
-            items: _predefinedVariables.map((variable) {
-              return DropdownMenuItem<String>(
-                value: variable,
-                child: Text(variable),
-              );
-            }).toList(),
-            onChanged: (value) {
-              setState(() {
-                _selectedPredefinedVariable = value;
-                _variableNameController.clear();
-              });
-            },
-            value: _selectedPredefinedVariable,
+          SizedBox(
+            height: 72, // Adjust the height as needed
+            child: DropdownButtonFormField<String>(
+              decoration: InputDecoration(labelText: 'Select Predefined Exercise'),
+              items: predefinedVariables.map((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+              onChanged: (value) {
+                setState(() {
+                  _selectedPredefinedVariable = value;
+                  _variableNameController.clear();
+                });
+              },
+              value: _selectedPredefinedVariable,
+              isExpanded: true,
+              iconSize: 24.0,
+              icon: Icon(Icons.arrow_drop_down),
+              elevation: 16,
+              style: TextStyle(color: Colors.black),
+              validator: (value) {
+                if (_selectedPredefinedVariable == null && (value == null || value.isEmpty)) {
+                  return 'Please enter an exercise name or select one';
+                }
+                return null;
+              },
+              dropdownColor: Colors.white,
+              // Limit the number of items shown
+              selectedItemBuilder: (BuildContext context) {
+                return predefinedVariables.take(dropdownVisibleItemCount).map<Widget>((String value) {
+                  return Text(value);
+                }).toList();
+              },
+              // Allow scrolling to select items outside the visible range
+              // The items are already specified above
+            ),
           ),
           TextFormField(
             controller: _variableNameController,
-            decoration: InputDecoration(labelText: 'Variable Name (or enter custom)'),
+            decoration: InputDecoration(labelText: 'Exercise Name (or enter custom)'),
             validator: (value) {
               if (_selectedPredefinedVariable == null && (value == null || value.isEmpty)) {
-                return 'Please enter a variable name or select one';
+                return 'Please enter an exercise name or select one';
               }
               return null;
             },
           ),
           TextFormField(
             controller: _variableValueController,
-            decoration: InputDecoration(labelText: 'Variable Value'),
+            decoration: InputDecoration(labelText: 'Exercise Value'),
             keyboardType: TextInputType.number,
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Please enter a variable value';
+                return 'Please enter an exercise value';
               }
               if (int.tryParse(value) == null) {
                 return 'Please enter a valid integer';
@@ -83,8 +106,8 @@ class _VariableSetterState extends State<VariableSetter> {
           ),
           SizedBox(height: 16.0),
           ElevatedButton(
-            onPressed: _addVariable,
-            child: Text('Add Variable'),
+            onPressed: _addExercise,
+            child: Text('Add Exercise'),
           ),
         ],
       ),

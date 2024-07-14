@@ -7,7 +7,7 @@ class VariableStoreApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Variable Store App',
+      title: 'IronFlow',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
@@ -39,7 +39,7 @@ class _VariableStoreHomePageState extends State<VariableStoreHomePage> {
       length: 3,
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Variable Store App'),
+          title: Text('IronFlow'),
           actions: [
             IconButton(
               icon: Icon(Icons.delete),
@@ -50,7 +50,7 @@ class _VariableStoreHomePageState extends State<VariableStoreHomePage> {
           ],
           bottom: TabBar(
             tabs: [
-              Tab(icon: Icon(Icons.add), text: 'Add Variable'),
+              Tab(icon: Icon(Icons.add), text: 'Log Exercise'),
               Tab(icon: Icon(Icons.table_chart), text: 'View Table'),
               Tab(icon: Icon(Icons.show_chart), text: 'Visualize Data'),
             ],
@@ -60,7 +60,7 @@ class _VariableStoreHomePageState extends State<VariableStoreHomePage> {
           children: [
             Padding(
               padding: EdgeInsets.all(16.0),
-              child: VariableSetter(
+              child: ExerciseSetter(
                 onVariableAdded: () {
                   setState(() {});
                 },
