@@ -3,6 +3,7 @@ import '../core/database.dart';
 import 'visualization.dart';
 import 'inputs.dart';
 
+
 class ExerciseStoreApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -26,6 +27,11 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage> {
 
   Future<void> _clearDatabase() async {
     await _dbHelper.clearDatabase();
+    setState(() {});
+  }
+
+  Future<void> _deleteExercise(int id) async {
+    await _dbHelper.deleteExercise(id);
     setState(() {});
   }
 
@@ -80,11 +86,12 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage> {
                   return SizedBox(
                     width: MediaQuery.of(context).size.width,
                     child: DataTable(
-                      columns: [
-                        const DataColumn(label: Text('ID')),
-                        const DataColumn(label: Text('Exercise')),
-                        const DataColumn(label: Text('Weight')),
-                        const DataColumn(label: Text('Timestamp')),
+                      columns: const [
+                        DataColumn(label: Text('ID')),
+                        DataColumn(label: Text('Exercise')),
+                        DataColumn(label: Text('Weight')),
+                        DataColumn(label: Text('Timestamp')),
+                        DataColumn(label: Text('Actions')),
                       ],
                       rows: variables.map((variable) {
                         return DataRow(cells: [
@@ -92,6 +99,14 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage> {
                           DataCell(Text(variable['exercise'])),
                           DataCell(Text(variable['weight'])),
                           DataCell(Text(variable['timestamp'])),
+                          DataCell(
+                            IconButton(
+                              icon: Icon(Icons.delete),
+                              onPressed: () async {
+                                await _deleteExercise(variable['id']);
+                              },
+                            ),
+                          ),
                         ]);
                       }).toList(),
                     ),
