@@ -32,8 +32,12 @@ class _VisualizationTabState extends State<VisualizationTab> {
     final exercises = await _dbHelper.getExercises();
     final filteredExercises = exercises.where((exercise) => exercise['exercise'] == exerciseName).toList();
 
+    // get earliest date
+    final dateTimes = exercises.map((row) => row['timestamp'] as String).toList();
+    final earliestDateTime = DateTime.parse(dateTimes.reduce((a, b) => a.compareTo(b) < 0 ? a : b));
+
     final dataPoints = filteredExercises.asMap().entries.map((entry) {
-      return FlSpot(entry.key.toDouble(), double.parse(entry.value['weight']));
+      return FlSpot(DateTime.parse(entry.value['timestamp']).difference(earliestDateTime).inDays.toDouble(), double.parse(entry.value['weight']));
     }).toList();
 
     setState(() {
@@ -48,7 +52,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
       child: Column(
         children: [
           DropdownButton<String>(
-            hint: Text('Select an exercise'),
+            hint: const Text('Select an exercise'),
             value: _selectedExercise,
             onChanged: (newValue) {
               setState(() {
@@ -63,10 +67,10 @@ class _VisualizationTabState extends State<VisualizationTab> {
               );
             }).toList(),
           ),
-          SizedBox(height: 16.0),
+          const SizedBox(height: 16.0),
           Expanded(
             child: _dataPoints.isEmpty
-                ? Center(child: Text('No data available'))
+                ? const Center(child: Text('No data available'))
                 : LineChart(
                     LineChartData(
                       lineBarsData: [
@@ -80,14 +84,61 @@ class _VisualizationTabState extends State<VisualizationTab> {
                       ],
                       titlesData: FlTitlesData(
                         leftTitles: AxisTitles(
-                          sideTitles: SideTitles(showTitles: true),
+                          sideTitles: SideTitles(
+                            showTitles: true,
+                            reservedSize: 40, // Add padding on the left for numbers and text
+                            getTitlesWidget: (value, meta) {
+                              return Text(
+                                value.toInt().toString(),
+                                style: const TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12,
+                                ),
+                              );
+                            },
+                          ),
+                          axisNameWidget: const Text(
+                            'Weights [kg]',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                        rightTitles: const AxisTitles(
+                          sideTitles: SideTitles(showTitles: false),
                         ),
                         bottomTitles: AxisTitles(
-                          sideTitles: SideTitles(showTitles: true),
+                          sideTitles: SideTitles(
+                            showTitles: true,
+                            getTitlesWidget: (value, meta) {
+                              return Text(
+                                value.toString(),
+                                style: const TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12,
+                                ),
+                              );
+                            },
+                          ),
+                          axisNameWidget: const Text(
+                            'Days',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                        topTitles: const AxisTitles(
+                          sideTitles: SideTitles(showTitles: false),
                         ),
                       ),
                       borderData: FlBorderData(show: true),
-                      gridData: FlGridData(show: true),
+                      gridData: const FlGridData(show: true),
                     ),
                   ),
           ),
