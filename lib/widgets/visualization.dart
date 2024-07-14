@@ -32,8 +32,12 @@ class _VisualizationTabState extends State<VisualizationTab> {
     final exercises = await _dbHelper.getExercises();
     final filteredExercises = exercises.where((exercise) => exercise['exercise'] == exerciseName).toList();
 
+    // get earliest date
+    final dateTimes = exercises.map((row) => row['timestamp'] as String).toList();
+    final earliestDateTime = DateTime.parse(dateTimes.reduce((a, b) => a.compareTo(b) < 0 ? a : b));
+
     final dataPoints = filteredExercises.asMap().entries.map((entry) {
-      return FlSpot(entry.key.toDouble(), double.parse(entry.value['weight']));
+      return FlSpot(DateTime.parse(entry.value['timestamp']).difference(earliestDateTime).inDays.toDouble(), double.parse(entry.value['weight']));
     }).toList();
 
     setState(() {
