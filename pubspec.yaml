@@ -31,7 +31,14 @@ dependencies:
   flutter:
     sdk: flutter
 
-  fl_chart: ^0.68.0 
+  # storage
+  sqflite: ^2.0.0+4
+  path: ^1.8.0
+
+  # visualization
+  fl_chart: ^0.68.0
+
+  # deprecated ? 
   csv: ^5.1.1
   path_provider: ^2.1.3
 
