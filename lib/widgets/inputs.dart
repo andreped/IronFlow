@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'database.dart';
-import 'constants.dart';
+import '../core/database.dart';
+import '../common/constants.dart';
 
 class ExerciseSetter extends StatefulWidget {
   final Function() onExerciseAdded;

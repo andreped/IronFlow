@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'database.dart';
+import '../core/database.dart';
 
 class VisualizationTab extends StatefulWidget {
   @override

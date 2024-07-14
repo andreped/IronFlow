@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'database.dart';
+import '../core/database.dart';
 import 'visualization.dart';
-import 'helpers.dart';
+import 'inputs.dart';
 
 class ExerciseStoreApp extends StatelessWidget {
   @override
@@ -58,6 +58,7 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage> {
         ),
         body: TabBarView(
           children: [
+            // Log Exercise Tab
             Padding(
               padding: EdgeInsets.all(16.0),
               child: ExerciseSetter(
@@ -66,35 +67,43 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage> {
                 },
               ),
             ),
-            FutureBuilder<List<Map<String, dynamic>>>(
-              future: _getExercises(),
-              builder: (context, snapshot) {
-                if (!snapshot.hasData) {
-                  return Center(child: CircularProgressIndicator());
-                }
-                final variables = snapshot.data!;
-                return SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: DataTable(
-                    columns: [
-                      DataColumn(label: Text('ID')),
-                      DataColumn(label: Text('Name')),
-                      DataColumn(label: Text('Value')),
-                      DataColumn(label: Text('Timestamp')),
-                    ],
-                    rows: variables.map((variable) {
-                      return DataRow(cells: [
-                        DataCell(Text(variable['id'].toString())),
-                        DataCell(Text(variable['name'])),
-                        DataCell(Text(variable['value'])),
-                        DataCell(Text(variable['timestamp'])),
-                      ]);
-                    }).toList(),
-                  ),
-                );
-              },
+            // View Table Tab
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: FutureBuilder<List<Map<String, dynamic>>>(
+                future: _getExercises(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return Center(child: CircularProgressIndicator());
+                  }
+                  final variables = snapshot.data!;
+                  return SizedBox(
+                    width: MediaQuery.of(context).size.width,
+                    child: DataTable(
+                      columns: [
+                        DataColumn(label: Text('ID')),
+                        DataColumn(label: Text('Exercise')),
+                        DataColumn(label: Text('Weight')),
+                        DataColumn(label: Text('Timestamp')),
+                      ],
+                      rows: variables.map((variable) {
+                        return DataRow(cells: [
+                          DataCell(Text(variable['id'].toString())),
+                          DataCell(Text(variable['exercise'])),
+                          DataCell(Text(variable['weight'])),
+                          DataCell(Text(variable['timestamp'])),
+                        ]);
+                      }).toList(),
+                    ),
+                  );
+                },
+              ),
             ),
-            VisualizationTab(),
+            // Visualize Data Tab
+            Padding(
+              padding: EdgeInsets.all(16.0),
+              child: VisualizationTab(),
+            ),
           ],
         ),
       ),
