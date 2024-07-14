@@ -3,7 +3,7 @@ import 'database.dart';
 import 'visualization.dart';
 import 'helpers.dart';
 
-class VariableStoreApp extends StatelessWidget {
+class ExerciseStoreApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -11,17 +11,17 @@ class VariableStoreApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: VariableStoreHomePage(),
+      home: ExerciseStoreHomePage(),
     );
   }
 }
 
-class VariableStoreHomePage extends StatefulWidget {
+class ExerciseStoreHomePage extends StatefulWidget {
   @override
-  _VariableStoreHomePageState createState() => _VariableStoreHomePageState();
+  _ExerciseStoreHomePageState createState() => _ExerciseStoreHomePageState();
 }
 
-class _VariableStoreHomePageState extends State<VariableStoreHomePage> {
+class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage> {
   final DatabaseHelper _dbHelper = DatabaseHelper();
 
   Future<void> _clearDatabase() async {

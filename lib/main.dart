@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightGreenAccent),
       ),
-      home: VariableStoreHomePage(),
+      home: ExerciseStoreHomePage(),
     );
   }
 }
