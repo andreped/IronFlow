@@ -77,4 +77,13 @@ class DatabaseHelper {
       conflictAlgorithm: ConflictAlgorithm.ignore, // Handle if exercise already exists
     );
   }
+
+  Future<void> deleteExercise(int id) async {
+    final db = await database;
+    await db.delete(
+      'exercises',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
 }
