@@ -75,43 +75,46 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage> {
             ),
             // View Table Tab
             SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: FutureBuilder<List<Map<String, dynamic>>>(
-                future: _getExercises(),
-                builder: (context, snapshot) {
-                  if (!snapshot.hasData) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                  final variables = snapshot.data!;
-                  return SizedBox(
-                    width: MediaQuery.of(context).size.width,
-                    child: DataTable(
-                      columns: const [
-                        DataColumn(label: Text('ID')),
-                        DataColumn(label: Text('Exercise')),
-                        DataColumn(label: Text('Weight')),
-                        DataColumn(label: Text('Timestamp')),
-                        DataColumn(label: Text('Actions')),
-                      ],
-                      rows: variables.map((variable) {
-                        return DataRow(cells: [
-                          DataCell(Text(variable['id'].toString())),
-                          DataCell(Text(variable['exercise'])),
-                          DataCell(Text(variable['weight'])),
-                          DataCell(Text(variable['timestamp'])),
-                          DataCell(
-                            IconButton(
-                              icon: Icon(Icons.delete),
-                              onPressed: () async {
-                                await _deleteExercise(variable['id']);
-                              },
+              scrollDirection: Axis.vertical,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: FutureBuilder<List<Map<String, dynamic>>>(
+                  future: _getExercises(),
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    final variables = snapshot.data!;
+                    return SizedBox(
+                      width: MediaQuery.of(context).size.width,
+                      child: DataTable(
+                        columns: const [
+                          DataColumn(label: Text('ID')),
+                          DataColumn(label: Text('Exercise')),
+                          DataColumn(label: Text('Weight')),
+                          DataColumn(label: Text('Timestamp')),
+                          DataColumn(label: Text('Actions')),
+                        ],
+                        rows: variables.map((variable) {
+                          return DataRow(cells: [
+                            DataCell(Text(variable['id'].toString())),
+                            DataCell(Text(variable['exercise'])),
+                            DataCell(Text(variable['weight'])),
+                            DataCell(Text(variable['timestamp'])),
+                            DataCell(
+                              IconButton(
+                                icon: Icon(Icons.delete),
+                                onPressed: () async {
+                                  await _deleteExercise(variable['id']);
+                                },
+                              ),
                             ),
-                          ),
-                        ]);
-                      }).toList(),
-                    ),
-                  );
-                },
+                          ]);
+                        }).toList(),
+                      ),
+                    );
+                  },
+                ),
               ),
             ),
             // Visualize Data Tab
