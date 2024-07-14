@@ -63,7 +63,7 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage> {
           ),
         ),
         body: TabBarView(
-          physics: NeverScrollableScrollPhysics(), // Disable TabBarView scrolling
+          // physics: NeverScrollableScrollPhysics(), // Disable TabBarView scrolling
           children: [
             // Log Exercise Tab
             Padding(
