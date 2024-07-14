@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:wakelock/wakelock.dart';
 import 'widgets/home.dart';
 
 Future<void> main() async {
@@ -18,8 +17,6 @@ class MyApp extends StatelessWidget {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
-    // disable the phone from going into sleep mode while app is running
-    Wakelock.enable();
     return MaterialApp(
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightGreenAccent),
