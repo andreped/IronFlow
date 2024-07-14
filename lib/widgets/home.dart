@@ -48,7 +48,7 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage> {
           title: const Text('IronFlow'),
           actions: [
             IconButton(
-              icon: const Icon(Icons.delete),
+              icon: const Icon(Icons.delete_sweep),
               onPressed: () async {
                 await _clearDatabase();
               },
@@ -63,6 +63,7 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage> {
           ),
         ),
         body: TabBarView(
+          physics: NeverScrollableScrollPhysics(), // Disable TabBarView scrolling
           children: [
             // Log Exercise Tab
             Padding(
