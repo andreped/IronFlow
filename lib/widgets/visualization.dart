@@ -107,7 +107,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
                             ),
                           ),
                         ),
-                        rightTitles: AxisTitles(
+                        rightTitles: const AxisTitles(
                           sideTitles: SideTitles(showTitles: false),
                         ),
                         bottomTitles: AxisTitles(
@@ -133,7 +133,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
                             ),
                           ),
                         ),
-                        topTitles: AxisTitles(
+                        topTitles: const AxisTitles(
                           sideTitles: SideTitles(showTitles: false),
                         ),
                       ),
