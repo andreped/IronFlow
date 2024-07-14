@@ -3,10 +3,6 @@ import 'database.dart';
 import 'visualization.dart';
 import 'helpers.dart';
 
-void main() {
-  runApp(VariableStoreApp());
-}
-
 class VariableStoreApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
