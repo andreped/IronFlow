@@ -8,6 +8,10 @@
 **IronFlow** was developed to allow free, seemless, and private tracking of training progress and activities.
 </div>
 
+<p align="center" width="100%">
+<img src="assets/log_exercise_tab.png" width="13%" height="15%"> <img src="assets/log_exercise_tab_dropdown.png" width="13%" height="15%"> <img src="assets/view_table_tab.png" width="13%" height="15%"> <img src="assets/visualize_data_tab.png" width="13%" height="15%">
+</p>
+
 ## Continuous integration
 
 | Build Type | Status |
