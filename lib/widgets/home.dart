@@ -93,9 +93,13 @@ class _VariableStoreHomePageState extends State<VariableStoreHomePage> {
                         TextFormField(
                           controller: _variableValueController,
                           decoration: InputDecoration(labelText: 'Variable Value'),
+                          keyboardType: TextInputType.number,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Please enter a variable value';
+                            }
+                            if (int.tryParse(value) == null) {
+                              return 'Please enter a valid integer';
                             }
                             return null;
                           },
