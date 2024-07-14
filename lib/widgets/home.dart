@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'database.dart';
+import '../core/database.dart';
 import 'visualization.dart';
-import 'helpers.dart';
+import 'inputs.dart';
 
-class VariableStoreApp extends StatelessWidget {
+class ExerciseStoreApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -11,17 +11,17 @@ class VariableStoreApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: VariableStoreHomePage(),
+      home: ExerciseStoreHomePage(),
     );
   }
 }
 
-class VariableStoreHomePage extends StatefulWidget {
+class ExerciseStoreHomePage extends StatefulWidget {
   @override
-  _VariableStoreHomePageState createState() => _VariableStoreHomePageState();
+  _ExerciseStoreHomePageState createState() => _ExerciseStoreHomePageState();
 }
 
-class _VariableStoreHomePageState extends State<VariableStoreHomePage> {
+class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage> {
   final DatabaseHelper _dbHelper = DatabaseHelper();
 
   Future<void> _clearDatabase() async {
@@ -29,8 +29,8 @@ class _VariableStoreHomePageState extends State<VariableStoreHomePage> {
     setState(() {});
   }
 
-  Future<List<Map<String, dynamic>>> _getVariables() async {
-    return await _dbHelper.getVariables();
+  Future<List<Map<String, dynamic>>> _getExercises() async {
+    return await _dbHelper.getExercises();
   }
 
   @override
@@ -58,43 +58,52 @@ class _VariableStoreHomePageState extends State<VariableStoreHomePage> {
         ),
         body: TabBarView(
           children: [
+            // Log Exercise Tab
             Padding(
               padding: EdgeInsets.all(16.0),
               child: ExerciseSetter(
-                onVariableAdded: () {
+                onExerciseAdded: () {
                   setState(() {});
                 },
               ),
             ),
-            FutureBuilder<List<Map<String, dynamic>>>(
-              future: _getVariables(),
-              builder: (context, snapshot) {
-                if (!snapshot.hasData) {
-                  return Center(child: CircularProgressIndicator());
-                }
-                final variables = snapshot.data!;
-                return SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: DataTable(
-                    columns: [
-                      DataColumn(label: Text('ID')),
-                      DataColumn(label: Text('Name')),
-                      DataColumn(label: Text('Value')),
-                      DataColumn(label: Text('Timestamp')),
-                    ],
-                    rows: variables.map((variable) {
-                      return DataRow(cells: [
-                        DataCell(Text(variable['id'].toString())),
-                        DataCell(Text(variable['name'])),
-                        DataCell(Text(variable['value'])),
-                        DataCell(Text(variable['timestamp'])),
-                      ]);
-                    }).toList(),
-                  ),
-                );
-              },
+            // View Table Tab
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: FutureBuilder<List<Map<String, dynamic>>>(
+                future: _getExercises(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return Center(child: CircularProgressIndicator());
+                  }
+                  final variables = snapshot.data!;
+                  return SizedBox(
+                    width: MediaQuery.of(context).size.width,
+                    child: DataTable(
+                      columns: [
+                        DataColumn(label: Text('ID')),
+                        DataColumn(label: Text('Exercise')),
+                        DataColumn(label: Text('Weight')),
+                        DataColumn(label: Text('Timestamp')),
+                      ],
+                      rows: variables.map((variable) {
+                        return DataRow(cells: [
+                          DataCell(Text(variable['id'].toString())),
+                          DataCell(Text(variable['exercise'])),
+                          DataCell(Text(variable['weight'])),
+                          DataCell(Text(variable['timestamp'])),
+                        ]);
+                      }).toList(),
+                    ),
+                  );
+                },
+              ),
             ),
-            VisualizationTab(),
+            // Visualize Data Tab
+            Padding(
+              padding: EdgeInsets.all(16.0),
+              child: VisualizationTab(),
+            ),
           ],
         ),
       ),

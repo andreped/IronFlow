@@ -15,34 +15,35 @@ class DatabaseHelper {
   }
 
   Future<Database> _initDatabase() async {
-    String path = join(await getDatabasesPath(), 'variables.db');
+    String path = join(await getDatabasesPath(), 'exercises.db');
+    print("Database is located at: $path");
     return await openDatabase(
       path,
       version: 1,
       onCreate: (db, version) {
         return db.execute(
-          'CREATE TABLE variables(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, value TEXT, timestamp TEXT)',
+          'CREATE TABLE exercises(id INTEGER PRIMARY KEY AUTOINCREMENT, exercise TEXT, weight TEXT, timestamp TEXT)',
         );
       },
     );
   }
 
-  Future<void> insertVariable(String name, String value) async {
+  Future<void> insertExercise(String exercise, String weight) async {
     final db = await database;
     await db.insert(
-      'variables',
-      {'name': name, 'value': value, 'timestamp': DateTime.now().toString()},
+      'exercises',
+      {'exercise': exercise, 'weight': weight, 'timestamp': DateTime.now().toString()},
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
 
-  Future<List<Map<String, dynamic>>> getVariables() async {
+  Future<List<Map<String, dynamic>>> getExercises() async {
     final db = await database;
-    return await db.query('variables');
+    return await db.query('exercises');
   }
 
   Future<void> clearDatabase() async {
     final db = await database;
-    await db.delete('variables');
+    await db.delete('exercises');
   }
 }

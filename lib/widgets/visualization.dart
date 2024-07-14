@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'database.dart';
+import '../core/database.dart';
 
 class VisualizationTab extends StatefulWidget {
   @override
@@ -8,8 +8,8 @@ class VisualizationTab extends StatefulWidget {
 }
 
 class _VisualizationTabState extends State<VisualizationTab> {
-  String? _selectedVariable;
-  List<String> _variableNames = [];
+  String? _selectedExercise;
+  List<String> _exerciseNames = [];
   List<FlSpot> _dataPoints = [];
 
   final DatabaseHelper _dbHelper = DatabaseHelper();
@@ -17,23 +17,23 @@ class _VisualizationTabState extends State<VisualizationTab> {
   @override
   void initState() {
     super.initState();
-    _fetchVariableNames();
+    _fetchExerciseNames();
   }
 
-  Future<void> _fetchVariableNames() async {
-    final variables = await _dbHelper.getVariables();
-    final names = variables.map((variable) => variable['name'] as String).toSet().toList();
+  Future<void> _fetchExerciseNames() async {
+    final variables = await _dbHelper.getExercises();
+    final names = variables.map((exercise) => exercise['exercise'] as String).toSet().toList();
     setState(() {
-      _variableNames = names;
+      _exerciseNames = names;
     });
   }
 
-  Future<void> _fetchDataPoints(String variableName) async {
-    final variables = await _dbHelper.getVariables();
-    final filteredVariables = variables.where((variable) => variable['name'] == variableName).toList();
+  Future<void> _fetchDataPoints(String exerciseName) async {
+    final exercises = await _dbHelper.getExercises();
+    final filteredExercises = exercises.where((exercise) => exercise['exercise'] == exerciseName).toList();
 
-    final dataPoints = filteredVariables.asMap().entries.map((entry) {
-      return FlSpot(entry.key.toDouble(), double.parse(entry.value['value']));
+    final dataPoints = filteredExercises.asMap().entries.map((entry) {
+      return FlSpot(entry.key.toDouble(), double.parse(entry.value['weight']));
     }).toList();
 
     setState(() {
@@ -48,18 +48,18 @@ class _VisualizationTabState extends State<VisualizationTab> {
       child: Column(
         children: [
           DropdownButton<String>(
-            hint: Text('Select a variable'),
-            value: _selectedVariable,
+            hint: Text('Select an exercise'),
+            value: _selectedExercise,
             onChanged: (newValue) {
               setState(() {
-                _selectedVariable = newValue;
+                _selectedExercise = newValue;
                 _fetchDataPoints(newValue!);
               });
             },
-            items: _variableNames.map((variableName) {
+            items: _exerciseNames.map((exerciseName) {
               return DropdownMenuItem<String>(
-                value: variableName,
-                child: Text(variableName),
+                value: exerciseName,
+                child: Text(exerciseName),
               );
             }).toList(),
           ),
