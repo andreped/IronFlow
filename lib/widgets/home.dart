@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'database.dart';
 import 'visualization.dart';
+import 'helpers.dart';
 
 class VariableStoreApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Variable Store App',
+      title: 'IronFlow',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
@@ -21,22 +22,7 @@ class VariableStoreHomePage extends StatefulWidget {
 }
 
 class _VariableStoreHomePageState extends State<VariableStoreHomePage> {
-  final _formKey = GlobalKey<FormState>();
-  final _variableNameController = TextEditingController();
-  final _variableValueController = TextEditingController();
   final DatabaseHelper _dbHelper = DatabaseHelper();
-
-  Future<void> _addVariable() async {
-    if (_formKey.currentState!.validate()) {
-      await _dbHelper.insertVariable(
-        _variableNameController.text,
-        _variableValueController.text,
-      );
-      _variableNameController.clear();
-      _variableValueController.clear();
-      setState(() {});
-    }
-  }
 
   Future<void> _clearDatabase() async {
     await _dbHelper.clearDatabase();
@@ -53,7 +39,7 @@ class _VariableStoreHomePageState extends State<VariableStoreHomePage> {
       length: 3,
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Variable Store App'),
+          title: Text('IronFlow'),
           actions: [
             IconButton(
               icon: Icon(Icons.delete),
@@ -64,7 +50,7 @@ class _VariableStoreHomePageState extends State<VariableStoreHomePage> {
           ],
           bottom: TabBar(
             tabs: [
-              Tab(icon: Icon(Icons.add), text: 'Add Variable'),
+              Tab(icon: Icon(Icons.add), text: 'Log Exercise'),
               Tab(icon: Icon(Icons.table_chart), text: 'View Table'),
               Tab(icon: Icon(Icons.show_chart), text: 'Visualize Data'),
             ],
@@ -74,41 +60,10 @@ class _VariableStoreHomePageState extends State<VariableStoreHomePage> {
           children: [
             Padding(
               padding: EdgeInsets.all(16.0),
-              child: Column(
-                children: [
-                  Form(
-                    key: _formKey,
-                    child: Column(
-                      children: [
-                        TextFormField(
-                          controller: _variableNameController,
-                          decoration: InputDecoration(labelText: 'Variable Name'),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter a variable name';
-                            }
-                            return null;
-                          },
-                        ),
-                        TextFormField(
-                          controller: _variableValueController,
-                          decoration: InputDecoration(labelText: 'Variable Value'),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter a variable value';
-                            }
-                            return null;
-                          },
-                        ),
-                        SizedBox(height: 16.0),
-                        ElevatedButton(
-                          onPressed: _addVariable,
-                          child: Text('Add Variable'),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+              child: ExerciseSetter(
+                onVariableAdded: () {
+                  setState(() {});
+                },
               ),
             ),
             FutureBuilder<List<Map<String, dynamic>>>(
