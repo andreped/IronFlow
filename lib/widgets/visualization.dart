@@ -82,28 +82,59 @@ class _VisualizationTabState extends State<VisualizationTab> {
                           belowBarData: BarAreaData(show: false),
                         ),
                       ],
-                      titlesData: const FlTitlesData(
+                      titlesData: FlTitlesData(
                         leftTitles: AxisTitles(
-                          sideTitles: SideTitles(showTitles: true),
-                          axisNameWidget: Text(
-                              'Weights [kg]',
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14,
-                              ),
+                          sideTitles: SideTitles(
+                            showTitles: true,
+                            reservedSize: 40, // Add padding on the left for numbers and text
+                            getTitlesWidget: (value, meta) {
+                              return Text(
+                                value.toString(),
+                                style: const TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12,
+                                ),
+                              );
+                            },
+                          ),
+                          axisNameWidget: const Text(
+                            'Weights [kg]',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
                             ),
+                          ),
                         ),
-                        bottomTitles: const AxisTitles(
-                          sideTitles: SideTitles(showTitles: true),
-                          axisNameWidget: Text(
-                              'Days',
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14,
-                              ),
+                        rightTitles: AxisTitles(
+                          sideTitles: SideTitles(showTitles: false),
+                        ),
+                        bottomTitles: AxisTitles(
+                          sideTitles: SideTitles(
+                            showTitles: true,
+                            getTitlesWidget: (value, meta) {
+                              return Text(
+                                value.toString(),
+                                style: const TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12,
+                                ),
+                              );
+                            },
+                          ),
+                          axisNameWidget: const Text(
+                            'Days',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
                             ),
+                          ),
+                        ),
+                        topTitles: AxisTitles(
+                          sideTitles: SideTitles(showTitles: false),
                         ),
                       ),
                       borderData: FlBorderData(show: true),
