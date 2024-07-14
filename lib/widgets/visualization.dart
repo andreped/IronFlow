@@ -88,6 +88,14 @@ class _VisualizationTabState extends State<VisualizationTab> {
                         ),
                         bottomTitles: AxisTitles(
                           sideTitles: SideTitles(showTitles: true),
+                          axisNameWidget: Text(
+                              'Days',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                              ),
+                            ),
                         ),
                       ),
                       borderData: FlBorderData(show: true),
