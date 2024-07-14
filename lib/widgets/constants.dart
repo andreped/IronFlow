@@ -9,5 +9,4 @@ const List<String> predefinedVariables = [
   "Hamstring curl"
 ];
 
-// constants.dart
 const int dropdownVisibleItemCount = 5;
