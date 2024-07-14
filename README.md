@@ -1,6 +1,6 @@
 <div align="center">
 <h1 align="center">IronFlow</h1>
-<h3 align="center">Strength training and fitness app for mobile devices</h3>
+<h3 align="center">Strength training and fitness app for mobile devices.</h3>
 
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 [![GitHub Downloads](https://img.shields.io/github/downloads/andreped/IronFlow/total?label=GitHub%20downloads&logo=github)](https://github.com/andreped/IronFlow/releases)
