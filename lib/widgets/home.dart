@@ -39,18 +39,18 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage> {
       length: 3,
       child: Scaffold(
         appBar: AppBar(
-          title: Text('IronFlow'),
+          title: const Text('IronFlow'),
           actions: [
             IconButton(
-              icon: Icon(Icons.delete),
+              icon: const Icon(Icons.delete),
               onPressed: () async {
                 await _clearDatabase();
               },
             ),
           ],
-          bottom: TabBar(
+          bottom: const TabBar(
             tabs: [
-              Tab(icon: Icon(Icons.add), text: 'Log Exercise'),
+              const Tab(icon: Icon(Icons.add), text: 'Log Exercise'),
               Tab(icon: Icon(Icons.table_chart), text: 'View Table'),
               Tab(icon: Icon(Icons.show_chart), text: 'Visualize Data'),
             ],
@@ -60,7 +60,7 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage> {
           children: [
             // Log Exercise Tab
             Padding(
-              padding: EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(16.0),
               child: ExerciseSetter(
                 onExerciseAdded: () {
                   setState(() {});
@@ -74,17 +74,17 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage> {
                 future: _getExercises(),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
-                    return Center(child: CircularProgressIndicator());
+                    return const Center(child: CircularProgressIndicator());
                   }
                   final variables = snapshot.data!;
                   return SizedBox(
                     width: MediaQuery.of(context).size.width,
                     child: DataTable(
                       columns: [
-                        DataColumn(label: Text('ID')),
-                        DataColumn(label: Text('Exercise')),
-                        DataColumn(label: Text('Weight')),
-                        DataColumn(label: Text('Timestamp')),
+                        const DataColumn(label: Text('ID')),
+                        const DataColumn(label: Text('Exercise')),
+                        const DataColumn(label: Text('Weight')),
+                        const DataColumn(label: Text('Timestamp')),
                       ],
                       rows: variables.map((variable) {
                         return DataRow(cells: [
@@ -101,7 +101,7 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage> {
             ),
             // Visualize Data Tab
             Padding(
-              padding: EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(16.0),
               child: VisualizationTab(),
             ),
           ],
