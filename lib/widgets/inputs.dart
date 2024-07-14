@@ -42,7 +42,7 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
           : _selectedExercise!;
       
       await _dbHelper.insertExercise(exerciseName, _exerciseValueController.text);
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text('Exercise added successfully'),
         duration: Duration(seconds: 2),
       ));
@@ -77,7 +77,7 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
               Expanded(
                 flex: 2,
                 child: DropdownButtonFormField<String>(
-                  decoration: InputDecoration(labelText: 'Select Exercise'),
+                  decoration: const InputDecoration(labelText: 'Select Exercise'),
                   items: [
                     ..._predefinedExercises.map((String value) {
                       return DropdownMenuItem<String>(
@@ -85,7 +85,7 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
                         child: Text(value),
                       );
                     }),
-                    DropdownMenuItem<String>(
+                    const DropdownMenuItem<String>(
                       value: 'custom',
                       child: Text('Add New Exercise'),
                     ),
@@ -105,9 +105,9 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
                   value: _selectedExercise,
                   isExpanded: true,
                   iconSize: 24.0,
-                  icon: Icon(Icons.arrow_drop_down),
+                  icon: const Icon(Icons.arrow_drop_down),
                   elevation: 16,
-                  style: TextStyle(color: Colors.black),
+                  style: const TextStyle(color: Colors.black),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please select or enter an exercise';
@@ -120,7 +120,7 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
                   dropdownColor: Colors.white,
                 ),
               ),
-              SizedBox(width: 16.0),
+              const SizedBox(width: 16.0),
               Expanded(
                 flex: 3,
                 child: TextFormField(
@@ -142,7 +142,7 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
           ),
           TextFormField(
             controller: _exerciseValueController,
-            decoration: InputDecoration(labelText: 'Exercise Value'),
+            decoration: const InputDecoration(labelText: 'Exercise Value'),
             keyboardType: TextInputType.number,
             validator: (value) {
               if (value == null || value.isEmpty) {
@@ -154,10 +154,10 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
               return null;
             },
           ),
-          SizedBox(height: 16.0),
+          const SizedBox(height: 16.0),
           ElevatedButton(
             onPressed: _addExercise,
-            child: Text('Add Exercise'),
+            child: const Text('Add Exercise'),
           ),
         ],
       ),
