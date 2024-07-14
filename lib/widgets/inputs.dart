@@ -22,10 +22,12 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
   Future<void> _addExercise() async {
     if (_formKey.currentState!.validate()) {
       final exerciseName = _selectedPredefinedExercise ?? _exerciseNameController.text;
-      await _dbHelper.insertExercise(
-        exerciseName,
-        _exerciseValueController.text,
-      );
+      // feedback mechanism after inserting exercise
+      await _dbHelper.insertExercise(exerciseName, _exerciseValueController.text);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Exercise added successfully'),
+        duration: Duration(seconds: 2),
+      ));
       _exerciseNameController.clear();
       _exerciseValueController.clear();
       setState(() {
