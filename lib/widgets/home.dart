@@ -3,7 +3,6 @@ import '../core/database.dart';
 import 'visualization.dart';
 import 'inputs.dart';
 
-
 class ExerciseStoreApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
