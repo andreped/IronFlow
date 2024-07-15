@@ -62,7 +62,6 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage> {
           ),
         ),
         body: TabBarView(
-          // physics: NeverScrollableScrollPhysics(), // Disable TabBarView scrolling
           children: [
             // Log Exercise Tab
             Padding(
@@ -92,6 +91,8 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage> {
                           DataColumn(label: Text('ID')),
                           DataColumn(label: Text('Exercise')),
                           DataColumn(label: Text('Weight')),
+                          DataColumn(label: Text('Reps')),
+                          DataColumn(label: Text('Sets')),
                           DataColumn(label: Text('Timestamp')),
                           DataColumn(label: Text('Actions')),
                         ],
@@ -100,6 +101,8 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage> {
                             DataCell(Text(variable['id'].toString())),
                             DataCell(Text(variable['exercise'])),
                             DataCell(Text(variable['weight'])),
+                            DataCell(Text(variable['reps'].toString())),
+                            DataCell(Text(variable['sets'].toString())),
                             DataCell(Text(variable['timestamp'])),
                             DataCell(
                               IconButton(

@@ -12,8 +12,9 @@ class ExerciseSetter extends StatefulWidget {
 
 class _ExerciseSetterState extends State<ExerciseSetter> {
   final _formKey = GlobalKey<FormState>();
-  final _exerciseNameController = TextEditingController();
   final _exerciseValueController = TextEditingController();
+  final _repsController = TextEditingController();
+  final _setsController = TextEditingController();
   final DatabaseHelper _dbHelper = DatabaseHelper();
 
   String? _selectedExercise;
@@ -38,10 +39,16 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
   Future<void> _addExercise() async {
     if (_formKey.currentState!.validate()) {
       final exerciseName = _isAddingNewExercise
-          ? _exerciseNameController.text.trim()
+          ? _exerciseValueController.text.trim()
           : _selectedExercise!;
       
-      await _dbHelper.insertExercise(exerciseName, _exerciseValueController.text);
+      await _dbHelper.insertExercise(
+        exercise: exerciseName,
+        weight: _exerciseValueController.text,
+        reps: int.parse(_repsController.text),
+        sets: int.parse(_setsController.text),
+      );
+      
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text('Exercise added successfully'),
         duration: Duration(seconds: 2),
@@ -55,8 +62,9 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
         });
       }
 
-      _exerciseNameController.clear();
       _exerciseValueController.clear();
+      _repsController.clear();
+      _setsController.clear();
       setState(() {
         _isAddingNewExercise = false;
       });
@@ -99,7 +107,7 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
                         _isAddingNewExercise = false;
                         _selectedExercise = value;
                       }
-                      _exerciseNameController.clear();
+                      _exerciseValueController.clear();
                     });
                   },
                   value: _selectedExercise,
@@ -120,33 +128,43 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
                   dropdownColor: Colors.white,
                 ),
               ),
-              const SizedBox(width: 16.0),
-              Expanded(
-                flex: 3,
-                child: TextFormField(
-                  controller: _exerciseNameController,
-                  enabled: _isAddingNewExercise,
-                  decoration: InputDecoration(
-                    labelText: 'Exercise Name (or enter custom)',
-                    enabled: _isAddingNewExercise,
-                  ),
-                  validator: (value) {
-                    if (_isAddingNewExercise && (value == null || value.isEmpty)) {
-                      return 'Please enter an exercise name';
-                    }
-                    return null;
-                  },
-                ),
-              ),
             ],
           ),
           TextFormField(
             controller: _exerciseValueController,
-            decoration: const InputDecoration(labelText: 'Exercise Value'),
+            decoration: const InputDecoration(labelText: 'Exercise Weight'),
             keyboardType: TextInputType.number,
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Please enter an exercise value';
+                return 'Please enter an exercise weight';
+              }
+              if (double.tryParse(value) == null) {
+                return 'Please enter a valid number';
+              }
+              return null;
+            },
+          ),
+          TextFormField(
+            controller: _repsController,
+            decoration: const InputDecoration(labelText: 'Reps'),
+            keyboardType: TextInputType.number,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter the number of reps';
+              }
+              if (int.tryParse(value) == null) {
+                return 'Please enter a valid integer';
+              }
+              return null;
+            },
+          ),
+          TextFormField(
+            controller: _setsController,
+            decoration: const InputDecoration(labelText: 'Sets'),
+            keyboardType: TextInputType.number,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter the number of sets';
               }
               if (int.tryParse(value) == null) {
                 return 'Please enter a valid integer';

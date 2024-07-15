@@ -23,7 +23,7 @@ class DatabaseHelper {
       version: 1,
       onCreate: (db, version) async {
         await db.execute(
-          'CREATE TABLE exercises(id INTEGER PRIMARY KEY AUTOINCREMENT, exercise TEXT, weight TEXT, timestamp TEXT)',
+          'CREATE TABLE exercises(id INTEGER PRIMARY KEY AUTOINCREMENT, exercise TEXT, weight TEXT, reps INTEGER, sets INTEGER, timestamp TEXT)',
         );
         await db.execute(
           'CREATE TABLE IF NOT EXISTS predefined_exercises(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT)',
@@ -42,11 +42,22 @@ class DatabaseHelper {
     await batch.commit();
   }
 
-  Future<void> insertExercise(String exercise, String weight) async {
+  Future<void> insertExercise({
+    required String exercise,
+    required String weight,
+    required int reps,
+    required int sets,
+  }) async {
     final db = await database;
     await db.insert(
       'exercises',
-      {'exercise': exercise, 'weight': weight, 'timestamp': DateTime.now().toString()},
+      {
+        'exercise': exercise,
+        'weight': weight,
+        'reps': reps,
+        'sets': sets,
+        'timestamp': DateTime.now().toString(),
+      },
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
