@@ -53,7 +53,7 @@ class DatabaseHelper {
 
   Future<List<Map<String, dynamic>>> getExercises() async {
     final db = await database;
-    return await db.query('exercises');
+    return await db.query('exercises', orderBy: 'timestamp DESC');
   }
 
   Future<void> clearDatabase() async {
