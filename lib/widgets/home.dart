@@ -23,6 +23,7 @@ class ExerciseStoreHomePage extends StatefulWidget {
 
 class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage> {
   final DatabaseHelper _dbHelper = DatabaseHelper();
+  DateTime _selectedDay = DateTime.now();
 
   Future<void> _clearDatabase() async {
     await _dbHelper.clearDatabase();
@@ -38,10 +39,24 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage> {
     return await _dbHelper.getExercises();
   }
 
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedDay,
+      firstDate: DateTime(2020),
+      lastDate: DateTime.now(),
+    );
+    if (picked != null && picked != _selectedDay) {
+      setState(() {
+        _selectedDay = picked;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3,
+      length: 4,
       child: Scaffold(
         appBar: AppBar(
           title: const Text('IronFlow'),
@@ -55,14 +70,14 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage> {
           ],
           bottom: const TabBar(
             tabs: [
-              const Tab(icon: Icon(Icons.add), text: 'Log Exercise'),
+              Tab(icon: Icon(Icons.add), text: 'Log Exercise'),
               Tab(icon: Icon(Icons.table_chart), text: 'View Table'),
               Tab(icon: Icon(Icons.show_chart), text: 'Visualize Data'),
+              Tab(icon: Icon(Icons.calendar_today), text: 'Summary'),
             ],
           ),
         ),
         body: TabBarView(
-          // physics: NeverScrollableScrollPhysics(), // Disable TabBarView scrolling
           children: [
             // Log Exercise Tab
             Padding(
@@ -92,6 +107,8 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage> {
                           DataColumn(label: Text('ID')),
                           DataColumn(label: Text('Exercise')),
                           DataColumn(label: Text('Weight')),
+                          DataColumn(label: Text('Reps')),
+                          DataColumn(label: Text('Sets')),
                           DataColumn(label: Text('Timestamp')),
                           DataColumn(label: Text('Actions')),
                         ],
@@ -100,10 +117,12 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage> {
                             DataCell(Text(variable['id'].toString())),
                             DataCell(Text(variable['exercise'])),
                             DataCell(Text(variable['weight'])),
+                            DataCell(Text(variable['reps'].toString())),
+                            DataCell(Text(variable['sets'].toString())),
                             DataCell(Text(variable['timestamp'])),
                             DataCell(
                               IconButton(
-                                icon: Icon(Icons.delete),
+                                icon: const Icon(Icons.delete),
                                 onPressed: () async {
                                   await _deleteExercise(variable['id']);
                                 },
@@ -121,6 +140,50 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage> {
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: VisualizationTab(),
+            ),
+            // Summary Tab
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      const Text('Select Day: '),
+                      TextButton(
+                        onPressed: () => _selectDate(context),
+                        child: Text('${_selectedDay.year}-${_selectedDay.month}-${_selectedDay.day}'),
+                      ),
+                    ],
+                  ),
+                  FutureBuilder<Map<String, double>>(
+                    future: _dbHelper.getTotalWeightForDay(_selectedDay),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const CircularProgressIndicator();
+                      } else if (snapshot.hasError) {
+                        return Text('Error: ${snapshot.error}');
+                      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                        return const Text('No data available for selected day');
+                      }
+
+                      final totalWeights = snapshot.data!;
+
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: totalWeights.entries.map((entry) {
+                          return Card(
+                            child: ListTile(
+                              title: Text(entry.key),
+                              subtitle: Text('Total Weight: ${entry.value}'),
+                            ),
+                          );
+                        }).toList(),
+                      );
+                    },
+                  ),
+                ],
+              ),
             ),
           ],
         ),

@@ -23,7 +23,7 @@ class DatabaseHelper {
       version: 1,
       onCreate: (db, version) async {
         await db.execute(
-          'CREATE TABLE exercises(id INTEGER PRIMARY KEY AUTOINCREMENT, exercise TEXT, weight TEXT, timestamp TEXT)',
+          'CREATE TABLE exercises(id INTEGER PRIMARY KEY AUTOINCREMENT, exercise TEXT, weight TEXT, reps INTEGER, sets INTEGER, timestamp TEXT)',
         );
         await db.execute(
           'CREATE TABLE IF NOT EXISTS predefined_exercises(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT)',
@@ -42,11 +42,22 @@ class DatabaseHelper {
     await batch.commit();
   }
 
-  Future<void> insertExercise(String exercise, String weight) async {
+  Future<void> insertExercise({
+    required String exercise,
+    required String weight,
+    required int reps,
+    required int sets,
+  }) async {
     final db = await database;
     await db.insert(
       'exercises',
-      {'exercise': exercise, 'weight': weight, 'timestamp': DateTime.now().toString()},
+      {
+        'exercise': exercise,
+        'weight': weight,
+        'reps': reps,
+        'sets': sets,
+        'timestamp': DateTime.now().toString(),
+      },
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
@@ -54,6 +65,38 @@ class DatabaseHelper {
   Future<List<Map<String, dynamic>>> getExercises() async {
     final db = await database;
     return await db.query('exercises', orderBy: 'timestamp DESC');
+  }
+
+  Future<List<Map<String, dynamic>>> getExercisesForDay(DateTime selectedDay) async {
+    final db = await database;
+    final formattedDay = '${selectedDay.year}-${selectedDay.month.toString().padLeft(2, '0')}-${selectedDay.day.toString().padLeft(2, '0')}';
+    return await db.query(
+      'exercises',
+      where: 'substr(timestamp, 1, 10) = ?',
+      whereArgs: [formattedDay],
+    );
+  }
+
+  Future<Map<String, double>> getTotalWeightForDay(DateTime selectedDay) async {
+    final exercises = await getExercisesForDay(selectedDay);
+    Map<String, double> exerciseWeights = {};
+
+    exercises.forEach((exercise) {
+      String exerciseName = exercise['exercise'];
+      double weight = double.parse(exercise['weight']);
+      int reps = exercise['reps'];
+      int sets = exercise['sets'];
+
+      double currWeight = weight * reps * sets;
+
+      if (exerciseWeights.containsKey(exerciseName)) {
+        exerciseWeights[exerciseName] = exerciseWeights[exerciseName]! + currWeight;
+      } else {
+        exerciseWeights[exerciseName] = currWeight;
+      }
+    });
+
+    return exerciseWeights;
   }
 
   Future<void> clearDatabase() async {

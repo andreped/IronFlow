@@ -10,7 +10,7 @@ class VisualizationTab extends StatefulWidget {
 class _VisualizationTabState extends State<VisualizationTab> {
   String? _selectedExercise;
   List<String> _exerciseNames = [];
-  List<FlSpot> _dataPoints = [];
+  List<ScatterSpot> _dataPoints = [];
 
   final DatabaseHelper _dbHelper = DatabaseHelper();
 
@@ -32,12 +32,18 @@ class _VisualizationTabState extends State<VisualizationTab> {
     final exercises = await _dbHelper.getExercises();
     final filteredExercises = exercises.where((exercise) => exercise['exercise'] == exerciseName).toList();
 
-    // get earliest date
-    final dateTimes = exercises.map((row) => row['timestamp'] as String).toList();
-    final earliestDateTime = DateTime.parse(dateTimes.reduce((a, b) => a.compareTo(b) < 0 ? a : b));
+    // Sort the filtered exercises by timestamp in descending order
+    filteredExercises.sort((a, b) => DateTime.parse(b['timestamp']).compareTo(DateTime.parse(a['timestamp'])));
 
-    final dataPoints = filteredExercises.asMap().entries.map((entry) {
-      return FlSpot(DateTime.parse(entry.value['timestamp']).difference(earliestDateTime).inDays.toDouble(), double.parse(entry.value['weight']));
+    // Get the earliest date (ignoring the time part)
+    final earliestDate = DateUtils.dateOnly(DateTime.parse(filteredExercises.last['timestamp']));
+
+    final dataPoints = filteredExercises.map((exercise) {
+      final dateTime = DateUtils.dateOnly(DateTime.parse(exercise['timestamp']));
+
+      // Calculate the difference in days, ignoring hours time information
+      final dayDifference = dateTime.difference(earliestDate).inDays.toDouble();
+      return ScatterSpot(dayDifference, double.parse(exercise['weight']));
     }).toList();
 
     setState(() {
@@ -71,17 +77,15 @@ class _VisualizationTabState extends State<VisualizationTab> {
           Expanded(
             child: _dataPoints.isEmpty
                 ? const Center(child: Text('No data available'))
-                : LineChart(
-                    LineChartData(
-                      lineBarsData: [
-                        LineChartBarData(
-                          spots: _dataPoints,
-                          isCurved: true,
-                          color: Colors.blue,
-                          barWidth: 3,
-                          belowBarData: BarAreaData(show: false),
+                : ScatterChart(
+                    ScatterChartData(
+                      scatterSpots: _dataPoints,
+                      scatterTouchData: ScatterTouchData(
+                        touchTooltipData: ScatterTouchTooltipData(
+                          getTooltipColor: (ScatterSpot touchedSpot) => Colors.blueAccent,
                         ),
-                      ],
+                        enabled: true,
+                      ),
                       titlesData: FlTitlesData(
                         leftTitles: AxisTitles(
                           sideTitles: SideTitles(
@@ -115,7 +119,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
                             showTitles: true,
                             getTitlesWidget: (value, meta) {
                               return Text(
-                                value.toString(),
+                                value.toInt().toString(),
                                 style: const TextStyle(
                                   color: Colors.black,
                                   fontWeight: FontWeight.bold,
