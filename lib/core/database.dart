@@ -67,6 +67,38 @@ class DatabaseHelper {
     return await db.query('exercises', orderBy: 'timestamp DESC');
   }
 
+  Future<List<Map<String, dynamic>>> getExercisesForDay(DateTime selectedDay) async {
+    final db = await database;
+    final formattedDay = '${selectedDay.year}-${selectedDay.month.toString().padLeft(2, '0')}-${selectedDay.day.toString().padLeft(2, '0')}';
+    return await db.query(
+      'exercises',
+      where: 'substr(timestamp, 1, 10) = ?',
+      whereArgs: [formattedDay],
+    );
+  }
+
+  Future<Map<String, double>> getTotalWeightForDay(DateTime selectedDay) async {
+    final exercises = await getExercisesForDay(selectedDay);
+    Map<String, double> exerciseWeights = {};
+
+    exercises.forEach((exercise) {
+      String exerciseName = exercise['exercise'];
+      double weight = double.parse(exercise['weight']);
+      int reps = exercise['reps'];
+      int sets = exercise['sets'];
+
+      double currWeight = weight * reps * sets;
+
+      if (exerciseWeights.containsKey(exerciseName)) {
+        exerciseWeights[exerciseName] = exerciseWeights[exerciseName]! + currWeight;
+      } else {
+        exerciseWeights[exerciseName] = currWeight;
+      }
+    });
+
+    return exerciseWeights;
+  }
+
   Future<void> clearDatabase() async {
     final db = await database;
     await db.delete('exercises');
