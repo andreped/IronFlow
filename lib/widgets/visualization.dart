@@ -81,10 +81,10 @@ class _VisualizationTabState extends State<VisualizationTab> {
                     ScatterChartData(
                       scatterSpots: _dataPoints,
                       scatterTouchData: ScatterTouchData(
-                        enabled: true,
                         touchTooltipData: ScatterTouchTooltipData(
-                          tooltipBgColor: Colors.blueAccent,
+                          getTooltipColor: (ScatterSpot touchedSpot) => Colors.blueAccent,
                         ),
+                        enabled: true,
                       ),
                       titlesData: FlTitlesData(
                         leftTitles: AxisTitles(
