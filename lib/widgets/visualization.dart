@@ -36,11 +36,12 @@ class _VisualizationTabState extends State<VisualizationTab> {
     filteredExercises.sort((a, b) => DateTime.parse(a['timestamp']).compareTo(DateTime.parse(b['timestamp'])));
 
     // Get the earliest date (ignoring the time part)
-    final earliestDate = DateTime.parse(filteredExercises.first['timestamp']).toLocal();
+    final earliestDate = DateUtils.dateOnly(DateTime.parse(filteredExercises.first['timestamp']));
 
     final dataPoints = filteredExercises.map((exercise) {
-      final dateTime = DateTime.parse(exercise['timestamp']).toLocal();
-      // Calculate the difference in days ignoring time part
+      final dateTime = DateUtils.dateOnly(DateTime.parse(exercise['timestamp']));
+
+      // Calculate the difference in days, ignoring hours time information
       final dayDifference = dateTime.difference(earliestDate).inDays.toDouble();
       return FlSpot(dayDifference, double.parse(exercise['weight']));
     }).toList();
