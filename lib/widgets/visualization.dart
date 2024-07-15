@@ -32,12 +32,17 @@ class _VisualizationTabState extends State<VisualizationTab> {
     final exercises = await _dbHelper.getExercises();
     final filteredExercises = exercises.where((exercise) => exercise['exercise'] == exerciseName).toList();
 
-    // get earliest date
-    final dateTimes = exercises.map((row) => row['timestamp'] as String).toList();
-    final earliestDateTime = DateTime.parse(dateTimes.reduce((a, b) => a.compareTo(b) < 0 ? a : b));
+    // Sort the filtered exercises by timestamp
+    filteredExercises.sort((a, b) => DateTime.parse(a['timestamp']).compareTo(DateTime.parse(b['timestamp'])));
 
-    final dataPoints = filteredExercises.asMap().entries.map((entry) {
-      return FlSpot(DateTime.parse(entry.value['timestamp']).difference(earliestDateTime).inDays.toDouble(), double.parse(entry.value['weight']));
+    // Get the earliest date (ignoring the time part)
+    final earliestDate = DateTime.parse(filteredExercises.first['timestamp']).toLocal();
+
+    final dataPoints = filteredExercises.map((exercise) {
+      final dateTime = DateTime.parse(exercise['timestamp']).toLocal();
+      // Calculate the difference in days ignoring time part
+      final dayDifference = dateTime.difference(earliestDate).inDays.toDouble();
+      return FlSpot(dayDifference, double.parse(exercise['weight']));
     }).toList();
 
     setState(() {
@@ -115,7 +120,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
                             showTitles: true,
                             getTitlesWidget: (value, meta) {
                               return Text(
-                                value.toString(),
+                                value.toInt().toString(),
                                 style: const TextStyle(
                                   color: Colors.black,
                                   fontWeight: FontWeight.bold,
