@@ -10,7 +10,7 @@ class VisualizationTab extends StatefulWidget {
 class _VisualizationTabState extends State<VisualizationTab> {
   String? _selectedExercise;
   List<String> _exerciseNames = [];
-  List<FlSpot> _dataPoints = [];
+  List<ScatterSpot> _dataPoints = [];
 
   final DatabaseHelper _dbHelper = DatabaseHelper();
 
@@ -32,18 +32,18 @@ class _VisualizationTabState extends State<VisualizationTab> {
     final exercises = await _dbHelper.getExercises();
     final filteredExercises = exercises.where((exercise) => exercise['exercise'] == exerciseName).toList();
 
-    // Sort the filtered exercises by timestamp
-    filteredExercises.sort((a, b) => DateTime.parse(a['timestamp']).compareTo(DateTime.parse(b['timestamp'])));
+    // Sort the filtered exercises by timestamp in descending order
+    filteredExercises.sort((a, b) => DateTime.parse(b['timestamp']).compareTo(DateTime.parse(a['timestamp'])));
 
     // Get the earliest date (ignoring the time part)
-    final earliestDate = DateUtils.dateOnly(DateTime.parse(filteredExercises.first['timestamp']));
+    final earliestDate = DateUtils.dateOnly(DateTime.parse(filteredExercises.last['timestamp']));
 
     final dataPoints = filteredExercises.map((exercise) {
       final dateTime = DateUtils.dateOnly(DateTime.parse(exercise['timestamp']));
 
       // Calculate the difference in days, ignoring hours time information
       final dayDifference = dateTime.difference(earliestDate).inDays.toDouble();
-      return FlSpot(dayDifference, double.parse(exercise['weight']));
+      return ScatterSpot(dayDifference, double.parse(exercise['weight']));
     }).toList();
 
     setState(() {
@@ -77,17 +77,15 @@ class _VisualizationTabState extends State<VisualizationTab> {
           Expanded(
             child: _dataPoints.isEmpty
                 ? const Center(child: Text('No data available'))
-                : LineChart(
-                    LineChartData(
-                      lineBarsData: [
-                        LineChartBarData(
-                          spots: _dataPoints,
-                          isCurved: true,
-                          color: Colors.blue,
-                          barWidth: 3,
-                          belowBarData: BarAreaData(show: false),
+                : ScatterChart(
+                    ScatterChartData(
+                      scatterSpots: _dataPoints,
+                      scatterTouchData: ScatterTouchData(
+                        enabled: true,
+                        touchTooltipData: ScatterTouchTooltipData(
+                          tooltipBgColor: Colors.blueAccent,
                         ),
-                      ],
+                      ),
                       titlesData: FlTitlesData(
                         leftTitles: AxisTitles(
                           sideTitles: SideTitles(
