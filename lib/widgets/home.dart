@@ -222,8 +222,8 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage> {
                       ),
                     ],
                   ),
-                  FutureBuilder<Map<String, double>>(
-                    future: _dbHelper.getTotalWeightForDay(_selectedDay),
+                  FutureBuilder<Map<String, dynamic>>(
+                    future: _dbHelper.getSummaryForDay(_selectedDay),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const CircularProgressIndicator();
@@ -233,15 +233,29 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage> {
                         return const Text('No data available for selected day');
                       }
 
-                      final totalWeights = snapshot.data!;
+                      final summaryData = snapshot.data!;
 
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: totalWeights.entries.map((entry) {
+                        children: summaryData.entries.map((entry) {
+                          final exercise = entry.key;
+                          final details = entry.value as Map<String, dynamic>;
+                          final totalWeight = details['totalWeight'];
+                          final totalSets = details['totalSets'];
+                          final totalReps = details['totalReps'];
+                          final avgWeight = details['avgWeight'];
+                          final records = details['records'] as List<Map<String, dynamic>>;
+
                           return Card(
-                            child: ListTile(
-                              title: Text(entry.key),
-                              subtitle: Text('Total Weight: ${entry.value}'),
+                            child: ExpansionTile(
+                              title: Text(exercise),
+                              subtitle: Text('Total Weight: ${totalWeight.toStringAsFixed(2)} kg, Sets: $totalSets, Reps: $totalReps, Avg Weight per Set: ${avgWeight.toStringAsFixed(2)} kg'),
+                              children: records.map((record) {
+                                return ListTile(
+                                  title: Text('Sets: ${record['sets']}, Reps: ${record['reps']}, Weight: ${record['weight']} kg'),
+                                  subtitle: Text('Timestamp: ${record['timestamp']}'),
+                                );
+                              }).toList(),
                             ),
                           );
                         }).toList(),
