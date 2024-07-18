@@ -128,6 +128,47 @@ class DatabaseHelper {
     return totalWeights;
   }
 
+  Future<Map<String, dynamic>> getSummaryForDay(DateTime day) async {
+    final db = await database;
+    final List<Map<String, dynamic>> exercises = await db.query(
+      'exercises',
+      where: 'date(timestamp) = ?',
+      whereArgs: [day.toIso8601String().split('T')[0]],
+    );
+
+    Map<String, dynamic> summary = {};
+
+    for (var exercise in exercises) {
+      String exerciseName = exercise['exercise'];
+      double weight = double.parse(exercise['weight']);
+      int reps = exercise['reps'];
+      int sets = exercise['sets'];
+      double totalWeight = weight * reps * sets;
+
+      if (summary.containsKey(exerciseName)) {
+        summary[exerciseName]['totalWeight'] += totalWeight;
+        summary[exerciseName]['totalSets'] += sets;
+        summary[exerciseName]['totalReps'] += reps;
+        summary[exerciseName]['records'].add(exercise);
+      } else {
+        summary[exerciseName] = {
+          'totalWeight': totalWeight,
+          'totalSets': sets,
+          'totalReps': reps,
+          'avgWeight': 0.0,
+          'records': [exercise],
+        };
+      }
+    }
+
+    summary.forEach((key, value) {
+      value['avgWeight'] = value['totalWeight'] / value['totalSets'];
+    });
+
+    return summary;
+  }
+
+
   Future<List<String>> getPredefinedExercises() async {
     final db = await database;
     final List<Map<String, dynamic>> result = await db.query('predefined_exercises');
