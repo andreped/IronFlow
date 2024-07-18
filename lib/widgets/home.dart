@@ -210,59 +210,61 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage> {
             // Summary Tab
             Padding(
               padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      const Text('Select Day: '),
-                      TextButton(
-                        onPressed: () => _selectDate(context),
-                        child: Text('${_selectedDay.year}-${_selectedDay.month}-${_selectedDay.day}'),
-                      ),
-                    ],
-                  ),
-                  FutureBuilder<Map<String, dynamic>>(
-                    future: _dbHelper.getSummaryForDay(_selectedDay),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const CircularProgressIndicator();
-                      } else if (snapshot.hasError) {
-                        return Text('Error: ${snapshot.error}');
-                      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                        return const Text('No data available for selected day');
-                      }
+              child: SingleChildScrollView( // Wrap with SingleChildScrollView
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        const Text('Select Day: '),
+                        TextButton(
+                          onPressed: () => _selectDate(context),
+                          child: Text('${_selectedDay.year}-${_selectedDay.month}-${_selectedDay.day}'),
+                        ),
+                      ],
+                    ),
+                    FutureBuilder<Map<String, dynamic>>(
+                      future: _dbHelper.getSummaryForDay(_selectedDay),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return const CircularProgressIndicator();
+                        } else if (snapshot.hasError) {
+                          return Text('Error: ${snapshot.error}');
+                        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                          return const Text('No data available for selected day');
+                        }
 
-                      final summaryData = snapshot.data!;
+                        final summaryData = snapshot.data!;
 
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: summaryData.entries.map((entry) {
-                          final exercise = entry.key;
-                          final details = entry.value as Map<String, dynamic>;
-                          final totalWeight = details['totalWeight'];
-                          final totalSets = details['totalSets'];
-                          final totalReps = details['totalReps'];
-                          final avgWeight = details['avgWeight'];
-                          final records = details['records'] as List<Map<String, dynamic>>;
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: summaryData.entries.map((entry) {
+                            final exercise = entry.key;
+                            final details = entry.value as Map<String, dynamic>;
+                            final totalWeight = details['totalWeight'];
+                            final totalSets = details['totalSets'];
+                            final totalReps = details['totalReps'];
+                            final avgWeight = details['avgWeight'];
+                            final records = details['records'] as List<Map<String, dynamic>>;
 
-                          return Card(
-                            child: ExpansionTile(
-                              title: Text(exercise),
-                              subtitle: Text('Total Weight: ${totalWeight.toStringAsFixed(2)} kg, Sets: $totalSets, Reps: $totalReps, Avg Weight per Set: ${avgWeight.toStringAsFixed(2)} kg'),
-                              children: records.map((record) {
-                                return ListTile(
-                                  title: Text('Sets: ${record['sets']}, Reps: ${record['reps']}, Weight: ${record['weight']} kg'),
-                                  subtitle: Text('Timestamp: ${record['timestamp']}'),
-                                );
-                              }).toList(),
-                            ),
-                          );
-                        }).toList(),
-                      );
-                    },
-                  ),
-                ],
+                            return Card(
+                              child: ExpansionTile(
+                                title: Text(exercise),
+                                subtitle: Text('Total Weight: ${totalWeight.toStringAsFixed(2)} kg, Sets: $totalSets, Reps: $totalReps, Avg Weight per Set: ${avgWeight.toStringAsFixed(2)} kg'),
+                                children: records.map((record) {
+                                  return ListTile(
+                                    title: Text('Sets: ${record['sets']}, Reps: ${record['reps']}, Weight: ${record['weight']} kg'),
+                                    subtitle: Text('Timestamp: ${record['timestamp']}'),
+                                  );
+                                }).toList(),
+                              ),
+                            );
+                          }).toList(),
+                        );
+                      },
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
