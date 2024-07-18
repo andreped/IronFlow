@@ -53,6 +53,62 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage> {
     }
   }
 
+  void _showEditDialog(Map<String, dynamic> exercise) {
+    TextEditingController weightController = TextEditingController(text: exercise['weight']);
+    TextEditingController repsController = TextEditingController(text: exercise['reps'].toString());
+    TextEditingController setsController = TextEditingController(text: exercise['sets'].toString());
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Edit Exercise'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextFormField(
+                controller: weightController,
+                decoration: const InputDecoration(labelText: 'Weight'),
+                keyboardType: TextInputType.number,
+              ),
+              TextFormField(
+                controller: repsController,
+                decoration: const InputDecoration(labelText: 'Reps'),
+                keyboardType: TextInputType.number,
+              ),
+              TextFormField(
+                controller: setsController,
+                decoration: const InputDecoration(labelText: 'Sets'),
+                keyboardType: TextInputType.number,
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Save'),
+              onPressed: () async {
+                await _dbHelper.updateExercise(
+                  id: exercise['id'],
+                  weight: weightController.text,
+                  reps: int.parse(repsController.text),
+                  sets: int.parse(setsController.text),
+                );
+                setState(() {});
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -99,7 +155,7 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage> {
                     if (!snapshot.hasData) {
                       return const Center(child: CircularProgressIndicator());
                     }
-                    final variables = snapshot.data!;
+                    final exercises = snapshot.data!;
                     return SizedBox(
                       width: MediaQuery.of(context).size.width,
                       child: DataTable(
@@ -112,20 +168,30 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage> {
                           DataColumn(label: Text('Timestamp')),
                           DataColumn(label: Text('Actions')),
                         ],
-                        rows: variables.map((variable) {
+                        rows: exercises.map((exercise) {
                           return DataRow(cells: [
-                            DataCell(Text(variable['id'].toString())),
-                            DataCell(Text(variable['exercise'])),
-                            DataCell(Text(variable['weight'])),
-                            DataCell(Text(variable['reps'].toString())),
-                            DataCell(Text(variable['sets'].toString())),
-                            DataCell(Text(variable['timestamp'])),
+                            DataCell(Text(exercise['id'].toString())),
+                            DataCell(Text(exercise['exercise'])),
+                            DataCell(Text(exercise['weight'])),
+                            DataCell(Text(exercise['reps'].toString())),
+                            DataCell(Text(exercise['sets'].toString())),
+                            DataCell(Text(exercise['timestamp'])),
                             DataCell(
-                              IconButton(
-                                icon: const Icon(Icons.delete),
-                                onPressed: () async {
-                                  await _deleteExercise(variable['id']);
-                                },
+                              Row(
+                                children: [
+                                  IconButton(
+                                    icon: const Icon(Icons.edit),
+                                    onPressed: () {
+                                      _showEditDialog(exercise);
+                                    },
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(Icons.delete),
+                                    onPressed: () async {
+                                      await _deleteExercise(exercise['id']);
+                                    },
+                                  ),
+                                ],
                               ),
                             ),
                           ]);
