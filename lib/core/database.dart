@@ -39,7 +39,7 @@ class DatabaseHelper {
     for (String exercise in predefinedExercises) {
       batch.insert('predefined_exercises', {'name': exercise});
     }
-    await batch.commit();
+    await batch.commit(noResult: true);
   }
 
   Future<void> insertExercise({
@@ -62,41 +62,13 @@ class DatabaseHelper {
     );
   }
 
-  Future<List<Map<String, dynamic>>> getExercises() async {
+  Future<void> deleteExercise(int id) async {
     final db = await database;
-    return await db.query('exercises', orderBy: 'timestamp DESC');
-  }
-
-  Future<List<Map<String, dynamic>>> getExercisesForDay(DateTime selectedDay) async {
-    final db = await database;
-    final formattedDay = '${selectedDay.year}-${selectedDay.month.toString().padLeft(2, '0')}-${selectedDay.day.toString().padLeft(2, '0')}';
-    return await db.query(
+    await db.delete(
       'exercises',
-      where: 'substr(timestamp, 1, 10) = ?',
-      whereArgs: [formattedDay],
+      where: 'id = ?',
+      whereArgs: [id],
     );
-  }
-
-  Future<Map<String, double>> getTotalWeightForDay(DateTime selectedDay) async {
-    final exercises = await getExercisesForDay(selectedDay);
-    Map<String, double> exerciseWeights = {};
-
-    exercises.forEach((exercise) {
-      String exerciseName = exercise['exercise'];
-      double weight = double.parse(exercise['weight']);
-      int reps = exercise['reps'];
-      int sets = exercise['sets'];
-
-      double currWeight = weight * reps * sets;
-
-      if (exerciseWeights.containsKey(exerciseName)) {
-        exerciseWeights[exerciseName] = exerciseWeights[exerciseName]! + currWeight;
-      } else {
-        exerciseWeights[exerciseName] = currWeight;
-      }
-    });
-
-    return exerciseWeights;
   }
 
   Future<void> clearDatabase() async {
@@ -104,12 +76,62 @@ class DatabaseHelper {
     await db.delete('exercises');
   }
 
+  Future<List<Map<String, dynamic>>> getExercises() async {
+    final db = await database;
+    return await db.query('exercises');
+  }
+
+  Future<void> updateExercise({
+    required int id,
+    required String weight,
+    required int reps,
+    required int sets,
+  }) async {
+    final db = await database;
+    await db.update(
+      'exercises',
+      {
+        'weight': weight,
+        'reps': reps,
+        'sets': sets,
+        'timestamp': DateTime.now().toString(),
+      },
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+
+  Future<Map<String, double>> getTotalWeightForDay(DateTime day) async {
+    final db = await database;
+    final List<Map<String, dynamic>> exercises = await db.query(
+      'exercises',
+      where: 'date(timestamp) = ?',
+      whereArgs: [day.toIso8601String().split('T')[0]],
+    );
+
+    Map<String, double> totalWeights = {};
+
+    for (var exercise in exercises) {
+      String exerciseName = exercise['exercise'];
+      double weight = double.parse(exercise['weight']);
+      int reps = exercise['reps'];
+      int sets = exercise['sets'];
+      double totalWeight = weight * reps * sets;
+
+      if (totalWeights.containsKey(exerciseName)) {
+        totalWeights[exerciseName] = totalWeights[exerciseName]! + totalWeight;
+      } else {
+        totalWeights[exerciseName] = totalWeight;
+      }
+    }
+
+    return totalWeights;
+  }
+
   Future<List<String>> getPredefinedExercises() async {
     final db = await database;
-    List<Map<String, dynamic>> maps = await db.query('predefined_exercises');
-    return List.generate(maps.length, (i) {
-      return maps[i]['name'];
-    });
+    final List<Map<String, dynamic>> result = await db.query('predefined_exercises');
+    return result.map((row) => row['name'] as String).toList();
   }
 
   Future<void> addPredefinedExercise(String exerciseName) async {
@@ -118,15 +140,6 @@ class DatabaseHelper {
       'predefined_exercises',
       {'name': exerciseName},
       conflictAlgorithm: ConflictAlgorithm.ignore, // Handle if exercise already exists
-    );
-  }
-
-  Future<void> deleteExercise(int id) async {
-    final db = await database;
-    await db.delete(
-      'exercises',
-      where: 'id = ?',
-      whereArgs: [id],
     );
   }
 }

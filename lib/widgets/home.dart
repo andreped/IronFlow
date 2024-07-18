@@ -24,8 +24,6 @@ class ExerciseStoreHomePage extends StatefulWidget {
 class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage> {
   final DatabaseHelper _dbHelper = DatabaseHelper();
   DateTime _selectedDay = DateTime.now();
-  String _searchQuery = '';
-  TextEditingController _searchController = TextEditingController();
 
   Future<void> _clearDatabase() async {
     await _dbHelper.clearDatabase();
@@ -55,13 +53,60 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage> {
     }
   }
 
-  List<Map<String, dynamic>> _filterExercises(List<Map<String, dynamic>> exercises) {
-    if (_searchQuery.isEmpty) {
-      return exercises;
-    }
-    return exercises.where((exercise) {
-      return exercise['exercise'].toString().toLowerCase().contains(_searchQuery.toLowerCase());
-    }).toList();
+  void _showEditDialog(Map<String, dynamic> exercise) {
+    TextEditingController weightController = TextEditingController(text: exercise['weight']);
+    TextEditingController repsController = TextEditingController(text: exercise['reps'].toString());
+    TextEditingController setsController = TextEditingController(text: exercise['sets'].toString());
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Edit Exercise'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextFormField(
+                controller: weightController,
+                decoration: const InputDecoration(labelText: 'Weight'),
+                keyboardType: TextInputType.number,
+              ),
+              TextFormField(
+                controller: repsController,
+                decoration: const InputDecoration(labelText: 'Reps'),
+                keyboardType: TextInputType.number,
+              ),
+              TextFormField(
+                controller: setsController,
+                decoration: const InputDecoration(labelText: 'Sets'),
+                keyboardType: TextInputType.number,
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Save'),
+              onPressed: () async {
+                await _dbHelper.updateExercise(
+                  id: exercise['id'],
+                  weight: weightController.text,
+                  reps: int.parse(repsController.text),
+                  sets: int.parse(setsController.text),
+                );
+                setState(() {});
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -100,73 +145,62 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage> {
               ),
             ),
             // View Table Tab
-            Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TextField(
-                    controller: _searchController,
-                    decoration: const InputDecoration(
-                      labelText: 'Search Exercises',
-                      prefixIcon: Icon(Icons.search),
-                    ),
-                    onChanged: (value) {
-                      setState(() {
-                        _searchQuery = value;
-                      });
-                    },
-                  ),
-                ),
-                Expanded(
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.vertical,
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: FutureBuilder<List<Map<String, dynamic>>>(
-                        future: _getExercises(),
-                        builder: (context, snapshot) {
-                          if (!snapshot.hasData) {
-                            return const Center(child: CircularProgressIndicator());
-                          }
-                          final exercises = _filterExercises(snapshot.data!);
-                          return SizedBox(
-                            width: MediaQuery.of(context).size.width,
-                            child: DataTable(
-                              columns: const [
-                                DataColumn(label: Text('ID')),
-                                DataColumn(label: Text('Exercise')),
-                                DataColumn(label: Text('Weight')),
-                                DataColumn(label: Text('Reps')),
-                                DataColumn(label: Text('Sets')),
-                                DataColumn(label: Text('Timestamp')),
-                                DataColumn(label: Text('Actions')),
-                              ],
-                              rows: exercises.map((exercise) {
-                                return DataRow(cells: [
-                                  DataCell(Text(exercise['id'].toString())),
-                                  DataCell(Text(exercise['exercise'])),
-                                  DataCell(Text(exercise['weight'])),
-                                  DataCell(Text(exercise['reps'].toString())),
-                                  DataCell(Text(exercise['sets'].toString())),
-                                  DataCell(Text(exercise['timestamp'])),
-                                  DataCell(
-                                    IconButton(
-                                      icon: const Icon(Icons.delete),
-                                      onPressed: () async {
-                                        await _deleteExercise(exercise['id']);
-                                      },
-                                    ),
+            SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: FutureBuilder<List<Map<String, dynamic>>>(
+                  future: _getExercises(),
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    final exercises = snapshot.data!;
+                    return SizedBox(
+                      width: MediaQuery.of(context).size.width,
+                      child: DataTable(
+                        columns: const [
+                          DataColumn(label: Text('ID')),
+                          DataColumn(label: Text('Exercise')),
+                          DataColumn(label: Text('Weight')),
+                          DataColumn(label: Text('Reps')),
+                          DataColumn(label: Text('Sets')),
+                          DataColumn(label: Text('Timestamp')),
+                          DataColumn(label: Text('Actions')),
+                        ],
+                        rows: exercises.map((exercise) {
+                          return DataRow(cells: [
+                            DataCell(Text(exercise['id'].toString())),
+                            DataCell(Text(exercise['exercise'])),
+                            DataCell(Text(exercise['weight'])),
+                            DataCell(Text(exercise['reps'].toString())),
+                            DataCell(Text(exercise['sets'].toString())),
+                            DataCell(Text(exercise['timestamp'])),
+                            DataCell(
+                              Row(
+                                children: [
+                                  IconButton(
+                                    icon: const Icon(Icons.edit),
+                                    onPressed: () {
+                                      _showEditDialog(exercise);
+                                    },
                                   ),
-                                ]);
-                              }).toList(),
+                                  IconButton(
+                                    icon: const Icon(Icons.delete),
+                                    onPressed: () async {
+                                      await _deleteExercise(exercise['id']);
+                                    },
+                                  ),
+                                ],
+                              ),
                             ),
-                          );
-                        },
+                          ]);
+                        }).toList(),
                       ),
-                    ),
-                  ),
+                    );
+                  },
                 ),
-              ],
+              ),
             ),
             // Visualize Data Tab
             Padding(
