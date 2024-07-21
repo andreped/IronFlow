@@ -12,7 +12,8 @@ class ExerciseSetter extends StatefulWidget {
 
 class _ExerciseSetterState extends State<ExerciseSetter> {
   final _formKey = GlobalKey<FormState>();
-  final _exerciseValueController = TextEditingController();
+  final _newExerciseController = TextEditingController();
+  final _weightController = TextEditingController();
   final _repsController = TextEditingController();
   final _setsController = TextEditingController();
   final DatabaseHelper _dbHelper = DatabaseHelper();
@@ -39,16 +40,16 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
   Future<void> _addExercise() async {
     if (_formKey.currentState!.validate()) {
       final exerciseName = _isAddingNewExercise
-          ? _exerciseValueController.text.trim()
+          ? _newExerciseController.text.trim()
           : _selectedExercise!;
-      
+
       await _dbHelper.insertExercise(
         exercise: exerciseName,
-        weight: _exerciseValueController.text,
+        weight: _weightController.text,
         reps: int.parse(_repsController.text),
         sets: int.parse(_setsController.text),
       );
-      
+
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text('Exercise added successfully'),
         duration: Duration(seconds: 2),
@@ -62,7 +63,8 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
         });
       }
 
-      _exerciseValueController.clear();
+      _newExerciseController.clear();
+      _weightController.clear();
       _repsController.clear();
       _setsController.clear();
       setState(() {
@@ -107,20 +109,16 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
                         _isAddingNewExercise = false;
                         _selectedExercise = value;
                       }
-                      _exerciseValueController.clear();
                     });
                   },
-                  value: _selectedExercise,
+                  value: _isAddingNewExercise ? 'custom' : _selectedExercise,
                   isExpanded: true,
                   iconSize: 24.0,
                   icon: const Icon(Icons.arrow_drop_down),
                   elevation: 16,
                   style: const TextStyle(color: Colors.black),
                   validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please select or enter an exercise';
-                    }
-                    if (value == 'custom' && !_isAddingNewExercise) {
+                    if (!_isAddingNewExercise && (value == null || value.isEmpty)) {
                       return 'Please select or enter an exercise';
                     }
                     return null;
@@ -130,13 +128,24 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
               ),
             ],
           ),
+          if (_isAddingNewExercise)
+            TextFormField(
+              controller: _newExerciseController,
+              decoration: const InputDecoration(labelText: 'New Exercise Name'),
+              validator: (value) {
+                if (_isAddingNewExercise && (value == null || value.isEmpty)) {
+                  return 'Please enter a new exercise name';
+                }
+                return null;
+              },
+            ),
           TextFormField(
-            controller: _exerciseValueController,
-            decoration: const InputDecoration(labelText: 'Exercise Weight'),
+            controller: _weightController,
+            decoration: const InputDecoration(labelText: 'Weight'),
             keyboardType: TextInputType.number,
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Please enter an exercise weight';
+                return 'Please enter the exercise weight';
               }
               if (double.tryParse(value) == null) {
                 return 'Please enter a valid number';
