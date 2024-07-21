@@ -78,7 +78,10 @@ class DatabaseHelper {
 
   Future<List<Map<String, dynamic>>> getExercises() async {
     final db = await database;
-    return await db.query('exercises');
+    return await db.query(
+      'exercises',
+      orderBy: 'timestamp DESC', // Order by timestamp in descending order
+    );
   }
 
   Future<void> updateExercise({
@@ -167,7 +170,6 @@ class DatabaseHelper {
 
     return summary;
   }
-
 
   Future<List<String>> getPredefinedExercises() async {
     final db = await database;
