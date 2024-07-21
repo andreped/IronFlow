@@ -108,9 +108,9 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage> with Sing
             _pageController.jumpToPage(index);
           },
           tabs: const [
-            Tab(icon: Icon(Icons.add), text: 'Log Exercise'),
-            Tab(icon: Icon(Icons.table_chart), text: 'View Table'),
-            Tab(icon: Icon(Icons.show_chart), text: 'Visualize Data'),
+            Tab(icon: Icon(Icons.add), text: 'Log\nExercise'),
+            Tab(icon: Icon(Icons.table_chart), text: 'View\nTable'),
+            Tab(icon: Icon(Icons.show_chart), text: 'Visualize\nData'),
             Tab(icon: Icon(Icons.calendar_today), text: 'Summary'),
           ],
         ),
@@ -260,9 +260,9 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage> with Sing
           _pageController.jumpToPage(index); // Sync PageView with TabBar
         },
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.add), label: 'Log Exercise'),
-          BottomNavigationBarItem(icon: Icon(Icons.table_chart), label: 'View Table'),
-          BottomNavigationBarItem(icon: Icon(Icons.show_chart), label: 'Visualize Data'),
+          BottomNavigationBarItem(icon: Icon(Icons.add), label: 'Log\nExercise'),
+          BottomNavigationBarItem(icon: Icon(Icons.table_chart), label: 'View\nTable'),
+          BottomNavigationBarItem(icon: Icon(Icons.show_chart), label: 'Visualize\nData'),
           BottomNavigationBarItem(icon: Icon(Icons.calendar_today), label: 'Summary'),
         ],
       ),
