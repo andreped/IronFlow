@@ -84,7 +84,6 @@ class DatabaseHelper {
     );
   }
 
-
   Future<void> updateExercise({
     required int id,
     required String weight,
@@ -171,7 +170,6 @@ class DatabaseHelper {
 
     return summary;
   }
-
 
   Future<List<String>> getPredefinedExercises() async {
     final db = await database;
