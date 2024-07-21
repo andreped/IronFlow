@@ -86,6 +86,7 @@ class DatabaseHelper {
 
   Future<void> updateExercise({
     required int id,
+    required String exercise,
     required String weight,
     required int reps,
     required int sets,
@@ -94,10 +95,11 @@ class DatabaseHelper {
     await db.update(
       'exercises',
       {
+        'exercise': exercise,
         'weight': weight,
         'reps': reps,
         'sets': sets,
-        'timestamp': DateTime.now().toString(),
+        // Note: Do not update the timestamp here
       },
       where: 'id = ?',
       whereArgs: [id],
