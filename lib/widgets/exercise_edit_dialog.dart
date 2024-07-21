@@ -100,6 +100,7 @@ class _ExerciseEditDialogState extends State<ExerciseEditDialog> {
           onPressed: () {
             if (_formKey.currentState!.validate()) {
               Navigator.of(context).pop({
+                'id': widget.exerciseData['id'], // Include the id
                 'exercise': _exerciseController.text,
                 'weight': _weightController.text,
                 'reps': int.parse(_repsController.text),

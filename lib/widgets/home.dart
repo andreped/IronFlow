@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../core/database.dart';
 import 'visualization.dart';
 import 'inputs.dart';
+import 'exercise_edit_dialog.dart';
 
 class ExerciseStoreApp extends StatelessWidget {
   @override
@@ -54,59 +55,23 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage> {
   }
 
   void _showEditDialog(Map<String, dynamic> exercise) {
-    TextEditingController weightController = TextEditingController(text: exercise['weight']);
-    TextEditingController repsController = TextEditingController(text: exercise['reps'].toString());
-    TextEditingController setsController = TextEditingController(text: exercise['sets'].toString());
-
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Edit Exercise'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextFormField(
-                controller: weightController,
-                decoration: const InputDecoration(labelText: 'Weight'),
-                keyboardType: TextInputType.number,
-              ),
-              TextFormField(
-                controller: repsController,
-                decoration: const InputDecoration(labelText: 'Reps'),
-                keyboardType: TextInputType.number,
-              ),
-              TextFormField(
-                controller: setsController,
-                decoration: const InputDecoration(labelText: 'Sets'),
-                keyboardType: TextInputType.number,
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              child: const Text('Cancel'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: const Text('Save'),
-              onPressed: () async {
-                await _dbHelper.updateExercise(
-                  id: exercise['id'],
-                  weight: weightController.text,
-                  reps: int.parse(repsController.text),
-                  sets: int.parse(setsController.text),
-                );
-                setState(() {});
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
+        return ExerciseEditDialog(exerciseData: exercise);
       },
-    );
+    ).then((result) async {
+      if (result != null) {
+        await _dbHelper.updateExercise(
+          id: result['id'],
+          exercise: result['exercise'],
+          weight: result['weight'],
+          reps: result['reps'],
+          sets: result['sets'],
+        );
+        setState(() {});
+      }
+    });
   }
 
   @override
