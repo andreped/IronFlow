@@ -10,7 +10,7 @@
 </div>
 
 <p align="center" width="100%">
-<img src="assets/log_exercise_tab.png" width="22%" height="22%"> <img src="assets/log_exercise_tab_dropdown.png" width="22%" height="22%"> <img src="assets/view_table_tab.png" width="22%" height="22%"> <img src="assets/visualize_data_tab.png" width="22%" height="22%">
+<img src="assets/snapshots/log.png" width="22%" height="22%"> <img src="assets/snapshots/table.png" width="22%" height="22%"> <img src="assets/snapshots/visualize.png" width="22%" height="22%"> <img src="assets/snapshots/summary.png" width="22%" height="22%">
 </p>
 
 ## Continuous integration
