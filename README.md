@@ -1,4 +1,5 @@
-<div align="center">
+<p align="center" width="100%">
+<img src="assets/icon/app_icon_transparent.png" width="10%" height="10%">
 <h1 align="center">IronFlow</h1>
 <h3 align="center">Strength training and fitness app for mobile devices.</h3>
 
