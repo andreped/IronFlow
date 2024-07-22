@@ -191,19 +191,6 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage> with Sing
           ),
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _tabController.index,
-        onTap: (index) {
-          _tabController.animateTo(index);
-          _pageController.jumpToPage(index); // Sync PageView with TabBar
-        },
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.add), label: 'Log\nExercise'),
-          BottomNavigationBarItem(icon: Icon(Icons.table_chart), label: 'View\nTable'),
-          BottomNavigationBarItem(icon: Icon(Icons.show_chart), label: 'Visualize\nData'),
-          BottomNavigationBarItem(icon: Icon(Icons.calendar_today), label: 'Summary'),
-        ],
-      ),
     );
   }
 }
