@@ -102,9 +102,9 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage> with Sing
           },
           tabs: const [
             Tab(icon: Icon(Icons.add), text: 'Log\nExercise'),
-            Tab(icon: Icon(Icons.table_chart), text: 'View\nTable'),
-            Tab(icon: Icon(Icons.show_chart), text: 'Visualize\nData'),
             Tab(icon: Icon(Icons.calendar_today), text: 'Summary'),
+            Tab(icon: Icon(Icons.show_chart), text: 'Visualize\nData'),
+            Tab(icon: Icon(Icons.table_chart), text: 'View\nTable'),
           ],
         ),
       ),
@@ -123,6 +123,16 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage> with Sing
                 setState(() {});
               },
             ),
+          ),
+          // Summary Tab
+          SummaryTab(
+            selectedDay: _selectedDay,
+            onDateSelected: _onDateSelected,
+          ),
+          // Visualize Data Tab
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: VisualizationTab(),
           ),
           // View Table Tab
           SingleChildScrollView(
@@ -178,16 +188,6 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage> with Sing
                 },
               ),
             ),
-          ),
-          // Visualize Data Tab
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: VisualizationTab(),
-          ),
-          // Summary Tab
-          SummaryTab(
-            selectedDay: _selectedDay,
-            onDateSelected: _onDateSelected,
           ),
         ],
       ),
