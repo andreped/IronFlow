@@ -30,6 +30,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  
+  # calendar
+  table_calendar: ^3.0.0
 
   # storage
   sqflite: ^2.0.0+4

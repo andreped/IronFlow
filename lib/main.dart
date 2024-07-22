@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'widgets/home.dart';
+import 'tabs/home.dart';
 
 Future<void> main() async {
   runApp(const MyApp());
