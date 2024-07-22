@@ -84,6 +84,17 @@ class DatabaseHelper {
     );
   }
 
+  Future<List<DateTime>> getExerciseDates() async {
+    final db = await database;
+    final List<Map<String, dynamic>> datesResult = await db.rawQuery(
+      'SELECT DISTINCT date(timestamp) as date FROM exercises'
+    );
+
+    return datesResult.map((row) {
+      return DateTime.parse(row['date']);
+    }).toList();
+  }
+
   Future<void> updateExercise({
     required int id,
     required String exercise,
