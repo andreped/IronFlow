@@ -3,6 +3,7 @@ import '../core/database.dart';
 import 'visualization.dart';
 import 'inputs.dart';
 import 'exercise_edit_dialog.dart';
+import 'summary.dart';
 
 class ExerciseStoreApp extends StatelessWidget {
   @override
@@ -55,20 +56,6 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage> with Sing
     return await _dbHelper.getExercises();
   }
 
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: _selectedDay,
-      firstDate: DateTime(2020),
-      lastDate: DateTime.now(),
-    );
-    if (picked != null && picked != _selectedDay) {
-      setState(() {
-        _selectedDay = picked;
-      });
-    }
-  }
-
   void _showEditDialog(Map<String, dynamic> exercise) {
     showDialog(
       context: context,
@@ -86,6 +73,12 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage> with Sing
         );
         setState(() {});
       }
+    });
+  }
+
+  void _onDateSelected(DateTime date) {
+    setState(() {
+      _selectedDay = date;
     });
   }
 
@@ -192,64 +185,9 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage> with Sing
             child: VisualizationTab(),
           ),
           // Summary Tab
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: SingleChildScrollView( // Wrap with SingleChildScrollView
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      const Text('Select Day: '),
-                      TextButton(
-                        onPressed: () => _selectDate(context),
-                        child: Text('${_selectedDay.year}-${_selectedDay.month}-${_selectedDay.day}'),
-                      ),
-                    ],
-                  ),
-                  FutureBuilder<Map<String, dynamic>>(
-                    future: _dbHelper.getSummaryForDay(_selectedDay),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const CircularProgressIndicator();
-                      } else if (snapshot.hasError) {
-                        return Text('Error: ${snapshot.error}');
-                      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                        return const Text('No data available for selected day');
-                      }
-
-                      final summaryData = snapshot.data!;
-
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: summaryData.entries.map((entry) {
-                          final exercise = entry.key;
-                          final details = entry.value as Map<String, dynamic>;
-                          final totalWeight = details['totalWeight'];
-                          final totalSets = details['totalSets'];
-                          final totalReps = details['totalReps'];
-                          final avgWeight = details['avgWeight'];
-                          final records = details['records'] as List<Map<String, dynamic>>;
-
-                          return Card(
-                            child: ExpansionTile(
-                              title: Text(exercise),
-                              subtitle: Text('Total Weight: ${totalWeight.toStringAsFixed(2)} kg, Sets: $totalSets, Reps: $totalReps, Avg Weight per Set: ${avgWeight.toStringAsFixed(2)} kg'),
-                              children: records.map((record) {
-                                return ListTile(
-                                  title: Text('Sets: ${record['sets']}, Reps: ${record['reps']}, Weight: ${record['weight']} kg'),
-                                  subtitle: Text('Timestamp: ${record['timestamp']}'),
-                                );
-                              }).toList(),
-                            ),
-                          );
-                        }).toList(),
-                      );
-                    },
-                  ),
-                ],
-              ),
-            ),
+          SummaryTab(
+            selectedDay: _selectedDay,
+            onDateSelected: _onDateSelected,
           ),
         ],
       ),
