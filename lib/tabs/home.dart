@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../core/database.dart';
 import 'visualization.dart';
 import 'inputs.dart';
-import 'exercise_edit_dialog.dart';
+import '../widgets/exercise_edit_dialog.dart';
 import 'summary.dart';
 
 class ExerciseStoreApp extends StatelessWidget {
