@@ -9,7 +9,7 @@ class RecordsTab extends StatefulWidget {
 class _RecordsTabState extends State<RecordsTab> {
   final DatabaseHelper _dbHelper = DatabaseHelper();
 
-  Future<Map<String, double>> _getMaxWeights() async {
+  Future<Map<String, Map<String, dynamic>>> _getMaxWeights() async {
     return await _dbHelper.getMaxWeightsForExercises();
   }
 
@@ -17,7 +17,7 @@ class _RecordsTabState extends State<RecordsTab> {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
-      child: FutureBuilder<Map<String, double>>(
+      child: FutureBuilder<Map<String, Map<String, dynamic>>>(
         future: _getMaxWeights(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -33,10 +33,12 @@ class _RecordsTabState extends State<RecordsTab> {
             itemCount: maxWeights.length,
             itemBuilder: (context, index) {
               final exercise = maxWeights.keys.elementAt(index);
-              final weight = maxWeights[exercise];
+              final weightData = maxWeights[exercise]!;
+              final weight = weightData['maxWeight'];
+              final reps = weightData['reps'];
               return ListTile(
                 title: Text(exercise),
-                trailing: Text('${weight!.toStringAsFixed(2)} kg'),
+                trailing: Text('${weight!.toStringAsFixed(2)} kg x $reps reps'),
               );
             },
           );

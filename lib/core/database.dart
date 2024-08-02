@@ -1,5 +1,3 @@
-// database.dart
-
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import '../common/constants.dart';
@@ -201,15 +199,18 @@ class DatabaseHelper {
     );
   }
 
-  Future<Map<String, double>> getMaxWeightsForExercises() async {
+  Future<Map<String, Map<String, dynamic>>> getMaxWeightsForExercises() async {
     final db = await database;
     final List<Map<String, dynamic>> results = await db.rawQuery(
-      'SELECT exercise, MAX(CAST(weight AS REAL)) as maxWeight FROM exercises GROUP BY exercise'
+      'SELECT exercise, weight, reps FROM exercises WHERE CAST(weight AS REAL) IN (SELECT MAX(CAST(weight AS REAL)) FROM exercises GROUP BY exercise)'
     );
 
-    Map<String, double> maxWeights = {};
+    Map<String, Map<String, dynamic>> maxWeights = {};
     for (var result in results) {
-      maxWeights[result['exercise']] = result['maxWeight'];
+      maxWeights[result['exercise']] = {
+        'maxWeight': double.parse(result['weight']),
+        'reps': result['reps']
+      };
     }
     return maxWeights;
   }
