@@ -4,6 +4,7 @@ import 'visualization.dart';
 import 'inputs.dart';
 import '../widgets/exercise_edit_dialog.dart';
 import 'summary.dart';
+import 'records.dart'; // Import the new records tab
 
 class ExerciseStoreApp extends StatelessWidget {
   @override
@@ -33,7 +34,7 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage> with Sing
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 4, vsync: this);
+    _tabController = TabController(length: 5, vsync: this); // Update length to 5
   }
 
   @override
@@ -106,6 +107,7 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage> with Sing
             Tab(icon: Icon(Icons.calendar_today), text: 'Summary'),
             Tab(icon: Icon(Icons.show_chart), text: 'Visualize\nData'),
             Tab(icon: Icon(Icons.table_chart), text: 'View\nTable'),
+            Tab(icon: Icon(Icons.record_voice_over), text: 'Records'), // New Records tab
           ],
         ),
       ),
@@ -192,6 +194,8 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage> with Sing
                 ),
               ),
             ),
+            // Records Tab
+            RecordsTab(), // New Records tab
           ],
         ),
       ),

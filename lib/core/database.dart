@@ -198,4 +198,20 @@ class DatabaseHelper {
       conflictAlgorithm: ConflictAlgorithm.ignore, // Handle if exercise already exists
     );
   }
+
+  Future<Map<String, Map<String, dynamic>>> getMaxWeightsForExercises() async {
+    final db = await database;
+    final List<Map<String, dynamic>> results = await db.rawQuery(
+      'SELECT exercise, weight, reps FROM exercises WHERE CAST(weight AS REAL) IN (SELECT MAX(CAST(weight AS REAL)) FROM exercises GROUP BY exercise)'
+    );
+
+    Map<String, Map<String, dynamic>> maxWeights = {};
+    for (var result in results) {
+      maxWeights[result['exercise']] = {
+        'maxWeight': double.parse(result['weight']),
+        'reps': result['reps']
+      };
+    }
+    return maxWeights;
+  }
 }
