@@ -108,7 +108,7 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage> with Sing
             Tab(icon: Icon(Icons.calendar_today), text: 'Summary'),
             Tab(icon: Icon(Icons.show_chart), text: 'Visualize\nData'),
             Tab(icon: Icon(Icons.table_chart), text: 'View\nTable'),
-            Tab(icon: Icon(Icons.record_voice_over), text: 'Records'), // New Records tab
+            Tab(icon: Icon(Icons.celebration), text: 'Records'), // New Records tab
           ],
         ),
       ),
