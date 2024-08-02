@@ -1,3 +1,5 @@
+// database.dart
+
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import '../common/constants.dart';
@@ -197,5 +199,18 @@ class DatabaseHelper {
       {'name': exerciseName},
       conflictAlgorithm: ConflictAlgorithm.ignore, // Handle if exercise already exists
     );
+  }
+
+  Future<Map<String, double>> getMaxWeightsForExercises() async {
+    final db = await database;
+    final List<Map<String, dynamic>> results = await db.rawQuery(
+      'SELECT exercise, MAX(CAST(weight AS REAL)) as maxWeight FROM exercises GROUP BY exercise'
+    );
+
+    Map<String, double> maxWeights = {};
+    for (var result in results) {
+      maxWeights[result['exercise']] = result['maxWeight'];
+    }
+    return maxWeights;
   }
 }
