@@ -3,11 +3,13 @@ import 'package:fl_chart/fl_chart.dart';
 import '../core/database.dart';
 
 class VisualizationTab extends StatefulWidget {
+  const VisualizationTab({Key? key}) : super(key: key);
+
   @override
   _VisualizationTabState createState() => _VisualizationTabState();
 }
 
-class _VisualizationTabState extends State<VisualizationTab> {
+class _VisualizationTabState extends State<VisualizationTab> with AutomaticKeepAliveClientMixin {
   String? _selectedExercise;
   List<String> _exerciseNames = [];
   List<ScatterSpot> _dataPoints = [];
@@ -53,6 +55,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);  // Required by AutomaticKeepAliveClientMixin
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -150,4 +153,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true; // Required by AutomaticKeepAliveClientMixin
 }
