@@ -57,10 +57,10 @@ jobs:
       - name: Fix pod install
         run: sudo arch -x86_64 gem install ffi
       
-      - name: Set up Python 3.8
+      - name: Set up Python 3.10
         uses: actions/setup-python@v2
         with:
-          python-version: 3.8
+          python-version: "3.10"
 
       - name: Setup XCode profiles
         run: |
@@ -75,15 +75,15 @@ jobs:
           flutter pub get
           flutter build ipa --release --verbose --export-options-plist /Users/runner/export_options.plist --no-codesign
       
-      - name: Upload IPA
-        uses: actions/upload-artifact@v2
-        with:
-          name: release-ipa
-          path: ./build/ios/ipa/app-release.ipa
-          if-no-files-found: error
+      # - name: Upload IPA
+      #   uses: actions/upload-artifact@v2
+      #   with:
+      #     name: release-ipa
+      #     path: ./build/ios/ipa/app-release.ipa
+      #     if-no-files-found: error
       
-      - name: Clean up keychain and provisioning profile
-        if: ${{ always() }}
-        run: |
-          security delete-keychain $RUNNER_TEMP/app-signing.keychain-db
-          rm ~/Library/MobileDevice/Provisioning\ Profiles/build_pp.mobileprovision
+      # - name: Clean up keychain and provisioning profile
+      #   if: ${{ always() }}
+      #   run: |
+      #     security delete-keychain $RUNNER_TEMP/app-signing.keychain-db
+      #     rm ~/Library/MobileDevice/Provisioning\ Profiles/build_pp.mobileprovision
