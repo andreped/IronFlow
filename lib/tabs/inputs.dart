@@ -43,17 +43,31 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
           ? _newExerciseController.text.trim()
           : _selectedExercise!;
 
+      final weight = double.parse(_weightController.text);
+      final reps = int.parse(_repsController.text);
+      final sets = int.parse(_setsController.text);
+
+      final isNewHighScore = await _dbHelper.isNewHighScore(exerciseName, weight);
+
       await _dbHelper.insertExercise(
         exercise: exerciseName,
-        weight: _weightController.text,
-        reps: int.parse(_repsController.text),
-        sets: int.parse(_setsController.text),
+        weight: weight.toString(),
+        reps: reps,
+        sets: sets,
       );
 
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('Exercise added successfully'),
-        duration: Duration(seconds: 2),
-      ));
+      if (isNewHighScore) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('New high score for $exerciseName!'),
+          duration: Duration(seconds: 2),
+          backgroundColor: Colors.green,
+        ));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Exercise added successfully'),
+          duration: Duration(seconds: 2),
+        ));
+      }
 
       if (_isAddingNewExercise) {
         await _dbHelper.addPredefinedExercise(exerciseName);
