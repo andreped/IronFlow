@@ -75,12 +75,12 @@ jobs:
           flutter pub get
           flutter build ipa --release --verbose --export-options-plist /Users/runner/export_options.plist --no-codesign
       
-      - name: Upload xarchive
-        uses: actions/upload-artifact@v2
-        with:
-          name: release-xarchive
-          path: ./build/ios/archive/Runner.xarchive
-          if-no-files-found: error
+      # - name: Upload IPA
+      #   uses: actions/upload-artifact@v2
+      #   with:
+      #     name: release-ipa
+      #     path: ./build/ios/ipa/app-release.ipa
+      #     if-no-files-found: error
       
       - name: Clean up keychain and provisioning profile
         if: ${{ always() }}
