@@ -68,19 +68,30 @@ jobs:
           which xcode-project
           xcode-project use-profiles --archive-method=ad-hoc
           cat /Users/runner/export_options.plist
+      
+      - name: Update pod
+        run: pod repo update
+        working-directory: ios
 
-      - name: Build IPA
+      - name: Build app
         run: |
           cd ./
           flutter pub get
           flutter build ipa --release --verbose --export-options-plist /Users/runner/export_options.plist --no-codesign
       
-      # - name: Upload IPA
-      #   uses: actions/upload-artifact@v2
-      #   with:
-      #     name: release-ipa
-      #     path: ./build/ios/ipa/app-release.ipa
-      #     if-no-files-found: error
+      - name: Create IPA
+        run: |
+          mkdir payload/
+          mv Runner.app/ payload/
+          zip -qq -r -9 app-release.ipa payload
+        working-directory: build/ios/iphoneos
+      
+      - name: Upload IPA
+        uses: actions/upload-artifact@v2
+        with:
+          name: release-ipa
+          path: ./build/ios/ipa/app-release.ipa
+          if-no-files-found: error
       
       # - name: Clean up keychain and provisioning profile
       #   if: ${{ always() }}
