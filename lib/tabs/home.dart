@@ -28,6 +28,7 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage> with Sing
   DateTime _selectedDay = DateTime.now();
   late TabController _tabController;
   final PageController _pageController = PageController();
+  final PageStorageBucket bucket = PageStorageBucket();
 
   @override
   void initState() {
@@ -108,88 +109,91 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage> with Sing
           ],
         ),
       ),
-      body: PageView(
-        controller: _pageController,
-        physics: const NeverScrollableScrollPhysics(), // Disable swipe gesture
-        onPageChanged: (index) {
-          _tabController.animateTo(index);
-        },
-        children: [
-          // Log Exercise Tab
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: ExerciseSetter(
-              onExerciseAdded: () {
-                setState(() {});
-              },
-            ),
-          ),
-          // Summary Tab
-          SummaryTab(
-            selectedDay: _selectedDay,
-            onDateSelected: _onDateSelected,
-          ),
-          // Visualize Data Tab
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: VisualizationTab(),
-          ),
-          // View Table Tab
-          SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: FutureBuilder<List<Map<String, dynamic>>>(
-                future: _getExercises(),
-                builder: (context, snapshot) {
-                  if (!snapshot.hasData) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                  final exercises = snapshot.data!;
-                  return DataTable(
-                    columns: const [
-                      DataColumn(label: Text('ID')),
-                      DataColumn(label: Text('Exercise')),
-                      DataColumn(label: Text('Weight')),
-                      DataColumn(label: Text('Reps')),
-                      DataColumn(label: Text('Sets')),
-                      DataColumn(label: Text('Timestamp')),
-                      DataColumn(label: Text('Actions')),
-                    ],
-                    rows: exercises.map((exercise) {
-                      return DataRow(cells: [
-                        DataCell(Text(exercise['id'].toString())),
-                        DataCell(Text(exercise['exercise'])),
-                        DataCell(Text(exercise['weight'])),
-                        DataCell(Text(exercise['reps'].toString())),
-                        DataCell(Text(exercise['sets'].toString())),
-                        DataCell(Text(exercise['timestamp'])),
-                        DataCell(
-                          Row(
-                            children: [
-                              IconButton(
-                                icon: const Icon(Icons.edit),
-                                onPressed: () {
-                                  _showEditDialog(exercise);
-                                },
-                              ),
-                              IconButton(
-                                icon: const Icon(Icons.delete),
-                                onPressed: () async {
-                                  await _deleteExercise(exercise['id']);
-                                },
-                              ),
-                            ],
-                          ),
-                        ),
-                      ]);
-                    }).toList(),
-                  );
+      body: PageStorage(
+        bucket: bucket,
+        child: PageView(
+          controller: _pageController,
+          physics: const NeverScrollableScrollPhysics(), // Disable swipe gesture
+          onPageChanged: (index) {
+            _tabController.animateTo(index);
+          },
+          children: [
+            // Log Exercise Tab
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: ExerciseSetter(
+                onExerciseAdded: () {
+                  setState(() {});
                 },
               ),
             ),
-          ),
-        ],
+            // Summary Tab
+            SummaryTab(
+              selectedDay: _selectedDay,
+              onDateSelected: _onDateSelected,
+            ),
+            // Visualize Data Tab
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: VisualizationTab(key: PageStorageKey('visualizationTab')),
+            ),
+            // View Table Tab
+            SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: FutureBuilder<List<Map<String, dynamic>>>(
+                  future: _getExercises(),
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    final exercises = snapshot.data!;
+                    return DataTable(
+                      columns: const [
+                        DataColumn(label: Text('ID')),
+                        DataColumn(label: Text('Exercise')),
+                        DataColumn(label: Text('Weight')),
+                        DataColumn(label: Text('Reps')),
+                        DataColumn(label: Text('Sets')),
+                        DataColumn(label: Text('Timestamp')),
+                        DataColumn(label: Text('Actions')),
+                      ],
+                      rows: exercises.map((exercise) {
+                        return DataRow(cells: [
+                          DataCell(Text(exercise['id'].toString())),
+                          DataCell(Text(exercise['exercise'])),
+                          DataCell(Text(exercise['weight'])),
+                          DataCell(Text(exercise['reps'].toString())),
+                          DataCell(Text(exercise['sets'].toString())),
+                          DataCell(Text(exercise['timestamp'])),
+                          DataCell(
+                            Row(
+                              children: [
+                                IconButton(
+                                  icon: const Icon(Icons.edit),
+                                  onPressed: () {
+                                    _showEditDialog(exercise);
+                                  },
+                                ),
+                                IconButton(
+                                  icon: const Icon(Icons.delete),
+                                  onPressed: () async {
+                                    await _deleteExercise(exercise['id']);
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                        ]);
+                      }).toList(),
+                    );
+                  },
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
