@@ -102,6 +102,7 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage> with Sing
           onTap: (index) {
             _pageController.jumpToPage(index);
           },
+          labelStyle: TextStyle(fontSize: 12),
           tabs: const [
             Tab(icon: Icon(Icons.add), text: 'Log\nExercise'),
             Tab(icon: Icon(Icons.calendar_today), text: 'Summary'),
