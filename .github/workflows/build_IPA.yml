@@ -24,7 +24,7 @@ jobs:
         run: |
           cd ./
           flutter pub get
-          flutter build ipa --release --verbose --export-options-plist /Users/runner/export_options.plist --no-codesign
+          flutter build ipa --release --verbose --no-codesign
       
       - name: Create IPA
         run: |
