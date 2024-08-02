@@ -6,35 +6,30 @@ on:
 
 jobs:
   build-ipa:
-    runs-on: macos-12
+    runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Setup Java
-        uses: actions/setup-java@v2
-        with:
-          distribution: 'zulu'
-          java-version: '11'
+      - uses: actions/checkout@v3
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.22.2'
+          architecture: x64
 
-      - name: Build app
+      - name: Build iOS
         run: |
-          cd ./
           flutter pub get
-          flutter build ipa --release --verbose --no-codesign
+          flutter build ios --release --verbose --no-codesign
       
       - name: Create IPA
         run: |
-          mkdir payload/
-          mv build/ios/iphoneos/Runner.app/ payload
-          zip -qq -r -9 app-release.ipa payload
+          mkdir ./payload/
+          mv ./build/ios/iphoneos/Runner.app/ ./payload
+          zip -qq -r -9 ./app-release.ipa ./payload
       
       - name: Upload IPA
         uses: actions/upload-artifact@v2
         with:
           name: release-ipa
-          path: ./build/ios/ipa/app-release.ipa
+          path: ./app-release.ipa
           if-no-files-found: error
