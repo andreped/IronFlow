@@ -49,3 +49,9 @@ Then simply use the app as you would with any other iOS app.
 ## License
 
 This project has MIT License.
+
+## Acknowledgements
+
+To reduce development time and get experience with Copilots, 
+this Flutter application was heavily assisted by OpenAI's Chat-GPT,
+primarily using GPT-4/4o/4o-mini.
