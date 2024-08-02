@@ -37,6 +37,9 @@ Then simply use the app as you would with any other Android app.
 
 ### iOS
 
+**DISCLAIMER:** _We currently do not own an Apple Developer Certificate, thus we cannot sign the IPA.
+This has to be done before the IPA can be used to install the app on iOS._
+
 1. Connect the mobile device (e.g., iPhone) to a desktop device (e.g., macbook) with USB cable.
 2. On the desktop device, download the IPA from [releases](https://github.com/andreped/IronFlow/releases).
 3. On the desktop device, go to `Finder`, and then unlock the mobile device. The phone should then be accessbile from the left-hand side in Finder, and click on it.
