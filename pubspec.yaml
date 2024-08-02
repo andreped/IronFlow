@@ -34,6 +34,9 @@ dependencies:
   # calendar
   table_calendar: ^3.0.0
 
+  # notifications
+  flutter_local_notifications: ^9.1.4
+
   # storage
   sqflite: ^2.0.0+4
   path: ^1.8.0
