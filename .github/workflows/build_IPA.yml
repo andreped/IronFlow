@@ -73,7 +73,7 @@ jobs:
         run: |
           cd ./
           flutter pub get
-          flutter build ipa --release --verbose --export-options-plist /Users/runner/export_options.plist
+          flutter build ipa --release --verbose --export-options-plist /Users/runner/export_options.plist --no-codesign
       
       - name: Upload IPA
         uses: actions/upload-artifact@v2
