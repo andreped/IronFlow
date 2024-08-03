@@ -8,7 +8,7 @@ class DatabaseHelper {
   DatabaseHelper._internal();
 
   static Database? _database;
-  static const int _databaseVersion = 2; // Update version as needed
+  static const int _databaseVersion = 1; // Keep the version fixed for now
 
   Future<Database> get database async {
     if (_database != null) return _database!;
@@ -42,11 +42,13 @@ class DatabaseHelper {
   }
 
   Future<void> _upgradeDatabase(Database db, int oldVersion, int newVersion) async {
-    if (oldVersion < 2) {
-      // Example migration from version 1 to 2: add a new column 'notes'
-      await db.execute('ALTER TABLE exercises ADD COLUMN notes TEXT');
+    // Placeholder for future upgrade logic
+    if (oldVersion < newVersion) {
+      // Example: if (oldVersion < 2) {
+      //   await db.execute('ALTER TABLE exercises ADD COLUMN notes TEXT');
+      // }
+      // Add more version checks and migration logic as needed
     }
-    // Handle further migrations here
   }
 
   Future<void> _initializePredefinedExercises(Database db) async {
