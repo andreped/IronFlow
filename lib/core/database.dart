@@ -8,6 +8,7 @@ class DatabaseHelper {
   DatabaseHelper._internal();
 
   static Database? _database;
+  static const int _databaseVersion = 1; // Keep the version fixed for now
 
   Future<Database> get database async {
     if (_database != null) return _database!;
@@ -20,17 +21,34 @@ class DatabaseHelper {
     print("Database is located at: $path");
     return await openDatabase(
       path,
-      version: 1,
+      version: _databaseVersion,
       onCreate: (db, version) async {
-        await db.execute(
-          'CREATE TABLE exercises(id INTEGER PRIMARY KEY AUTOINCREMENT, exercise TEXT, weight TEXT, reps INTEGER, sets INTEGER, timestamp TEXT)',
-        );
-        await db.execute(
-          'CREATE TABLE IF NOT EXISTS predefined_exercises(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT)',
-        );
-        await _initializePredefinedExercises(db);
+        await _createTables(db);
+      },
+      onUpgrade: (db, oldVersion, newVersion) async {
+        await _upgradeDatabase(db, oldVersion, newVersion);
       },
     );
+  }
+
+  Future<void> _createTables(Database db) async {
+    await db.execute(
+      'CREATE TABLE exercises(id INTEGER PRIMARY KEY AUTOINCREMENT, exercise TEXT, weight TEXT, reps INTEGER, sets INTEGER, timestamp TEXT)',
+    );
+    await db.execute(
+      'CREATE TABLE IF NOT EXISTS predefined_exercises(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT)',
+    );
+    await _initializePredefinedExercises(db);
+  }
+
+  Future<void> _upgradeDatabase(Database db, int oldVersion, int newVersion) async {
+    // Placeholder for future upgrade logic
+    if (oldVersion < newVersion) {
+      // Example: if (oldVersion < 2) {
+      //   await db.execute('ALTER TABLE exercises ADD COLUMN notes TEXT');
+      // }
+      // Add more version checks and migration logic as needed
+    }
   }
 
   Future<void> _initializePredefinedExercises(Database db) async {
