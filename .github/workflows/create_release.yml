@@ -1,0 +1,65 @@
+name: Create Release
+
+on:
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+  release:
+    types: [ published ]
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Java
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'zulu'
+          java-version: '11'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.22.2'
+
+      - name: Build APK
+        run: |
+          cd ./
+          flutter pub get
+          flutter build apk --release
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v2
+        with:
+          name: release-apk
+          path: ./build/app/outputs/flutter-apk/app-release.apk
+          if-no-files-found: error
+
+  build-ipa:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.22.2'
+          architecture: x64
+
+      - name: Build iOS
+        run: |
+          flutter pub get
+          flutter build ios --release --verbose --no-codesign
+      
+      - name: Create IPA
+        run: |
+          mkdir ./payload/
+          mv ./build/ios/iphoneos/Runner.app/ ./payload
+          zip -qq -r -9 ./app-release.ipa ./payload
+      
+      - name: Upload IPA
+        uses: actions/upload-artifact@v2
+        with:
+          name: release-ipa
+          path: ./app-release.ipa
+          if-no-files-found: error
