@@ -20,7 +20,7 @@
 
 ## Features
 
-The app can be used with both Android and iOS.
+The app is compatible with both Android and iOS.
 
 - [x] Ability to save individual exercises with weight and number of reps and sets.
 - [x] All data is stored in a private SQLite database on the device.
@@ -34,8 +34,6 @@ The app can be used with both Android and iOS.
 - [x] Notification when new weight record is saved.
 
 ## Continuous integration
-
-
 
 | Build Type | Status |
 | - | - |
@@ -74,7 +72,7 @@ Then simply use the app as you would with any other iOS app.
 
 ## License
 
-This project has MIT License.
+This project has [MIT License](https://github.com/andreped/IronFlow/blob/main/LICENSE).
 
 ## Acknowledgements
 
