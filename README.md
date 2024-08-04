@@ -1,12 +1,12 @@
 <p align="center" width="100%">
 <img src="assets/icon/app_icon_transparent.png" width="20%" height="20%">
 <h1 align="center">IronFlow</h1>
-<h3 align="center">Strength training and fitness app for mobile devices.</h3>
+<h3 align="center">Cross-platform mobile app for strength training progress tracking.</h3>
 
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 [![GitHub Downloads](https://img.shields.io/github/downloads/andreped/IronFlow/total?label=GitHub%20downloads&logo=github)](https://github.com/andreped/IronFlow/releases)
 
-**IronFlow** was developed to allow free, seemless, and private tracking of training progress and activities.
+**IronFlow** was developed to allow free, private, and seemless tracking of training progress and activities.
 </div>
 
 <p align="center" width="100%">
