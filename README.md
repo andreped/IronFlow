@@ -18,7 +18,7 @@
 <img src="assets/snapshots/log.png" width="18%" height="18%"> <img src="assets/snapshots/summary.png" width="18%" height="18%"> <img src="assets/snapshots/records.png" width="18%" height="18%"> <img src="assets/snapshots/visualize.png" width="18%" height="18%"> <img src="assets/snapshots/table.png" width="18%" height="18%">
 </p>
 
-## Features
+## [Features](https://github.com/andreped/IronFlow#Features)
 
 The app is compatible with both Android and iOS.
 
@@ -33,7 +33,7 @@ The app is compatible with both Android and iOS.
 - [x] Ability to inspect and edit all exercise runs from a table tab.
 - [x] Notification when new weight record is saved.
 
-## Continuous integration
+## [Continuous Integration](https://github.com/andreped/IronFlow#Continuous-Integration)
 
 | Build Type | Status |
 | - | - |
@@ -41,13 +41,13 @@ The app is compatible with both Android and iOS.
 | **Build IPA** | ![CI](https://github.com/andreped/IronFlow/workflows/Build%20IPA/badge.svg) |
 | **Create Release** | ![CI](https://github.com/andreped/IronFlow/workflows/Create%20Release/badge.svg) |
 
-## Getting started
+## [Getting Started](https://github.com/andreped/IronFlow#Getting-Started)
 
 A cross-platform mobile app was developed to test the produced solutions. Installers for both
 Android (.apk) and iOS (.ipa) were developed. To install the app, a different approach is required
 on Android and iOS.
 
-### Android
+## [Android](https://github.com/andreped/IronFlow#Android)
 
 1. On the mobile device (e.g., Samsung), go to Settings > About phone > Software information > Click the `Build number` 5 times. Then say `yes` to enable developer mode.
 2. On the mobile device, download the APK from [releases](https://github.com/andreped/IronFlow/releases).
@@ -56,7 +56,7 @@ on Android and iOS.
 
 Then simply use the app as you would with any other Android app.
 
-### iOS
+## [iOS](https://github.com/andreped/IronFlow#iOS)
 
 **DISCLAIMER:** _We currently do not own an Apple Developer Certificate, thus we cannot sign the IPA.
 This has to be done before the IPA can be used to install the app on iOS._
@@ -70,11 +70,11 @@ This has to be done before the IPA can be used to install the app on iOS._
 
 Then simply use the app as you would with any other iOS app.
 
-## License
+## [License](https://github.com/andreped/IronFlow#license)
 
 This project has [MIT License](https://github.com/andreped/IronFlow/blob/main/LICENSE).
 
-## Acknowledgements
+## [Acknowledgements](https://github.com/andreped/IronFlow#Acknowledgements)
 
 To reduce development time and get experience with Copilots, 
 this Flutter application was heavily assisted by OpenAI's Chat-GPT,
