@@ -106,9 +106,9 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage> with Sing
           tabs: const [
             Tab(icon: Icon(Icons.add), text: 'Log\nExercise'),
             Tab(icon: Icon(Icons.calendar_today), text: 'Summary'),
+            Tab(icon: Icon(Icons.celebration), text: 'Records'), // New Records tab
             Tab(icon: Icon(Icons.show_chart), text: 'Visualize\nData'),
             Tab(icon: Icon(Icons.table_chart), text: 'View\nTable'),
-            Tab(icon: Icon(Icons.celebration), text: 'Records'), // New Records tab
           ],
         ),
       ),
@@ -135,6 +135,8 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage> with Sing
               selectedDay: _selectedDay,
               onDateSelected: _onDateSelected,
             ),
+            // Records Tab
+            RecordsTab(), // New Records tab
             // Visualize Data Tab
             Padding(
               padding: const EdgeInsets.all(16.0),
@@ -195,8 +197,6 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage> with Sing
                 ),
               ),
             ),
-            // Records Tab
-            RecordsTab(), // New Records tab
           ],
         ),
       ),
