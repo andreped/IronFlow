@@ -1,17 +1,34 @@
 <p align="center" width="100%">
 <img src="assets/icon/app_icon_transparent.png" width="20%" height="20%">
 <h1 align="center">IronFlow</h1>
-<h3 align="center">Strength training and fitness app for mobile devices.</h3>
+<h3 align="center">Cross-platform mobile app for strength training progress tracking.</h3>
+
+<h3 align="center"> 
 
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 [![GitHub Downloads](https://img.shields.io/github/downloads/andreped/IronFlow/total?label=GitHub%20downloads&logo=github)](https://github.com/andreped/IronFlow/releases)
+![CI](https://github.com/andreped/IronFlow/workflows/Build%20APK/badge.svg)
+![CI](https://github.com/andreped/IronFlow/workflows/Build%20IPA/badge.svg)
+</h3>
 
-**IronFlow** was developed to allow free, seemless, and private tracking of training progress and activities.
+**IronFlow** was developed to allow free, private, and seemless tracking of training progress and activities.
 </div>
 
 <p align="center" width="100%">
-<img src="assets/snapshots/log.png" width="22%" height="22%"> <img src="assets/snapshots/table.png" width="22%" height="22%"> <img src="assets/snapshots/visualize.png" width="22%" height="22%"> <img src="assets/snapshots/summary.png" width="22%" height="22%">
+<img src="assets/snapshots/log.png" width="18%" height="18%"> <img src="assets/snapshots/summary.png" width="18%" height="18%"> <img src="assets/snapshots/records.png" width="18%" height="18%"> <img src="assets/snapshots/visualize.png" width="18%" height="18%"> <img src="assets/snapshots/table.png" width="18%" height="18%">
 </p>
+
+## Features
+
+- [x] Ability to save individual exercises with weight and number of reps and sets.
+- [x] All data is stored in a private SQLite database on the device.
+- [x] Ability to add new exercises.
+- [x] Database with all new exercsies and sessions are preserved when upgrading app.
+- [x] Tab to see current max weight lifted for each recorded exercise.
+- [x] Summary tab showing exercise details for any given day.
+- [x] Ability to change days in summary tab to see history.
+- [x] Visualize individual weight lifted for each exercise over time.
+- [x] Ability to inspect and edit all exercise runs from a table tab.
 
 ## Continuous integration
 
@@ -19,6 +36,7 @@
 | - | - |
 | **Build APK** | ![CI](https://github.com/andreped/IronFlow/workflows/Build%20APK/badge.svg) |
 | **Build IPA** | ![CI](https://github.com/andreped/IronFlow/workflows/Build%20IPA/badge.svg) |
+| **Create Release** | ![CI](https://github.com/andreped/IronFlow/workflows/Create%20Release/badge.svg) |
 
 ## Getting started
 
