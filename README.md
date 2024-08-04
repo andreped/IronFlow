@@ -13,6 +13,18 @@
 <img src="assets/snapshots/log.png" width="22%" height="22%"> <img src="assets/snapshots/table.png" width="22%" height="22%"> <img src="assets/snapshots/visualize.png" width="22%" height="22%"> <img src="assets/snapshots/summary.png" width="22%" height="22%">
 </p>
 
+## Features
+
+- [x] Ability to save individual exercises with weight and number of reps and sets.
+- [x] All data is stored in a private SQLite database on the device.
+- [x] Ability to add new exercises.
+- [x] Database with all new exercsies and sessions are preserved when upgrading app.
+- [x] Tab to see current max weight lifted for each recorded exercise.
+- [x] Summary tab showing exercise details for any given day.
+- [x] Ability to change days in summary tab to see history.
+- [x] Visualize individual weight lifted for each exercise over time.
+- [x] Ability to inspect and edit all exercise runs from a table tab.
+
 ## Continuous integration
 
 | Build Type | Status |
@@ -20,7 +32,6 @@
 | **Build APK** | ![CI](https://github.com/andreped/IronFlow/workflows/Build%20APK/badge.svg) |
 | **Build IPA** | ![CI](https://github.com/andreped/IronFlow/workflows/Build%20IPA/badge.svg) |
 | **Create Release** | ![CI](https://github.com/andreped/IronFlow/workflows/Create%20Release/badge.svg) |
-
 
 ## Getting started
 
