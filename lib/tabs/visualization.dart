@@ -23,39 +23,48 @@ class _VisualizationTabState extends State<VisualizationTab> with AutomaticKeepA
   }
 
   Future<void> _fetchExerciseNames() async {
-    final variables = await _dbHelper.getExercises();
-    final names = variables.map((exercise) => exercise['exercise'] as String).toSet().toList();
-    setState(() {
-      _exerciseNames = names;
-    });
+    try {
+      final variables = await _dbHelper.getExercises();
+      print('Fetched exercises: $variables');
+      final names = variables.map((exercise) => exercise['exercise'] as String).toSet().toList();
+      setState(() {
+        _exerciseNames = names;
+      });
+    } catch (e) {
+      print('Error fetching exercise names: $e');
+    }
   }
 
   Future<void> _fetchDataPoints(String exerciseName) async {
-    final exercises = await _dbHelper.getExercises();
-    final filteredExercises = exercises.where((exercise) => exercise['exercise'] == exerciseName).toList();
+    try {
+      final exercises = await _dbHelper.getExercises();
+      final filteredExercises = exercises.where((exercise) => exercise['exercise'] == exerciseName).toList();
 
-    // Sort the filtered exercises by timestamp in descending order
-    filteredExercises.sort((a, b) => DateTime.parse(b['timestamp']).compareTo(DateTime.parse(a['timestamp'])));
+      // Sort the filtered exercises by timestamp in descending order
+      filteredExercises.sort((a, b) => DateTime.parse(b['timestamp']).compareTo(DateTime.parse(a['timestamp'])));
 
-    // Get the earliest date (ignoring the time part)
-    final earliestDate = DateUtils.dateOnly(DateTime.parse(filteredExercises.last['timestamp']));
+      // Get the earliest date (ignoring the time part)
+      final earliestDate = DateUtils.dateOnly(DateTime.parse(filteredExercises.last['timestamp']));
 
-    final dataPoints = filteredExercises.map((exercise) {
-      final dateTime = DateUtils.dateOnly(DateTime.parse(exercise['timestamp']));
+      final dataPoints = filteredExercises.map((exercise) {
+        final dateTime = DateUtils.dateOnly(DateTime.parse(exercise['timestamp']));
 
-      // Calculate the difference in days, ignoring hours time information
-      final dayDifference = dateTime.difference(earliestDate).inDays.toDouble();
-      return ScatterSpot(dayDifference, double.parse(exercise['weight']));
-    }).toList();
+        // Calculate the difference in days, ignoring hours time information
+        final dayDifference = dateTime.difference(earliestDate).inDays.toDouble();
+        return ScatterSpot(dayDifference, double.parse(exercise['weight']));
+      }).toList();
 
-    setState(() {
-      _dataPoints = dataPoints;
-    });
+      setState(() {
+        _dataPoints = dataPoints;
+      });
+    } catch (e) {
+      print('Error fetching data points: $e');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);  // Required by AutomaticKeepAliveClientMixin
+    super.build(context); // Required by AutomaticKeepAliveClientMixin
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -64,10 +73,12 @@ class _VisualizationTabState extends State<VisualizationTab> with AutomaticKeepA
             hint: const Text('Select an exercise'),
             value: _selectedExercise,
             onChanged: (newValue) {
-              setState(() {
-                _selectedExercise = newValue;
-                _fetchDataPoints(newValue!);
-              });
+              if (newValue != null) {
+                setState(() {
+                  _selectedExercise = newValue;
+                });
+                _fetchDataPoints(newValue);
+              }
             },
             items: _exerciseNames.map((exerciseName) {
               return DropdownMenuItem<String>(
