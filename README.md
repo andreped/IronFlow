@@ -5,6 +5,8 @@
 
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 [![GitHub Downloads](https://img.shields.io/github/downloads/andreped/IronFlow/total?label=GitHub%20downloads&logo=github)](https://github.com/andreped/IronFlow/releases)
+![CI](https://github.com/andreped/IronFlow/workflows/Build%20APK/badge.svg)
+![CI](https://github.com/andreped/IronFlow/workflows/Build%20IPA/badge.svg)
 
 **IronFlow** was developed to allow free, private, and seemless tracking of training progress and activities.
 </div>
