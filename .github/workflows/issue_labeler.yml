@@ -21,4 +21,6 @@ jobs:
           configuration-path: .github/actions/labeler.yml
           not-before: 2024-01-01T02:54:32Z
           enable-versioned-regex: 0
+          include-title: 1
+          include-body: 0
           repo-token: ${{ github.token }}
