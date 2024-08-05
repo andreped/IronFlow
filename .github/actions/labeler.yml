@@ -1,5 +1,5 @@
 # Add/remove 'enhancement' label if issue contains the words 'feat' or 'feature'
 enhancement:
-  - '(feature|feat)'
+  - '(feature|Feature|feat|Feat)'
 bug:
-  - '(bug)'
+  - '(bug|Bug)'
