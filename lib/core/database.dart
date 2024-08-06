@@ -135,20 +135,33 @@ class DatabaseHelper {
     );
   }
 
-  Future<bool> isNewHighScore(String exerciseName, double newWeight) async {
+  Future<bool> isNewHighScore(String exerciseName, double newWeight, int newReps) async {
     final db = await database;
-    final List<Map<String, dynamic>> results = await db.query(
-      'exercises',
-      columns: ['MAX(weight) as maxWeight'],
-      where: 'exercise = ?',
-      whereArgs: [exerciseName],
+    
+    // Query to get the current highest weight and corresponding reps for that weight
+    final List<Map<String, dynamic>> results = await db.rawQuery(
+      '''
+      SELECT weight, reps FROM exercises 
+      WHERE exercise = ?
+      ORDER BY CAST(weight AS REAL) DESC, reps DESC
+      LIMIT 1
+      ''',
+      [exerciseName],
     );
 
-    if (results.isNotEmpty && results.first['maxWeight'] != null) {
-      final maxWeight = double.parse(results.first['maxWeight'].toString());
-      return newWeight > maxWeight;
+    if (results.isNotEmpty) {
+      final row = results.first;
+      final maxWeight = double.parse(row['weight'].toString());
+      final maxReps = row['reps'] as int;
+
+      if (newWeight > maxWeight) {
+        return true; // New weight is higher
+      } else if (newWeight == maxWeight && newReps > maxReps) {
+        return true; // Same weight but more reps
+      }
     }
-    return true; // If it's the first entry for the exercise, it's a high score.
+
+    return false; // No new record
   }
 
   Future<Map<String, double>> getTotalWeightForDay(DateTime day) async {
