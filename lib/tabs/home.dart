@@ -128,6 +128,15 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage> with Sing
 
       if (secondDialogConfirmed == true) {
         await _clearDatabase();
+
+        // Show success SnackBar
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('✅ Database cleared successfully!'),
+            backgroundColor: Colors.green,
+            duration: const Duration(seconds: 2),
+          ),
+        );
       }
     }
   }
