@@ -32,6 +32,11 @@ The app is compatible with both Android and iOS.
 - [x] Visualize individual weight lifted for each exercise over time.
 - [x] Ability to inspect and edit all exercise runs from a table tab.
 - [x] Notification when new weight record is saved.
+- [x] Defined large set of predefined exercises to avoid needing to add new exercises manually.
+- [x] Set or add new exercise in log tab now only shows 5 items in dropdown and is scrollable.
+- [x] Faster exercise logging using previously stored data for given exercise as prefilled values.
+- [x] Database clear button now has two-step dialog to safeguard data from accidental deletion.
+- [x] Max weight notification takes into account max weight lifted AND number of reps.
 
 ## [Continuous Integration](https://github.com/andreped/IronFlow#Continuous-Integration)
 
