@@ -99,13 +99,12 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
           _predefinedExercises.add(exerciseName);
           _selectedExercise = exerciseName;
         });
+      } else {
+        // Refresh last logged exercise details
+        _loadLastLoggedExercise();
       }
 
       _newExerciseController.clear();
-      _weightController.clear();
-      _repsController.clear();
-      _setsController.text = '1'; // Reset sets to default
-
       setState(() {
         _isAddingNewExercise = false;
       });
