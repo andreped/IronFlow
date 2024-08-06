@@ -100,21 +100,8 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
             children: [
               Expanded(
                 flex: 2,
-                child: DropdownButtonFormField<String>(
-                  decoration: const InputDecoration(labelText: 'Select Exercise'),
-                  items: [
-                    ..._predefinedExercises.map((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }),
-                    const DropdownMenuItem<String>(
-                      value: 'custom',
-                      child: Text('Add New Exercise'),
-                    ),
-                  ],
-                  onChanged: (value) {
+                child: PopupMenuButton<String>(
+                  onSelected: (value) {
                     setState(() {
                       if (value == 'custom') {
                         _isAddingNewExercise = true;
@@ -125,19 +112,29 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
                       }
                     });
                   },
-                  value: _isAddingNewExercise ? 'custom' : _selectedExercise,
-                  isExpanded: true,
-                  iconSize: 24.0,
-                  icon: const Icon(Icons.arrow_drop_down),
-                  elevation: 16,
-                  style: const TextStyle(color: Colors.black),
-                  validator: (value) {
-                    if (!_isAddingNewExercise && (value == null || value.isEmpty)) {
-                      return 'Please select or enter an exercise';
-                    }
-                    return null;
+                  child: InputDecorator(
+                    decoration: const InputDecoration(labelText: 'Select Exercise'),
+                    child: Text(
+                      _isAddingNewExercise ? 'Add New Exercise' : _selectedExercise ?? 'Select Exercise',
+                      style: TextStyle(color: _selectedExercise == null ? Colors.grey : Colors.black),
+                    ),
+                  ),
+                  itemBuilder: (context) {
+                    return [
+                      ..._predefinedExercises.take(5).map((String value) {
+                        return PopupMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }),
+                      const PopupMenuItem<String>(
+                        value: 'custom',
+                        child: Text('Add New Exercise'),
+                      ),
+                    ];
                   },
-                  dropdownColor: Colors.white,
+                  // Adjust the height of the menu
+                  constraints: BoxConstraints(maxHeight: 200.0),
                 ),
               ),
             ],
