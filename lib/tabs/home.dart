@@ -89,8 +89,8 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage> with Sing
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Confirm Deletion'),
-          content: const Text('Clicking this button deletes all the recorded exercise data. Are you sure you want to do this?'),
+          title: const Text('⚠️ Confirm Deletion'),
+          content: const Text('🚨 Clicking this button deletes all the recorded exercise data. Are you sure you want to do this?'),
           actions: <Widget>[
             TextButton(
               child: const Text('No'),
@@ -110,8 +110,8 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage> with Sing
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: const Text('Are you really sure?'),
-            content: const Text('Are you really sure you want to lose all your data? There is no going back!'),
+            title: const Text('❗️ Are you really sure?'),
+            content: const Text('💥 Are you really sure you want to lose all your data? There is no going back!'),
             actions: <Widget>[
               TextButton(
                 child: const Text('No'),
