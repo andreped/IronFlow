@@ -15,11 +15,15 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
   final _newExerciseController = TextEditingController();
   final _weightController = TextEditingController();
   final _repsController = TextEditingController();
-  final _setsController = TextEditingController();
+  final _setsController = TextEditingController(text: '1'); // Default sets to 1
   final DatabaseHelper _dbHelper = DatabaseHelper();
 
   String? _selectedExercise;
   bool _isAddingNewExercise = false;
+  String? _lastExerciseName;
+  double? _lastWeight;
+  int? _lastReps;
+  int? _lastSets;
 
   List<String> _predefinedExercises = [];
 
@@ -34,7 +38,27 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
     setState(() {
       _predefinedExercises = exercises;
       _selectedExercise = _predefinedExercises.isNotEmpty ? _predefinedExercises.first : null;
+      if (_selectedExercise != null) {
+        _loadLastLoggedExercise();
+      }
     });
+  }
+
+  Future<void> _loadLastLoggedExercise() async {
+    if (_selectedExercise != null) {
+      final lastLogged = await _dbHelper.getLastLoggedExercise(_selectedExercise!);
+      if (lastLogged != null) {
+        setState(() {
+          _lastExerciseName = lastLogged['exercise'];
+          _lastWeight = lastLogged['weight'];
+          _lastReps = lastLogged['reps'];
+          _lastSets = lastLogged['sets'];
+          _weightController.text = _lastWeight?.toString() ?? '';
+          _repsController.text = _lastReps?.toString() ?? '';
+          _setsController.text = _lastSets?.toString() ?? '1';
+        });
+      }
+    }
   }
 
   Future<void> _addExercise() async {
@@ -75,12 +99,12 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
           _predefinedExercises.add(exerciseName);
           _selectedExercise = exerciseName;
         });
+      } else {
+        // Refresh last logged exercise details
+        _loadLastLoggedExercise();
       }
 
       _newExerciseController.clear();
-      _weightController.clear();
-      _repsController.clear();
-      _setsController.clear();
       setState(() {
         _isAddingNewExercise = false;
       });
@@ -94,9 +118,13 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
       if (value == 'custom') {
         _isAddingNewExercise = true;
         _selectedExercise = null;
+        _weightController.clear();
+        _repsController.clear();
+        _setsController.text = '1';
       } else {
         _isAddingNewExercise = false;
         _selectedExercise = value;
+        _loadLastLoggedExercise();
       }
     });
   }
@@ -167,6 +195,11 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
               }
               return null;
             },
+            onTap: () {
+              if (_weightController.text == (_lastWeight?.toString() ?? '')) {
+                _weightController.clear();
+              }
+            },
           ),
           TextFormField(
             controller: _repsController,
@@ -181,6 +214,11 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
               }
               return null;
             },
+            onTap: () {
+              if (_repsController.text == (_lastReps?.toString() ?? '')) {
+                _repsController.clear();
+              }
+            },
           ),
           TextFormField(
             controller: _setsController,
@@ -194,6 +232,11 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
                 return 'Please enter a valid integer';
               }
               return null;
+            },
+            onTap: () {
+              if (_setsController.text == (_lastSets?.toString() ?? '')) {
+                _setsController.clear();
+              }
             },
           ),
           const SizedBox(height: 16.0),
