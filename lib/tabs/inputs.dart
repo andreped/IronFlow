@@ -89,6 +89,18 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
     }
   }
 
+  void _onPopupMenuSelected(String value) {
+    setState(() {
+      if (value == 'custom') {
+        _isAddingNewExercise = true;
+        _selectedExercise = null;
+      } else {
+        _isAddingNewExercise = false;
+        _selectedExercise = value;
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -101,17 +113,7 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
               Expanded(
                 flex: 2,
                 child: PopupMenuButton<String>(
-                  onSelected: (value) {
-                    setState(() {
-                      if (value == 'custom') {
-                        _isAddingNewExercise = true;
-                        _selectedExercise = null;
-                      } else {
-                        _isAddingNewExercise = false;
-                        _selectedExercise = value;
-                      }
-                    });
-                  },
+                  onSelected: _onPopupMenuSelected,
                   child: InputDecorator(
                     decoration: const InputDecoration(labelText: 'Select Exercise'),
                     child: Text(
@@ -120,35 +122,37 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
                     ),
                   ),
                   itemBuilder: (context) {
-                    return [
-                      ..._predefinedExercises.take(5).map((String value) {
-                        return PopupMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }),
-                      const PopupMenuItem<String>(
-                        value: 'custom',
-                        child: Text('Add New Exercise'),
-                      ),
-                    ];
+                    final exercisesToShow = List<String>.from(_predefinedExercises);
+                    if (exercisesToShow.length > 5) {
+                      exercisesToShow.removeRange(5, exercisesToShow.length);
+                    }
+                    exercisesToShow.add('custom');
+
+                    return exercisesToShow.map((String value) {
+                      return PopupMenuItem<String>(
+                        value: value,
+                        child: Text(value == 'custom' ? 'Add New Exercise' : value),
+                      );
+                    }).toList();
                   },
-                  // Adjust the height of the menu
-                  constraints: BoxConstraints(maxHeight: 200.0),
+                  constraints: BoxConstraints(maxHeight: 300.0),
                 ),
               ),
             ],
           ),
           if (_isAddingNewExercise)
-            TextFormField(
-              controller: _newExerciseController,
-              decoration: const InputDecoration(labelText: 'New Exercise Name'),
-              validator: (value) {
-                if (_isAddingNewExercise && (value == null || value.isEmpty)) {
-                  return 'Please enter a new exercise name';
-                }
-                return null;
-              },
+            Padding(
+              padding: const EdgeInsets.only(top: 16.0),
+              child: TextFormField(
+                controller: _newExerciseController,
+                decoration: const InputDecoration(labelText: 'New Exercise Name'),
+                validator: (value) {
+                  if (_isAddingNewExercise && (value == null || value.isEmpty)) {
+                    return 'Please enter a new exercise name';
+                  }
+                  return null;
+                },
+              ),
             ),
           TextFormField(
             controller: _weightController,
