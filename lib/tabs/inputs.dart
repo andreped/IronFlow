@@ -82,13 +82,13 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
 
       if (isNewHighScore) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('New high score for $exerciseName!'),
+          content: Text('🚀🎉 New high score for $exerciseName!'),
           duration: Duration(seconds: 2),
           backgroundColor: Colors.green,
         ));
       } else {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text('Exercise added successfully'),
+          content: Text('🎯 Exercise added successfully'),
           duration: Duration(seconds: 2),
         ));
       }
