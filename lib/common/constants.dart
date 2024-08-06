@@ -1,4 +1,4 @@
-List<String> IronFlowExercises = [
+List<String> predefinedExercises = [
   "Benchpress",
   "Pull-up",
   "Squats",
