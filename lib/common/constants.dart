@@ -8,7 +8,7 @@ List<String> IronFlowExercises = [
   "Leg Extension",
   "Hamstring Curl",
   "Hip Thrust",
-  "Calf Raises",
+  "Seated Calf Raises",
   "Shoulder Press (dumbbells)",
   "Shoulder Press (bar)",
   "Front Raises (dumbbells)",
@@ -18,7 +18,8 @@ List<String> IronFlowExercises = [
   "Flies (dumbbells)",
   "Incline Press (dumbbells)",
   "Incline Press (bar)",
-  "Bulgarian Split (dumbbells)"
+  "Bulgarian Split (dumbbells)",
+  "Sit-Up"
 ];
 
 const int dropdownVisibleItemCount = 5;
