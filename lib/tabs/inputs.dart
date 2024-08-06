@@ -71,7 +71,7 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
       final reps = int.parse(_repsController.text);
       final sets = int.parse(_setsController.text);
 
-      final isNewHighScore = await _dbHelper.isNewHighScore(exerciseName, weight);
+      final isNewHighScore = await _dbHelper.isNewHighScore(exerciseName, weight, reps);
 
       await _dbHelper.insertExercise(
         exercise: exerciseName,
