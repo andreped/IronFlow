@@ -89,6 +89,18 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
     }
   }
 
+  void _onPopupMenuSelected(String value) {
+    setState(() {
+      if (value == 'custom') {
+        _isAddingNewExercise = true;
+        _selectedExercise = null;
+      } else {
+        _isAddingNewExercise = false;
+        _selectedExercise = value;
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -100,58 +112,47 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
             children: [
               Expanded(
                 flex: 2,
-                child: DropdownButtonFormField<String>(
-                  decoration: const InputDecoration(labelText: 'Select Exercise'),
-                  items: [
-                    ..._predefinedExercises.map((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }),
-                    const DropdownMenuItem<String>(
-                      value: 'custom',
-                      child: Text('Add New Exercise'),
+                child: PopupMenuButton<String>(
+                  onSelected: _onPopupMenuSelected,
+                  child: InputDecorator(
+                    decoration: const InputDecoration(labelText: 'Select Exercise'),
+                    child: Text(
+                      _isAddingNewExercise ? 'Add New Exercise' : _selectedExercise ?? 'Select Exercise',
+                      style: TextStyle(color: _selectedExercise == null ? Colors.grey : Colors.black),
                     ),
-                  ],
-                  onChanged: (value) {
-                    setState(() {
-                      if (value == 'custom') {
-                        _isAddingNewExercise = true;
-                        _selectedExercise = null;
-                      } else {
-                        _isAddingNewExercise = false;
-                        _selectedExercise = value;
-                      }
-                    });
-                  },
-                  value: _isAddingNewExercise ? 'custom' : _selectedExercise,
-                  isExpanded: true,
-                  iconSize: 24.0,
-                  icon: const Icon(Icons.arrow_drop_down),
-                  elevation: 16,
-                  style: const TextStyle(color: Colors.black),
-                  validator: (value) {
-                    if (!_isAddingNewExercise && (value == null || value.isEmpty)) {
-                      return 'Please select or enter an exercise';
+                  ),
+                  itemBuilder: (context) {
+                    final exercisesToShow = List<String>.from(_predefinedExercises);
+                    if (exercisesToShow.length > 5) {
+                      exercisesToShow.removeRange(5, exercisesToShow.length);
                     }
-                    return null;
+                    exercisesToShow.add('custom');
+
+                    return exercisesToShow.map((String value) {
+                      return PopupMenuItem<String>(
+                        value: value,
+                        child: Text(value == 'custom' ? 'Add New Exercise' : value),
+                      );
+                    }).toList();
                   },
-                  dropdownColor: Colors.white,
+                  constraints: BoxConstraints(maxHeight: 300.0),
                 ),
               ),
             ],
           ),
           if (_isAddingNewExercise)
-            TextFormField(
-              controller: _newExerciseController,
-              decoration: const InputDecoration(labelText: 'New Exercise Name'),
-              validator: (value) {
-                if (_isAddingNewExercise && (value == null || value.isEmpty)) {
-                  return 'Please enter a new exercise name';
-                }
-                return null;
-              },
+            Padding(
+              padding: const EdgeInsets.only(top: 16.0),
+              child: TextFormField(
+                controller: _newExerciseController,
+                decoration: const InputDecoration(labelText: 'New Exercise Name'),
+                validator: (value) {
+                  if (_isAddingNewExercise && (value == null || value.isEmpty)) {
+                    return 'Please enter a new exercise name';
+                  }
+                  return null;
+                },
+              ),
             ),
           TextFormField(
             controller: _weightController,
