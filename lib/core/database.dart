@@ -137,7 +137,7 @@ class DatabaseHelper {
 
   Future<bool> isNewHighScore(String exerciseName, double newWeight, int newReps) async {
     final db = await database;
-    
+
     // Query to get the current highest weight and corresponding reps for that weight
     final List<Map<String, dynamic>> results = await db.rawQuery(
       '''
@@ -154,10 +154,9 @@ class DatabaseHelper {
       final maxWeight = double.parse(row['weight'].toString());
       final maxReps = row['reps'] as int;
 
-      if (newWeight > maxWeight) {
-        return true; // New weight is higher
-      } else if (newWeight == maxWeight && newReps > maxReps) {
-        return true; // Same weight but more reps
+      // Check if both weight and reps are greater than the current record
+      if (newWeight > maxWeight || (newWeight == maxWeight && newReps > maxReps)) {
+        return true; // New record found
       }
     }
 
@@ -262,26 +261,26 @@ class DatabaseHelper {
     return maxWeights;
   }
 
-Future<Map<String, dynamic>?> getLastLoggedExercise(String exerciseName) async {
-  final db = await database;
-  final List<Map<String, dynamic>> result = await db.query(
-    'exercises',
-    where: 'exercise = ?',
-    whereArgs: [exerciseName],
-    orderBy: 'timestamp DESC',
-    limit: 1, // Fetch only the latest entry
-  );
+  Future<Map<String, dynamic>?> getLastLoggedExercise(String exerciseName) async {
+    final db = await database;
+    final List<Map<String, dynamic>> result = await db.query(
+      'exercises',
+      where: 'exercise = ?',
+      whereArgs: [exerciseName],
+      orderBy: 'timestamp DESC',
+      limit: 1, // Fetch only the latest entry
+    );
 
-  if (result.isNotEmpty) {
-    final row = result.first;
-    return {
-      'exercise': row['exercise'],
-      'weight': double.tryParse(row['weight']) ?? 0.0, // Convert weight to double
-      'reps': row['reps'] as int,
-      'sets': row['sets'] as int,
-    };
+    if (result.isNotEmpty) {
+      final row = result.first;
+      return {
+        'exercise': row['exercise'],
+        'weight': double.tryParse(row['weight']) ?? 0.0, // Convert weight to double
+        'reps': row['reps'] as int,
+        'sets': row['sets'] as int,
+      };
+    }
+    return null;
   }
-  return null;
-}
 
 }
