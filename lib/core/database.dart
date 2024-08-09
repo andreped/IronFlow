@@ -247,19 +247,48 @@ class DatabaseHelper {
 
   Future<Map<String, Map<String, dynamic>>> getMaxWeightsForExercises() async {
     final db = await database;
+
+    // Query to get the maximum weight and corresponding highest reps for each exercise
     final List<Map<String, dynamic>> results = await db.rawQuery(
-      'SELECT exercise, weight, reps FROM exercises WHERE CAST(weight AS REAL) IN (SELECT MAX(CAST(weight AS REAL)) FROM exercises GROUP BY exercise)'
+      '''
+      SELECT exercise, weight, reps
+      FROM exercises
+      WHERE (exercise, CAST(weight AS REAL)) IN (
+        SELECT exercise, MAX(CAST(weight AS REAL))
+        FROM exercises
+        GROUP BY exercise
+      )
+      ORDER BY exercise, CAST(weight AS REAL) DESC, reps DESC
+      '''
     );
 
     Map<String, Map<String, dynamic>> maxWeights = {};
     for (var result in results) {
-      maxWeights[result['exercise']] = {
-        'maxWeight': double.parse(result['weight']),
-        'reps': result['reps']
-      };
+      final exercise = result['exercise'] as String;
+      final weight = double.parse(result['weight']);
+      final reps = result['reps'] as int;
+
+      if (maxWeights.containsKey(exercise)) {
+        final existing = maxWeights[exercise]!;
+        if (weight == existing['maxWeight']) {
+          if (reps > existing['reps']) {
+            existing['reps'] = reps;
+          }
+        } else if (weight > existing['maxWeight']) {
+          existing['maxWeight'] = weight;
+          existing['reps'] = reps;
+        }
+      } else {
+        maxWeights[exercise] = {
+          'maxWeight': weight,
+          'reps': reps,
+        };
+      }
     }
+
     return maxWeights;
   }
+
 
   Future<Map<String, dynamic>?> getLastLoggedExercise(String exerciseName) async {
     final db = await database;
