@@ -34,7 +34,7 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage> with Sing
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 5, vsync: this); // Update length to 5
+    _tabController = TabController(length: 5, vsync: this);
   }
 
   @override
