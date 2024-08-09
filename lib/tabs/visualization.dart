@@ -188,7 +188,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
               lineBarsData: [
                 LineChartBarData(
                   spots: _dataPoints,
-                  isCurved: true,
+                  isCurved: false,
                   color: Colors.blue,
                   dotData: FlDotData(show: false),
                   belowBarData: BarAreaData(show: false),
