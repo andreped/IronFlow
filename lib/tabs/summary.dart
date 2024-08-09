@@ -39,7 +39,8 @@ class _SummaryTabState extends State<SummaryTab> {
                 const Text('Select Day: '),
                 TextButton(
                   onPressed: () => _selectDate(context),
-                  child: Text('${widget.selectedDay.year}-${widget.selectedDay.month}-${widget.selectedDay.day}'),
+                  child: Text(
+                      '${widget.selectedDay.year}-${widget.selectedDay.month}-${widget.selectedDay.day}'),
                 ),
               ],
             ),
@@ -65,7 +66,8 @@ class _SummaryTabState extends State<SummaryTab> {
                     final totalSets = details['totalSets'];
                     final totalReps = details['totalReps'];
                     final avgWeight = details['avgWeight'];
-                    final records = details['records'] as List<Map<String, dynamic>>;
+                    final records =
+                        details['records'] as List<Map<String, dynamic>>;
 
                     return Card(
                       child: ExpansionTile(
