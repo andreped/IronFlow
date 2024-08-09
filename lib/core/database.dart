@@ -41,7 +41,8 @@ class DatabaseHelper {
     await _initializePredefinedExercises(db);
   }
 
-  Future<void> _upgradeDatabase(Database db, int oldVersion, int newVersion) async {
+  Future<void> _upgradeDatabase(
+      Database db, int oldVersion, int newVersion) async {
     // Placeholder for future upgrade logic
     if (oldVersion < newVersion) {
       // Example: if (oldVersion < 2) {
@@ -104,9 +105,8 @@ class DatabaseHelper {
 
   Future<List<DateTime>> getExerciseDates() async {
     final db = await database;
-    final List<Map<String, dynamic>> datesResult = await db.rawQuery(
-      'SELECT DISTINCT date(timestamp) as date FROM exercises'
-    );
+    final List<Map<String, dynamic>> datesResult = await db
+        .rawQuery('SELECT DISTINCT date(timestamp) as date FROM exercises');
 
     return datesResult.map((row) {
       return DateTime.parse(row['date']);
@@ -136,8 +136,8 @@ class DatabaseHelper {
     );
   }
 
-
-  Future<bool> isNewHighScore(String exerciseName, double newWeight, int newReps) async {
+  Future<bool> isNewHighScore(
+      String exerciseName, double newWeight, int newReps) async {
     final db = await database;
 
     // Query to get the current highest weight and corresponding reps for that weight
@@ -157,7 +157,8 @@ class DatabaseHelper {
       final maxReps = row['reps'] as int;
 
       // Check if both weight and reps are greater than the current record
-      if (newWeight > maxWeight || (newWeight == maxWeight && newReps > maxReps)) {
+      if (newWeight > maxWeight ||
+          (newWeight == maxWeight && newReps > maxReps)) {
         return true; // New record found
       }
     }
@@ -234,7 +235,8 @@ class DatabaseHelper {
 
   Future<List<String>> getPredefinedExercises() async {
     final db = await database;
-    final List<Map<String, dynamic>> result = await db.query('predefined_exercises');
+    final List<Map<String, dynamic>> result =
+        await db.query('predefined_exercises');
     return result.map((row) => row['name'] as String).toList();
   }
 
@@ -243,7 +245,8 @@ class DatabaseHelper {
     await db.insert(
       'predefined_exercises',
       {'name': exerciseName},
-      conflictAlgorithm: ConflictAlgorithm.ignore, // Handle if exercise already exists
+      conflictAlgorithm:
+          ConflictAlgorithm.ignore, // Handle if exercise already exists
     );
   }
 
@@ -251,8 +254,7 @@ class DatabaseHelper {
     final db = await database;
 
     // Query to get the maximum weight and corresponding highest reps for each exercise
-    final List<Map<String, dynamic>> results = await db.rawQuery(
-      '''
+    final List<Map<String, dynamic>> results = await db.rawQuery('''
       SELECT exercise, weight, reps
       FROM exercises
       WHERE (exercise, CAST(weight AS REAL)) IN (
@@ -261,8 +263,7 @@ class DatabaseHelper {
         GROUP BY exercise
       )
       ORDER BY exercise, CAST(weight AS REAL) DESC, reps DESC
-      '''
-    );
+      ''');
 
     Map<String, Map<String, dynamic>> maxWeights = {};
     for (var result in results) {
@@ -291,8 +292,8 @@ class DatabaseHelper {
     return maxWeights;
   }
 
-
-  Future<Map<String, dynamic>?> getLastLoggedExercise(String exerciseName) async {
+  Future<Map<String, dynamic>?> getLastLoggedExercise(
+      String exerciseName) async {
     final db = await database;
     final List<Map<String, dynamic>> result = await db.query(
       'exercises',
@@ -306,12 +307,12 @@ class DatabaseHelper {
       final row = result.first;
       return {
         'exercise': row['exercise'],
-        'weight': double.tryParse(row['weight']) ?? 0.0, // Convert weight to double
+        'weight':
+            double.tryParse(row['weight']) ?? 0.0, // Convert weight to double
         'reps': row['reps'] as int,
         'sets': row['sets'] as int,
       };
     }
     return null;
   }
-
 }

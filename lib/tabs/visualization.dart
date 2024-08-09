@@ -27,7 +27,10 @@ class _VisualizationTabState extends State<VisualizationTab> {
   Future<void> _fetchExerciseNames() async {
     try {
       final variables = await _dbHelper.getExercises();
-      final names = variables.map((exercise) => exercise['exercise'] as String).toSet().toList();
+      final names = variables
+          .map((exercise) => exercise['exercise'] as String)
+          .toSet()
+          .toList();
       setState(() {
         _exerciseNames = names;
       });
@@ -39,11 +42,14 @@ class _VisualizationTabState extends State<VisualizationTab> {
   Future<void> _fetchDataPoints(String exerciseName) async {
     try {
       final exercises = await _dbHelper.getExercises();
-      final filteredExercises = exercises.where((exercise) => exercise['exercise'] == exerciseName).toList();
+      final filteredExercises = exercises
+          .where((exercise) => exercise['exercise'] == exerciseName)
+          .toList();
 
       final groupedByDate = <DateTime, List<double>>{};
       for (var exercise in filteredExercises) {
-        final dateTime = DateUtils.dateOnly(DateTime.parse(exercise['timestamp']));
+        final dateTime =
+            DateUtils.dateOnly(DateTime.parse(exercise['timestamp']));
         final weight = double.parse(exercise['weight']);
         if (groupedByDate.containsKey(dateTime)) {
           groupedByDate[dateTime]!.add(weight);
@@ -53,7 +59,8 @@ class _VisualizationTabState extends State<VisualizationTab> {
       }
 
       final aggregatedDataPoints = <ScatterSpot>[];
-      final earliestDate = DateUtils.dateOnly(DateTime.parse(filteredExercises.last['timestamp']));
+      final earliestDate = DateUtils.dateOnly(
+          DateTime.parse(filteredExercises.last['timestamp']));
       groupedByDate.forEach((date, weights) {
         double value;
         switch (_aggregationMethod) {
@@ -208,7 +215,8 @@ class _VisualizationTabState extends State<VisualizationTab> {
               scatterSpots: _dataPoints,
               scatterTouchData: ScatterTouchData(
                 touchTooltipData: ScatterTouchTooltipData(
-                  getTooltipColor: (ScatterSpot touchedSpot) => Colors.blueAccent,
+                  getTooltipColor: (ScatterSpot touchedSpot) =>
+                      Colors.blueAccent,
                 ),
                 enabled: true,
               ),

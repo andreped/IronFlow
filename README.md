@@ -9,6 +9,7 @@
 [![GitHub Downloads](https://img.shields.io/github/downloads/andreped/IronFlow/total?label=GitHub%20downloads&logo=github)](https://github.com/andreped/IronFlow/releases)
 ![CI](https://github.com/andreped/IronFlow/workflows/Build%20APK/badge.svg)
 ![CI](https://github.com/andreped/IronFlow/workflows/Build%20IPA/badge.svg)
+![CI](https://github.com/andreped/IronFlow/workflows/Linting/badge.svg)
 </h3>
 
 **IronFlow** was developed to allow free, private, and seemless tracking of training progress and activities.
@@ -45,6 +46,7 @@ The app is compatible with both Android and iOS.
 | **Build APK** | ![CI](https://github.com/andreped/IronFlow/workflows/Build%20APK/badge.svg) |
 | **Build IPA** | ![CI](https://github.com/andreped/IronFlow/workflows/Build%20IPA/badge.svg) |
 | **Create Release** | ![CI](https://github.com/andreped/IronFlow/workflows/Create%20Release/badge.svg) |
+| **Linting** | ![CI](https://github.com/andreped/IronFlow/workflows/Linting/badge.svg) |
 
 ## [Getting Started](https://github.com/andreped/IronFlow#Getting-Started)
 

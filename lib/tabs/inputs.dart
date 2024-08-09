@@ -37,7 +37,8 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
     List<String> exercises = await _dbHelper.getPredefinedExercises();
     setState(() {
       _predefinedExercises = exercises;
-      _selectedExercise = _predefinedExercises.isNotEmpty ? _predefinedExercises.first : null;
+      _selectedExercise =
+          _predefinedExercises.isNotEmpty ? _predefinedExercises.first : null;
       if (_selectedExercise != null) {
         _loadLastLoggedExercise();
       }
@@ -46,7 +47,8 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
 
   Future<void> _loadLastLoggedExercise() async {
     if (_selectedExercise != null) {
-      final lastLogged = await _dbHelper.getLastLoggedExercise(_selectedExercise!);
+      final lastLogged =
+          await _dbHelper.getLastLoggedExercise(_selectedExercise!);
       if (lastLogged != null) {
         setState(() {
           _lastExerciseName = lastLogged['exercise'];
@@ -71,7 +73,8 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
       final reps = int.parse(_repsController.text);
       final sets = int.parse(_setsController.text);
 
-      final isNewHighScore = await _dbHelper.isNewHighScore(exerciseName, weight, reps);
+      final isNewHighScore =
+          await _dbHelper.isNewHighScore(exerciseName, weight, reps);
 
       await _dbHelper.insertExercise(
         exercise: exerciseName,
@@ -169,10 +172,16 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
                 child: GestureDetector(
                   onTap: _openExerciseSelectionSheet,
                   child: InputDecorator(
-                    decoration: const InputDecoration(labelText: 'Select Exercise'),
+                    decoration:
+                        const InputDecoration(labelText: 'Select Exercise'),
                     child: Text(
-                      _isAddingNewExercise ? 'Add New Exercise' : _selectedExercise ?? 'Select Exercise',
-                      style: TextStyle(color: _selectedExercise == null ? Colors.grey : Colors.black),
+                      _isAddingNewExercise
+                          ? 'Add New Exercise'
+                          : _selectedExercise ?? 'Select Exercise',
+                      style: TextStyle(
+                          color: _selectedExercise == null
+                              ? Colors.grey
+                              : Colors.black),
                     ),
                   ),
                 ),
@@ -184,9 +193,11 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
               padding: const EdgeInsets.only(top: 16.0),
               child: TextFormField(
                 controller: _newExerciseController,
-                decoration: const InputDecoration(labelText: 'New Exercise Name'),
+                decoration:
+                    const InputDecoration(labelText: 'New Exercise Name'),
                 validator: (value) {
-                  if (_isAddingNewExercise && (value == null || value.isEmpty)) {
+                  if (_isAddingNewExercise &&
+                      (value == null || value.isEmpty)) {
                     return 'Please enter a new exercise name';
                   }
                   return null;
