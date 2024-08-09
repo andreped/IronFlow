@@ -11,6 +11,7 @@ class VisualizationTab extends StatefulWidget {
 
 class _VisualizationTabState extends State<VisualizationTab> with AutomaticKeepAliveClientMixin {
   String? _selectedExercise;
+  String _aggregationMethod = 'Max'; // Default aggregation method
   List<String> _exerciseNames = [];
   List<ScatterSpot> _dataPoints = [];
 
@@ -40,22 +41,41 @@ class _VisualizationTabState extends State<VisualizationTab> with AutomaticKeepA
       final exercises = await _dbHelper.getExercises();
       final filteredExercises = exercises.where((exercise) => exercise['exercise'] == exerciseName).toList();
 
-      // Sort the filtered exercises by timestamp in descending order
-      filteredExercises.sort((a, b) => DateTime.parse(b['timestamp']).compareTo(DateTime.parse(a['timestamp'])));
-
-      // Get the earliest date (ignoring the time part)
-      final earliestDate = DateUtils.dateOnly(DateTime.parse(filteredExercises.last['timestamp']));
-
-      final dataPoints = filteredExercises.map((exercise) {
+      // Group exercises by date
+      final groupedByDate = <DateTime, List<double>>{};
+      for (var exercise in filteredExercises) {
         final dateTime = DateUtils.dateOnly(DateTime.parse(exercise['timestamp']));
+        final weight = double.parse(exercise['weight']);
+        if (groupedByDate.containsKey(dateTime)) {
+          groupedByDate[dateTime]!.add(weight);
+        } else {
+          groupedByDate[dateTime] = [weight];
+        }
+      }
 
-        // Calculate the difference in days, ignoring hours time information
-        final dayDifference = dateTime.difference(earliestDate).inDays.toDouble();
-        return ScatterSpot(dayDifference, double.parse(exercise['weight']));
-      }).toList();
+      // Apply aggregation method
+      final aggregatedDataPoints = <ScatterSpot>[];
+      final earliestDate = DateUtils.dateOnly(DateTime.parse(filteredExercises.last['timestamp']));
+      groupedByDate.forEach((date, weights) {
+        double value;
+        switch (_aggregationMethod) {
+          case 'Max':
+            value = weights.reduce((a, b) => a > b ? a : b);
+            break;
+          case 'Average':
+            value = weights.reduce((a, b) => a + b) / weights.length;
+            break;
+          case 'None':
+          default:
+            value = weights.last; // Just take the last weight in the list
+            break;
+        }
+        final dayDifference = date.difference(earliestDate).inDays.toDouble();
+        aggregatedDataPoints.add(ScatterSpot(dayDifference, value));
+      });
 
       setState(() {
-        _dataPoints = dataPoints;
+        _dataPoints = aggregatedDataPoints;
       });
     } catch (e) {
       print('Error fetching data points: $e');
@@ -84,6 +104,27 @@ class _VisualizationTabState extends State<VisualizationTab> with AutomaticKeepA
               return DropdownMenuItem<String>(
                 value: exerciseName,
                 child: Text(exerciseName),
+              );
+            }).toList(),
+          ),
+          const SizedBox(height: 16.0),
+          DropdownButton<String>(
+            hint: const Text('Select aggregation method'),
+            value: _aggregationMethod,
+            onChanged: (newValue) {
+              if (newValue != null) {
+                setState(() {
+                  _aggregationMethod = newValue;
+                });
+                if (_selectedExercise != null) {
+                  _fetchDataPoints(_selectedExercise!);
+                }
+              }
+            },
+            items: <String>['None', 'Max', 'Average'].map((method) {
+              return DropdownMenuItem<String>(
+                value: method,
+                child: Text(method),
               );
             }).toList(),
           ),
