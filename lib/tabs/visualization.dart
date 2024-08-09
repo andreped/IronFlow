@@ -9,7 +9,7 @@ class VisualizationTab extends StatefulWidget {
   _VisualizationTabState createState() => _VisualizationTabState();
 }
 
-class _VisualizationTabState extends State<VisualizationTab> with AutomaticKeepAliveClientMixin {
+class _VisualizationTabState extends State<VisualizationTab> {
   String? _selectedExercise;
   String _aggregationMethod = 'Max'; // Default aggregation method
   String _chartType = 'Line'; // Default chart type
@@ -82,7 +82,6 @@ class _VisualizationTabState extends State<VisualizationTab> with AutomaticKeepA
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -273,7 +272,4 @@ class _VisualizationTabState extends State<VisualizationTab> with AutomaticKeepA
       ),
     );
   }
-
-  @override
-  bool get wantKeepAlive => true; // Required by AutomaticKeepAliveClientMixin
 }

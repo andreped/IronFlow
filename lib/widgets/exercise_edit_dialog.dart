@@ -15,6 +15,7 @@ class _ExerciseEditDialogState extends State<ExerciseEditDialog> {
   late TextEditingController _weightController;
   late TextEditingController _repsController;
   late TextEditingController _setsController;
+  late TextEditingController _timestampController;
 
   @override
   void initState() {
@@ -23,6 +24,7 @@ class _ExerciseEditDialogState extends State<ExerciseEditDialog> {
     _weightController = TextEditingController(text: widget.exerciseData['weight']);
     _repsController = TextEditingController(text: widget.exerciseData['reps'].toString());
     _setsController = TextEditingController(text: widget.exerciseData['sets'].toString());
+    _timestampController = TextEditingController(text: widget.exerciseData['timestamp']);
   }
 
   @override
@@ -86,6 +88,22 @@ class _ExerciseEditDialogState extends State<ExerciseEditDialog> {
                 return null;
               },
             ),
+            TextFormField(
+              controller: _timestampController,
+              decoration: const InputDecoration(labelText: 'Timestamp (ISO8601)'),
+              keyboardType: TextInputType.datetime,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter a timestamp';
+                }
+                try {
+                  DateTime.parse(value);
+                } catch (e) {
+                  return 'Please enter a valid ISO8601 timestamp';
+                }
+                return null;
+              },
+            ),
           ],
         ),
       ),
@@ -105,6 +123,7 @@ class _ExerciseEditDialogState extends State<ExerciseEditDialog> {
                 'weight': _weightController.text,
                 'reps': int.parse(_repsController.text),
                 'sets': int.parse(_setsController.text),
+                'timestamp': _timestampController.text,
               });
             }
           },
@@ -120,6 +139,7 @@ class _ExerciseEditDialogState extends State<ExerciseEditDialog> {
     _weightController.dispose();
     _repsController.dispose();
     _setsController.dispose();
+    _timestampController.dispose();
     super.dispose();
   }
 }

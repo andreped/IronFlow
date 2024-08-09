@@ -72,6 +72,7 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage> with Sing
           weight: result['weight'],
           reps: result['reps'],
           sets: result['sets'],
+          timestamp: result['timestamp'],
         );
         setState(() {});
       }
@@ -212,43 +213,43 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage> with Sing
                     }
                     final exercises = snapshot.data!;
                     return DataTable(
-                      columns: const [
-                        DataColumn(label: Text('ID')),
-                        DataColumn(label: Text('Exercise')),
-                        DataColumn(label: Text('Weight')),
-                        DataColumn(label: Text('Reps')),
-                        DataColumn(label: Text('Sets')),
-                        DataColumn(label: Text('Timestamp')),
-                        DataColumn(label: Text('Actions')),
-                      ],
-                      rows: exercises.map((exercise) {
-                        return DataRow(cells: [
-                          DataCell(Text(exercise['id'].toString())),
-                          DataCell(Text(exercise['exercise'])),
-                          DataCell(Text(exercise['weight'])),
-                          DataCell(Text(exercise['reps'].toString())),
-                          DataCell(Text(exercise['sets'].toString())),
-                          DataCell(Text(exercise['timestamp'])),
-                          DataCell(
-                            Row(
-                              children: [
-                                IconButton(
-                                  icon: const Icon(Icons.edit),
-                                  onPressed: () {
-                                    _showEditDialog(exercise);
-                                  },
-                                ),
-                                IconButton(
-                                  icon: const Icon(Icons.delete),
-                                  onPressed: () async {
-                                    await _deleteExercise(exercise['id']);
-                                  },
-                                ),
-                              ],
+                        columns: const [
+                          DataColumn(label: Text('ID')),
+                          DataColumn(label: Text('Exercise')),
+                          DataColumn(label: Text('Weight')),
+                          DataColumn(label: Text('Reps')),
+                          DataColumn(label: Text('Sets')),
+                          DataColumn(label: Text('Timestamp')),
+                          DataColumn(label: Text('Actions')),
+                        ],
+                        rows: exercises.map((exercise) {
+                          return DataRow(cells: [
+                            DataCell(Text(exercise['id'].toString())),
+                            DataCell(Text(exercise['exercise'])),
+                            DataCell(Text(exercise['weight'])),
+                            DataCell(Text(exercise['reps'].toString())),
+                            DataCell(Text(exercise['sets'].toString())),
+                            DataCell(Text(exercise['timestamp'])), // Display the timestamp
+                            DataCell(
+                              Row(
+                                children: [
+                                  IconButton(
+                                    icon: const Icon(Icons.edit),
+                                    onPressed: () {
+                                      _showEditDialog(exercise);
+                                    },
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(Icons.delete),
+                                    onPressed: () async {
+                                      await _deleteExercise(exercise['id']);
+                                    },
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                        ]);
-                      }).toList(),
+                          ]);
+                        }).toList(),
                     );
                   },
                 ),
