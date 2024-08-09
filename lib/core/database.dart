@@ -119,6 +119,7 @@ class DatabaseHelper {
     required String weight,
     required int reps,
     required int sets,
+    required String timestamp,
   }) async {
     final db = await database;
     await db.update(
@@ -128,12 +129,13 @@ class DatabaseHelper {
         'weight': weight,
         'reps': reps,
         'sets': sets,
-        // Note: Do not update the timestamp here
+        'timestamp': timestamp,
       },
       where: 'id = ?',
       whereArgs: [id],
     );
   }
+
 
   Future<bool> isNewHighScore(String exerciseName, double newWeight, int newReps) async {
     final db = await database;
