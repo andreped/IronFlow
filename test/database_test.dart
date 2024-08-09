@@ -24,7 +24,7 @@ void main() {
     test('Should initialize database and create tables', () async {
       // Arrange
       when(mockDatabaseFactory.openDatabase(
-        'path_to_your_database',  // Replace with the actual path or a test path
+        await getDatabasesPath(),
         options: anyNamed('options'),
       )).thenAnswer((_) async => mockDatabase);
 
