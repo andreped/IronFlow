@@ -131,6 +131,10 @@ class _VisualizationTabState extends State<VisualizationTab> {
         if (newValue != null) {
           setState(() {
             _aggregationMethod = newValue;
+            // Automatically switch to Scatter if 'None' is selected
+            if (_aggregationMethod == 'None' && _chartType == 'Line') {
+              _chartType = 'Scatter';
+            }
           });
           if (_selectedExercise != null) {
             _fetchDataPoints(_selectedExercise!);
@@ -188,7 +192,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
               lineBarsData: [
                 LineChartBarData(
                   spots: _dataPoints,
-                  isCurved: false,
+                  isCurved: false, // Straight lines
                   color: Colors.blue,
                   dotData: FlDotData(show: false),
                   belowBarData: BarAreaData(show: false),
