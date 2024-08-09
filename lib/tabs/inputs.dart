@@ -113,20 +113,46 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
     }
   }
 
-  void _onPopupMenuSelected(String value) {
-    setState(() {
-      if (value == 'custom') {
-        _isAddingNewExercise = true;
-        _selectedExercise = null;
-        _weightController.clear();
-        _repsController.clear();
-        _setsController.text = '1';
-      } else {
-        _isAddingNewExercise = false;
-        _selectedExercise = value;
-        _loadLastLoggedExercise();
-      }
-    });
+  void _openExerciseSelectionSheet() {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              title: Text('Add New Exercise'),
+              onTap: () {
+                Navigator.pop(context);
+                setState(() {
+                  _isAddingNewExercise = true;
+                  _selectedExercise = null;
+                });
+              },
+            ),
+            Expanded(
+              child: ListView.builder(
+                itemCount: _predefinedExercises.length,
+                itemBuilder: (context, index) {
+                  final exercise = _predefinedExercises[index];
+                  return ListTile(
+                    title: Text(exercise),
+                    onTap: () {
+                      setState(() {
+                        _selectedExercise = exercise;
+                        _isAddingNewExercise = false;
+                      });
+                      Navigator.pop(context);
+                      _loadLastLoggedExercise();
+                    },
+                  );
+                },
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -140,8 +166,8 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
             children: [
               Expanded(
                 flex: 2,
-                child: PopupMenuButton<String>(
-                  onSelected: _onPopupMenuSelected,
+                child: GestureDetector(
+                  onTap: _openExerciseSelectionSheet,
                   child: InputDecorator(
                     decoration: const InputDecoration(labelText: 'Select Exercise'),
                     child: Text(
@@ -149,21 +175,6 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
                       style: TextStyle(color: _selectedExercise == null ? Colors.grey : Colors.black),
                     ),
                   ),
-                  itemBuilder: (context) {
-                    final exercisesToShow = List<String>.from(_predefinedExercises);
-                    if (exercisesToShow.length > 5) {
-                      exercisesToShow.removeRange(5, exercisesToShow.length);
-                    }
-                    exercisesToShow.add('custom');
-
-                    return exercisesToShow.map((String value) {
-                      return PopupMenuItem<String>(
-                        value: value,
-                        child: Text(value == 'custom' ? 'Add New Exercise' : value),
-                      );
-                    }).toList();
-                  },
-                  constraints: BoxConstraints(maxHeight: 300.0),
                 ),
               ),
             ],
