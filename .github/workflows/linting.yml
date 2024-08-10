@@ -4,6 +4,9 @@ on:
   pull_request:
     branches:
       - "*"
+    paths:
+      - lib/**
+      - '.github/workflows/linting.yml'
   workflow_dispatch:
 
 jobs:
