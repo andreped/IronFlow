@@ -32,10 +32,20 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage>
   final PageController _pageController = PageController();
   final PageStorageBucket bucket = PageStorageBucket();
 
+  void _refreshTable() {
+    setState(() {});
+  }
+
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 5, vsync: this);
+    _tabController = TabController(length: 5, vsync: this)
+      ..addListener(() {
+        if (_tabController.index == 4) {
+          // Index for 'View Table' tab
+          _refreshTable(); // Refresh the table when this tab is selected
+        }
+      });
   }
 
   @override
@@ -212,11 +222,16 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage>
               child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: FutureBuilder<List<Map<String, dynamic>>>(
-                  future: _getExercises(),
+                  future: _getExercises(), // Fetch fresh data
                   builder: (context, snapshot) {
                     if (!snapshot.hasData) {
                       return const Center(child: CircularProgressIndicator());
                     }
+
+                    if (snapshot.hasError) {
+                      return Center(child: Text('Error: ${snapshot.error}'));
+                    }
+
                     final exercises = snapshot.data!;
                     return DataTable(
                       columns: const [
@@ -235,8 +250,7 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage>
                           DataCell(Text(exercise['weight'])),
                           DataCell(Text(exercise['reps'].toString())),
                           DataCell(Text(exercise['sets'].toString())),
-                          DataCell(Text(
-                              exercise['timestamp'])), // Display the timestamp
+                          DataCell(Text(exercise['timestamp'])),
                           DataCell(
                             Row(
                               children: [
@@ -261,7 +275,7 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage>
                   },
                 ),
               ),
-            ),
+            )
           ],
         ),
       ),
