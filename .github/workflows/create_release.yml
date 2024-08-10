@@ -34,12 +34,15 @@ jobs:
           KEY_PASSWORD: ${{ secrets.ALIAS_PASSWORD }}
           ALIAS_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: base64 -d <<< $KEY_JKS > ./android/app/release-key.jks && flutter build apk --release -v
+      
+      - name: Rename APK
+        run: mv ./build/app/outputs/flutter-apk/app-release.apk IronFlow.apk
 
       - name: Upload APK
         uses: actions/upload-artifact@v2
         with:
-          name: release-apk
-          path: ./build/app/outputs/flutter-apk/app-release.apk
+          name: IronFlow
+          path: IronFlow.apk
           if-no-files-found: error
     
       - name: Upload APK to release
@@ -47,7 +50,7 @@ jobs:
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.CI_TOKEN }}
-          file: ./build/app/outputs/flutter-apk/app-release.apk
+          file: IronFlow.apk
           file_glob: true
           tag: ${{ github.ref }}
           overwrite: true
@@ -66,19 +69,20 @@ jobs:
       - name: Build iOS
         run: |
           flutter pub get
-          flutter build ios --release --verbose --no-codesign
+          flutter build ios --release --no-codesign
       
       - name: Create IPA
         run: |
-          mkdir ./payload/
-          mv ./build/ios/iphoneos/Runner.app/ ./payload
-          zip -qq -r -9 ./app-release.ipa ./payload
+          mkdir ./Payload/
+          mv ./build/ios/iphoneos/Runner.app/ ./Payload
+          zip -qq -r -9 ./IronFlow.zip ./Payload
+          mv IronFlow.zip IronFlow.ipa
       
       - name: Upload IPA
         uses: actions/upload-artifact@v2
         with:
-          name: release-ipa
-          path: ./app-release.ipa
+          name: IronFlow
+          path: ./IronFlow.ipa
           if-no-files-found: error
     
       - name: Upload IPA to release
@@ -86,7 +90,7 @@ jobs:
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.CI_TOKEN }}
-          file: ./app-release.ipa
+          file: ./IronFlow.ipa
           file_glob: true
           tag: ${{ github.ref }}
           overwrite: true
