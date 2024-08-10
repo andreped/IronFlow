@@ -4,7 +4,7 @@ import 'visualization.dart';
 import 'inputs.dart';
 import '../widgets/exercise_edit_dialog.dart';
 import 'summary.dart';
-import 'records.dart'; // Import the new records tab
+import 'records.dart';
 
 class ExerciseStoreApp extends StatelessWidget {
   @override
