@@ -33,7 +33,7 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage>
   final PageStorageBucket bucket = PageStorageBucket();
 
   void _refreshTable() {
-    setState(() {}); // Trigger a rebuild of the widget tree to refresh the FutureBuilder
+    setState(() {});
   }
 
   @override
@@ -41,7 +41,8 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage>
     super.initState();
     _tabController = TabController(length: 5, vsync: this)
       ..addListener(() {
-        if (_tabController.index == 4) { // Index for 'View Table' tab
+        if (_tabController.index == 4) {
+          // Index for 'View Table' tab
           _refreshTable(); // Refresh the table when this tab is selected
         }
       });

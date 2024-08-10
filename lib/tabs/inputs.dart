@@ -187,7 +187,7 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
                 final newName = _newExerciseController.text.trim();
                 if (newName.isNotEmpty && newName != oldName) {
                   await _dbHelper.updatePredefinedExercise(oldName, newName);
-                  await _dbHelper.updateExerciseName(oldName, newName); // Update exercise records
+                  await _dbHelper.updateExerciseName(oldName, newName);
                   setState(() {
                     final index = _predefinedExercises.indexOf(oldName);
                     if (index != -1) {
@@ -242,7 +242,8 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
               padding: const EdgeInsets.only(top: 16.0),
               child: TextFormField(
                 controller: _newExerciseController,
-                decoration: const InputDecoration(labelText: 'New Exercise Name'),
+                decoration:
+                    const InputDecoration(labelText: 'New Exercise Name'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter a new exercise name';
@@ -311,8 +312,7 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
           const SizedBox(height: 16),
           ElevatedButton(
             onPressed: _addOrUpdateExercise,
-            child: Text(
-                _isAddingNewExercise ? 'Add Exercise' : 'Save Changes'),
+            child: Text(_isAddingNewExercise ? 'Add Exercise' : 'Save Changes'),
           ),
         ],
       ),
