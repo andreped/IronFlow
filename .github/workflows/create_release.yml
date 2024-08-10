@@ -66,19 +66,20 @@ jobs:
       - name: Build iOS
         run: |
           flutter pub get
-          flutter build ios --release --verbose --no-codesign
+          flutter build ios --release --no-codesign
       
       - name: Create IPA
         run: |
-          mkdir ./payload/
-          mv ./build/ios/iphoneos/Runner.app/ ./payload
-          zip -qq -r -9 ./app-release.ipa ./payload
+          mkdir ./Payload/
+          mv ./build/ios/iphoneos/Runner.app/ ./Payload
+          zip -qq -r -9 ./IronFlow.zip ./Payload
+          mv IronFlow.zip IronFlow.ipa
       
       - name: Upload IPA
         uses: actions/upload-artifact@v2
         with:
           name: release-ipa
-          path: ./app-release.ipa
+          path: ./IronFlow.ipa
           if-no-files-found: error
     
       - name: Upload IPA to release
@@ -86,7 +87,7 @@ jobs:
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.CI_TOKEN }}
-          file: ./app-release.ipa
+          file: ./IronFlow.ipa
           file_glob: true
           tag: ${{ github.ref }}
           overwrite: true
