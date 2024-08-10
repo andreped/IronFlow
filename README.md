@@ -65,9 +65,6 @@ Then simply use the app as you would with any other Android app.
 
 ## [iOS](https://github.com/andreped/IronFlow#iOS)
 
-**DISCLAIMER:** _We currently do not own an Apple Developer Certificate, thus we cannot sign the IPA.
-This has to be done before the IPA can be used to install the app on iOS._
-
 1. Connect the mobile device (e.g., iPhone) to a desktop device (e.g., macbook) with USB cable.
 2. On the desktop device, download the IPA from [releases](https://github.com/andreped/IronFlow/releases).
 3. On the desktop device, go to `Finder`, and then unlock the mobile device. The phone should then be accessbile from the left-hand side in Finder, and click on it.
@@ -83,6 +80,9 @@ This project has [MIT License](https://github.com/andreped/IronFlow/blob/main/LI
 
 ## [Acknowledgements](https://github.com/andreped/IronFlow#Acknowledgements)
 
+I want to acknowledge [Scarlet](https://usescarlet.com) for providing me a free service to
+sign my IPA which allows me to support iOS.
+
 To reduce development time and get experience with Copilots, 
 this Flutter application was heavily assisted by OpenAI's Chat-GPT,
-primarily using GPT-4/4o/4o-mini.
+primarily using GPT-4o-mini.
