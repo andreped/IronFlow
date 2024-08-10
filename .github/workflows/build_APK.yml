@@ -30,9 +30,12 @@ jobs:
           ALIAS_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: base64 -d <<< $KEY_JKS > ./android/app/release-key.jks && flutter build apk --release -v
 
+      - name: Rename APK
+        run: ./build/app/outputs/flutter-apk/app-release.apk IronFlow.apk
+
       - name: Upload APK
         uses: actions/upload-artifact@v2
         with:
-          name: release-apk
-          path: ./build/app/outputs/flutter-apk/app-release.apk
+          name: IronFlow
+          path: IronFlow.apk
           if-no-files-found: error
