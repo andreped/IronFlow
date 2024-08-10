@@ -125,7 +125,8 @@ class _ExerciseEditDialogState extends State<ExerciseEditDialog> {
             if (_formKey.currentState!.validate()) {
               // Ensure weight has a trailing .0 if necessary
               String weight = _weightController.text;
-              if (double.tryParse(weight)?.truncateToDouble() == double.tryParse(weight)) {
+              if (double.tryParse(weight)?.truncateToDouble() ==
+                  double.tryParse(weight)) {
                 weight = '${weight}.0';
               }
 
