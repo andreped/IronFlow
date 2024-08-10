@@ -136,6 +136,16 @@ class DatabaseHelper {
     );
   }
 
+  Future<void> updatePredefinedExercise(String oldName, String newName) async {
+    final db = await database;
+    await db.update(
+      'predefined_exercises',
+      {'name': newName},
+      where: 'name = ?',
+      whereArgs: [oldName],
+    );
+  }
+
   Future<bool> isNewHighScore(
       String exerciseName, double newWeight, int newReps) async {
     final db = await database;

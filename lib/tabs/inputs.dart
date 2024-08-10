@@ -63,7 +63,7 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
     }
   }
 
-  Future<void> _addExercise() async {
+  Future<void> _addOrUpdateExercise() async {
     if (_formKey.currentState!.validate()) {
       final exerciseName = _isAddingNewExercise
           ? _newExerciseController.text.trim()
@@ -103,7 +103,6 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
           _selectedExercise = exerciseName;
         });
       } else {
-        // Refresh last logged exercise details
         _loadLastLoggedExercise();
       }
 
@@ -140,6 +139,13 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
                   final exercise = _predefinedExercises[index];
                   return ListTile(
                     title: Text(exercise),
+                    trailing: IconButton(
+                      icon: Icon(Icons.edit),
+                      onPressed: () {
+                        Navigator.pop(context);
+                        _showEditExerciseDialog(exercise);
+                      },
+                    ),
                     onTap: () {
                       setState(() {
                         _selectedExercise = exercise;
@@ -151,6 +157,48 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
                   );
                 },
               ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showEditExerciseDialog(String oldName) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Edit Exercise Name'),
+          content: TextField(
+            controller: _newExerciseController..text = oldName,
+            decoration: InputDecoration(labelText: 'New Exercise Name'),
+          ),
+          actions: [
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+            TextButton(
+              child: Text('Save'),
+              onPressed: () async {
+                final newName = _newExerciseController.text.trim();
+                if (newName.isNotEmpty && newName != oldName) {
+                  await _dbHelper.updatePredefinedExercise(oldName, newName);
+                  setState(() {
+                    final index = _predefinedExercises.indexOf(oldName);
+                    if (index != -1) {
+                      _predefinedExercises[index] = newName;
+                      if (_selectedExercise == oldName) {
+                        _selectedExercise = newName;
+                      }
+                    }
+                  });
+                }
+                Navigator.pop(context);
+              },
             ),
           ],
         );
@@ -193,11 +241,9 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
               padding: const EdgeInsets.only(top: 16.0),
               child: TextFormField(
                 controller: _newExerciseController,
-                decoration:
-                    const InputDecoration(labelText: 'New Exercise Name'),
+                decoration: const InputDecoration(labelText: 'New Exercise Name'),
                 validator: (value) {
-                  if (_isAddingNewExercise &&
-                      (value == null || value.isEmpty)) {
+                  if (value == null || value.isEmpty) {
                     return 'Please enter a new exercise name';
                   }
                   return null;
@@ -261,10 +307,11 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
               }
             },
           ),
-          const SizedBox(height: 16.0),
+          const SizedBox(height: 16),
           ElevatedButton(
-            onPressed: _addExercise,
-            child: const Text('Add Exercise'),
+            onPressed: _addOrUpdateExercise,
+            child: Text(
+                _isAddingNewExercise ? 'Add Exercise' : 'Save Changes'),
           ),
         ],
       ),
