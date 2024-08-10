@@ -27,7 +27,7 @@ If applicable, add logs/screenshots to give more information about the issue.
  - OS: [e.g., iOS or Android]
  - Version: [e.g., iOS 18]
 
-**Dekstop (if you are developing IronFlow):** 
+**Desktop (if you are developing IronFlow):** 
  - OS: [e.g., macOS]
  - Version: [e.g., 14 Sonoma]
  - Flutter: [e.g., 3.22.0]
