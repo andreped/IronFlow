@@ -123,10 +123,16 @@ class _ExerciseEditDialogState extends State<ExerciseEditDialog> {
         ElevatedButton(
           onPressed: () {
             if (_formKey.currentState!.validate()) {
+              // Ensure weight has a trailing .0 if necessary
+              String weight = _weightController.text;
+              if (double.tryParse(weight)?.truncateToDouble() == double.tryParse(weight)) {
+                weight = '${weight}.0';
+              }
+
               Navigator.of(context).pop({
                 'id': widget.exerciseData['id'], // Include the id
                 'exercise': _exerciseController.text,
-                'weight': _weightController.text,
+                'weight': weight,
                 'reps': int.parse(_repsController.text),
                 'sets': int.parse(_setsController.text),
                 'timestamp': _timestampController.text,
