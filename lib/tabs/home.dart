@@ -217,6 +217,11 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage>
                     if (!snapshot.hasData) {
                       return const Center(child: CircularProgressIndicator());
                     }
+
+                    if (snapshot.hasError) {
+                      return Center(child: Text('Error: ${snapshot.error}'));
+                    }
+
                     final exercises = snapshot.data!;
                     return DataTable(
                       columns: const [
@@ -235,8 +240,7 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage>
                           DataCell(Text(exercise['weight'])),
                           DataCell(Text(exercise['reps'].toString())),
                           DataCell(Text(exercise['sets'].toString())),
-                          DataCell(Text(
-                              exercise['timestamp'])), // Display the timestamp
+                          DataCell(Text(exercise['timestamp'])), // Display the timestamp
                           DataCell(
                             Row(
                               children: [
@@ -261,7 +265,7 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage>
                   },
                 ),
               ),
-            ),
+            )
           ],
         ),
       ),

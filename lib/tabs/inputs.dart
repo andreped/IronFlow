@@ -187,6 +187,7 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
                 final newName = _newExerciseController.text.trim();
                 if (newName.isNotEmpty && newName != oldName) {
                   await _dbHelper.updatePredefinedExercise(oldName, newName);
+                  await _dbHelper.updateExerciseName(oldName, newName); // Update exercise records
                   setState(() {
                     final index = _predefinedExercises.indexOf(oldName);
                     if (index != -1) {
