@@ -142,8 +142,8 @@ class _TableTabState extends State<TableTab> {
                 columnWidths: {
                   0: FixedColumnWidth(100.0), // Exercise name column
                   1: FixedColumnWidth(80.0), // Weight column
-                  2: FixedColumnWidth(60.0),  // Reps column
-                  3: FixedColumnWidth(60.0),  // Sets column
+                  2: FixedColumnWidth(60.0), // Reps column
+                  3: FixedColumnWidth(60.0), // Sets column
                   4: FixedColumnWidth(100.0), // Timestamp column
                   5: FixedColumnWidth(120.0), // Actions column
                 },
@@ -154,34 +154,90 @@ class _TableTabState extends State<TableTab> {
                 children: [
                   TableRow(
                     children: [
-                      TableCell(child: Padding(padding: const EdgeInsets.all(8.0), child: Text('Exercise', style: TextStyle(fontWeight: FontWeight.bold)))),
-                      TableCell(child: Padding(padding: const EdgeInsets.all(8.0), child: Text('Weight', style: TextStyle(fontWeight: FontWeight.bold)))),
-                      TableCell(child: Padding(padding: const EdgeInsets.all(8.0), child: Text('Reps', style: TextStyle(fontWeight: FontWeight.bold)))),
-                      TableCell(child: Padding(padding: const EdgeInsets.all(8.0), child: Text('Sets', style: TextStyle(fontWeight: FontWeight.bold)))),
-                      TableCell(child: Padding(padding: const EdgeInsets.all(8.0), child: Text('Timestamp', style: TextStyle(fontWeight: FontWeight.bold)))),
-                      TableCell(child: Padding(padding: const EdgeInsets.all(8.0), child: Text('Actions', style: TextStyle(fontWeight: FontWeight.bold)))),
+                      TableCell(
+                          child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text('Exercise',
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.bold)))),
+                      TableCell(
+                          child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text('Weight',
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.bold)))),
+                      TableCell(
+                          child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text('Reps',
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.bold)))),
+                      TableCell(
+                          child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text('Sets',
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.bold)))),
+                      TableCell(
+                          child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text('Timestamp',
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.bold)))),
+                      TableCell(
+                          child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text('Actions',
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.bold)))),
                     ],
                   ),
                   for (var exercise in exercises)
                     TableRow(
                       children: [
-                        TableCell(child: Padding(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 14.0), child: Text(exercise['exercise']))),
-                        TableCell(child: Padding(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 14.0), child: Text(exercise['weight']))),
-                        TableCell(child: Padding(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 14.0), child: Text(exercise['reps'].toString()))),
-                        TableCell(child: Padding(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 14.0), child: Text(exercise['sets'].toString()))),
-                        TableCell(child: Padding(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 14.0), child: Text(_formatDate(exercise['timestamp'])))),
-                        TableCell(child: Padding(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0.0), 
+                        TableCell(
+                            child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 14.0),
+                                child: Text(exercise['exercise']))),
+                        TableCell(
+                            child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 14.0),
+                                child: Text(exercise['weight']))),
+                        TableCell(
+                            child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 14.0),
+                                child: Text(exercise['reps'].toString()))),
+                        TableCell(
+                            child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 14.0),
+                                child: Text(exercise['sets'].toString()))),
+                        TableCell(
+                            child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 14.0),
+                                child:
+                                    Text(_formatDate(exercise['timestamp'])))),
+                        TableCell(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 0.0),
                             child: Row(
                               children: [
                                 IconButton(
-                                  icon: Icon(Icons.edit, size: 18.0), // Smaller icon size
+                                  icon: Icon(Icons.edit,
+                                      size: 18.0), // Smaller icon size
                                   onPressed: () {
                                     _showEditDialog(exercise);
                                   },
                                 ),
                                 SizedBox(width: 0.0), // Space between icons
                                 IconButton(
-                                  icon: Icon(Icons.delete, size: 18.0), // Smaller icon size
+                                  icon: Icon(Icons.delete,
+                                      size: 18.0), // Smaller icon size
                                   onPressed: () async {
                                     await _deleteExercise(exercise['id']);
                                   },
