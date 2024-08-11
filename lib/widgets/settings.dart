@@ -47,6 +47,8 @@ class _SettingsModalState extends State<SettingsModal> {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return AlertDialog(
       title: Text(
         'Settings',
@@ -66,7 +68,10 @@ class _SettingsModalState extends State<SettingsModal> {
               ),
               trailing: DropdownButton<ThemeMode>(
                 value: _themeMode,
-                style: TextStyle(fontSize: 14),  // Set font size for dropdown text
+                style: TextStyle(
+                  fontSize: 14,
+                  color: isDarkMode ? Colors.white : Colors.black,  // Set text color based on theme
+                ),
                 items: const [
                   DropdownMenuItem(
                     value: ThemeMode.system,
@@ -85,13 +90,20 @@ class _SettingsModalState extends State<SettingsModal> {
               ),
             ),
             // Unit selection
-            SwitchListTile(
+            ListTile(
               title: Text(
                 'Use kg (or lbs)',
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontSize: 14),
               ),
-              value: _isKg,
-              onChanged: _handleUnitChange,
+              trailing: Transform.scale(
+                scale: 0.8,  // Adjust the scale to resize the switch
+                child: Switch(
+                  value: _isKg,
+                  onChanged: _handleUnitChange,
+                  activeColor: Theme.of(context).colorScheme.primary,
+                  inactiveTrackColor: Theme.of(context).colorScheme.onSurface.withOpacity(0.38),
+                ),
+              ),
             ),
           ],
         ),
