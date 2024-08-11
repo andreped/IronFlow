@@ -140,16 +140,21 @@ class _TableTabState extends State<TableTab> {
               final exercises = snapshot.data!;
               return Table(
                 columnWidths: {
-                  0: FixedColumnWidth(100.0), // Exercise name column
+                  0: FixedColumnWidth(140.0), // Exercise name column
                   1: FixedColumnWidth(80.0), // Weight column
                   2: FixedColumnWidth(60.0), // Reps column
                   3: FixedColumnWidth(60.0), // Sets column
                   4: FixedColumnWidth(100.0), // Timestamp column
                   5: FixedColumnWidth(120.0), // Actions column
                 },
-                border: TableBorder.all(
-                  color: Colors.transparent, // No lines
-                  width: 0.0,
+                border: TableBorder(
+                  horizontalInside: BorderSide(
+                    color: Colors.grey.shade300,
+                    width: 0.5,
+                  ),
+                  verticalInside: BorderSide.none,
+                  top: BorderSide.none,
+                  bottom: BorderSide.none,
                 ),
                 children: [
                   TableRow(
