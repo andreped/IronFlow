@@ -20,11 +20,16 @@ class _ExerciseEditDialogState extends State<ExerciseEditDialog> {
   @override
   void initState() {
     super.initState();
-    _exerciseController = TextEditingController(text: widget.exerciseData['exercise']);
-    _weightController = TextEditingController(text: widget.exerciseData['weight']);
-    _repsController = TextEditingController(text: widget.exerciseData['reps'].toString());
-    _setsController = TextEditingController(text: widget.exerciseData['sets'].toString());
-    _timestampController = TextEditingController(text: widget.exerciseData['timestamp']);
+    _exerciseController =
+        TextEditingController(text: widget.exerciseData['exercise']);
+    _weightController =
+        TextEditingController(text: widget.exerciseData['weight']);
+    _repsController =
+        TextEditingController(text: widget.exerciseData['reps'].toString());
+    _setsController =
+        TextEditingController(text: widget.exerciseData['sets'].toString());
+    _timestampController =
+        TextEditingController(text: widget.exerciseData['timestamp']);
   }
 
   @override
@@ -90,7 +95,8 @@ class _ExerciseEditDialogState extends State<ExerciseEditDialog> {
             ),
             TextFormField(
               controller: _timestampController,
-              decoration: const InputDecoration(labelText: 'Timestamp (ISO8601)'),
+              decoration:
+                  const InputDecoration(labelText: 'Timestamp (ISO8601)'),
               keyboardType: TextInputType.datetime,
               validator: (value) {
                 if (value == null || value.isEmpty) {
