@@ -72,7 +72,8 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
           : _selectedExercise!;
 
       // Convert values to appropriate types
-      final weight = double.tryParse(_weightController.text.replaceAll(',', '.'));
+      final weight =
+          double.tryParse(_weightController.text.replaceAll(',', '.'));
       final reps = int.tryParse(_repsController.text);
       final sets = int.tryParse(_setsController.text);
 
@@ -134,7 +135,8 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
     required bool isDouble, // Added to determine if value is double or int
   }) {
     final FocusNode focusNode = FocusNode();
-    final TextEditingController localController = TextEditingController(text: initialValue);
+    final TextEditingController localController =
+        TextEditingController(text: initialValue);
 
     showModalBottomSheet(
       context: context,
@@ -176,9 +178,10 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
                     Navigator.pop(context);
                     // Handle type casting based on `isDouble`
                     final value = isDouble
-                        ? double.tryParse(localController.text.replaceAll(',', '.'))
+                        ? double.tryParse(
+                            localController.text.replaceAll(',', '.'))
                         : int.tryParse(localController.text);
-                    
+
                     if (value != null) {
                       setState(() {
                         controller.text = value.toString();

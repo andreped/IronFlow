@@ -21,11 +21,16 @@ class _ExerciseEditDialogState extends State<ExerciseEditDialog> {
   @override
   void initState() {
     super.initState();
-    _exerciseController = TextEditingController(text: widget.exerciseData['exercise']);
-    _weightController = TextEditingController(text: widget.exerciseData['weight']);
-    _repsController = TextEditingController(text: widget.exerciseData['reps'].toString());
-    _setsController = TextEditingController(text: widget.exerciseData['sets'].toString());
-    _timestampController = TextEditingController(text: widget.exerciseData['timestamp']);
+    _exerciseController =
+        TextEditingController(text: widget.exerciseData['exercise']);
+    _weightController =
+        TextEditingController(text: widget.exerciseData['weight']);
+    _repsController =
+        TextEditingController(text: widget.exerciseData['reps'].toString());
+    _setsController =
+        TextEditingController(text: widget.exerciseData['sets'].toString());
+    _timestampController =
+        TextEditingController(text: widget.exerciseData['timestamp']);
   }
 
   @override
@@ -67,7 +72,8 @@ class _ExerciseEditDialogState extends State<ExerciseEditDialog> {
                     child: TextFormField(
                       controller: _weightController,
                       decoration: const InputDecoration(labelText: 'Weight'),
-                      keyboardType: TextInputType.numberWithOptions(decimal: true),
+                      keyboardType:
+                          TextInputType.numberWithOptions(decimal: true),
                       inputFormatters: [
                         FilteringTextInputFormatter.allow(RegExp(r'^[\d,.]+$')),
                       ],
@@ -75,7 +81,8 @@ class _ExerciseEditDialogState extends State<ExerciseEditDialog> {
                         if (value == null || value.isEmpty) {
                           return 'Please enter the weight';
                         }
-                        final parsedWeight = double.tryParse(value.replaceAll(',', '.'));
+                        final parsedWeight =
+                            double.tryParse(value.replaceAll(',', '.'));
                         if (parsedWeight == null || !_isValidWeight(value)) {
                           return 'Please enter a valid number';
                         }
@@ -138,7 +145,8 @@ class _ExerciseEditDialogState extends State<ExerciseEditDialog> {
                 ),
                 TextFormField(
                   controller: _timestampController,
-                  decoration: const InputDecoration(labelText: 'Timestamp (ISO8601)'),
+                  decoration:
+                      const InputDecoration(labelText: 'Timestamp (ISO8601)'),
                   keyboardType: TextInputType.datetime,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -166,7 +174,8 @@ class _ExerciseEditDialogState extends State<ExerciseEditDialog> {
           ElevatedButton(
             onPressed: () {
               if (_formKey.currentState!.validate()) {
-                final weight = double.tryParse(_weightController.text.replaceAll(',', '.'));
+                final weight = double.tryParse(
+                    _weightController.text.replaceAll(',', '.'));
                 final reps = int.tryParse(_repsController.text);
                 final sets = int.tryParse(_setsController.text);
 
@@ -203,7 +212,8 @@ class _ExerciseEditDialogState extends State<ExerciseEditDialog> {
     required bool isDouble,
   }) {
     final FocusNode focusNode = FocusNode();
-    final TextEditingController localController = TextEditingController(text: initialValue);
+    final TextEditingController localController =
+        TextEditingController(text: initialValue);
 
     showModalBottomSheet(
       context: context,
@@ -244,7 +254,8 @@ class _ExerciseEditDialogState extends State<ExerciseEditDialog> {
                   onPressed: () {
                     Navigator.pop(context);
                     final value = isDouble
-                        ? double.tryParse(localController.text.replaceAll(',', '.'))
+                        ? double.tryParse(
+                            localController.text.replaceAll(',', '.'))
                         : int.tryParse(localController.text);
 
                     if (value != null) {
