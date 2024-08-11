@@ -48,46 +48,63 @@ class _SettingsModalState extends State<SettingsModal> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Settings'),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Theme selection
-          ListTile(
-            title: const Text('Theme'),
-            trailing: DropdownButton<ThemeMode>(
-              value: _themeMode,
-              items: const [
-                DropdownMenuItem(
-                  value: ThemeMode.system,
-                  child: Text('System Default'),
-                ),
-                DropdownMenuItem(
-                  value: ThemeMode.light,
-                  child: Text('Light'),
-                ),
-                DropdownMenuItem(
-                  value: ThemeMode.dark,
-                  child: Text('Dark'),
-                ),
-              ],
-              onChanged: _handleThemeChange,
+      title: Text(
+        'Settings',
+        style: Theme.of(context).textTheme.titleMedium?.copyWith(fontSize: 16),
+      ),
+      content: SizedBox(
+        width: 300,  // Set the width of the modal
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Theme selection
+            ListTile(
+              title: Text(
+                'Theme',
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontSize: 14),
+              ),
+              trailing: DropdownButton<ThemeMode>(
+                value: _themeMode,
+                style: TextStyle(fontSize: 14),  // Set font size for dropdown text
+                items: const [
+                  DropdownMenuItem(
+                    value: ThemeMode.system,
+                    child: Text('System Default'),
+                  ),
+                  DropdownMenuItem(
+                    value: ThemeMode.light,
+                    child: Text('Light'),
+                  ),
+                  DropdownMenuItem(
+                    value: ThemeMode.dark,
+                    child: Text('Dark'),
+                  ),
+                ],
+                onChanged: _handleThemeChange,
+              ),
             ),
-          ),
-          // Unit selection
-          SwitchListTile(
-            title: const Text('Use kg (uncheck for lbs)'),
-            value: _isKg,
-            onChanged: _handleUnitChange,
-          ),
-        ],
+            // Unit selection
+            SwitchListTile(
+              title: Text(
+                'Use kg (or lbs)',
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontSize: 14),
+              ),
+              value: _isKg,
+              onChanged: _handleUnitChange,
+            ),
+          ],
+        ),
       ),
       actions: [
         TextButton(
           onPressed: () {
             Navigator.of(context).pop();
           },
-          child: const Text('Close'),
+          child: Text(
+            'Close',
+            style: Theme.of(context).textTheme.labelLarge?.copyWith(fontSize: 14),
+          ),
         ),
       ],
     );
