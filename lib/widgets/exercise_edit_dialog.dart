@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class ExerciseEditDialog extends StatefulWidget {
   final Map<String, dynamic> exerciseData;
@@ -54,12 +55,17 @@ class _ExerciseEditDialogState extends State<ExerciseEditDialog> {
             TextFormField(
               controller: _weightController,
               decoration: const InputDecoration(labelText: 'Weight'),
-              keyboardType: TextInputType.number,
+              keyboardType: TextInputType.text,  // Changed to allow punctuation
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(
+                  RegExp(r'^[\d,.]+$'),  // Allow digits, comma, and period
+                ),
+              ],
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Please enter the weight';
                 }
-                if (double.tryParse(value) == null || !_isValidWeight(value)) {
+                if (double.tryParse(value.replaceAll(',', '.')) == null || !_isValidWeight(value)) {
                   return 'Please enter a valid number';
                 }
                 return null;
@@ -124,7 +130,7 @@ class _ExerciseEditDialogState extends State<ExerciseEditDialog> {
           onPressed: () {
             if (_formKey.currentState!.validate()) {
               // Ensure weight has a trailing .0 if necessary
-              String weight = _weightController.text;
+              String weight = _weightController.text.replaceAll(',', '.'); // Handle comma as a decimal
               double? parsedWeight = double.tryParse(weight);
               if (parsedWeight != null) {
                 if (parsedWeight == parsedWeight.truncateToDouble()) {
