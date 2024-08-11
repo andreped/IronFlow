@@ -59,7 +59,7 @@ class _ExerciseEditDialogState extends State<ExerciseEditDialog> {
                 if (value == null || value.isEmpty) {
                   return 'Please enter the weight';
                 }
-                if (double.tryParse(value) == null) {
+                if (double.tryParse(value) == null || !_isValidWeight(value)) {
                   return 'Please enter a valid number';
                 }
                 return null;
@@ -125,9 +125,13 @@ class _ExerciseEditDialogState extends State<ExerciseEditDialog> {
             if (_formKey.currentState!.validate()) {
               // Ensure weight has a trailing .0 if necessary
               String weight = _weightController.text;
-              if (double.tryParse(weight)?.truncateToDouble() ==
-                  double.tryParse(weight)) {
-                weight = '${weight}.0';
+              double? parsedWeight = double.tryParse(weight);
+              if (parsedWeight != null) {
+                if (parsedWeight == parsedWeight.truncateToDouble()) {
+                  weight = '${parsedWeight.toStringAsFixed(1)}';
+                } else {
+                  weight = parsedWeight.toString();
+                }
               }
 
               Navigator.of(context).pop({
@@ -144,6 +148,15 @@ class _ExerciseEditDialogState extends State<ExerciseEditDialog> {
         ),
       ],
     );
+  }
+
+  // Helper method to validate weight input
+  bool _isValidWeight(String value) {
+    // Check if the string contains more than one period or any invalid sequences
+    if (value.contains('..') || value.contains('..0') || value.endsWith('.')) {
+      return false;
+    }
+    return true;
   }
 
   @override
