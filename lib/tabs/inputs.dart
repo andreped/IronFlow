@@ -209,6 +209,8 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Form(
       key: _formKey,
       child: Column(
@@ -228,9 +230,10 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
                           ? 'Add New Exercise'
                           : _selectedExercise ?? 'Select Exercise',
                       style: TextStyle(
-                          color: _selectedExercise == null
-                              ? Colors.grey
-                              : Colors.black),
+                        color: _selectedExercise == null
+                            ? theme.hintColor
+                            : theme.textTheme.bodyLarge?.color,
+                      ),
                     ),
                   ),
                 ),

@@ -5,8 +5,22 @@ import 'inputs.dart';
 import 'summary.dart';
 import 'records.dart';
 import 'table.dart';
+import '../widgets/settings.dart';
 
 class ExerciseStoreApp extends StatelessWidget {
+  final ThemeMode themeMode;
+  final ValueChanged<ThemeMode> updateTheme;
+  final bool isKg;
+  final ValueChanged<bool> toggleUnit;
+
+  const ExerciseStoreApp({
+    Key? key,
+    required this.themeMode,
+    required this.updateTheme,
+    required this.isKg,
+    required this.toggleUnit,
+  }) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -14,12 +28,32 @@ class ExerciseStoreApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: ExerciseStoreHomePage(),
+      darkTheme: ThemeData.dark(),
+      themeMode: themeMode,
+      home: ExerciseStoreHomePage(
+        themeMode: themeMode,
+        updateTheme: updateTheme,
+        isKg: isKg,
+        toggleUnit: toggleUnit,
+      ),
     );
   }
 }
 
 class ExerciseStoreHomePage extends StatefulWidget {
+  final ThemeMode themeMode;
+  final ValueChanged<ThemeMode> updateTheme;
+  final bool isKg;
+  final ValueChanged<bool> toggleUnit;
+
+  const ExerciseStoreHomePage({
+    Key? key,
+    required this.themeMode,
+    required this.updateTheme,
+    required this.isKg,
+    required this.toggleUnit,
+  }) : super(key: key);
+
   @override
   _ExerciseStoreHomePageState createState() => _ExerciseStoreHomePageState();
 }
@@ -41,8 +75,7 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage>
     _tabController = TabController(length: 5, vsync: this)
       ..addListener(() {
         if (_tabController.index == 4) {
-          // Index for 'View Table' tab
-          _refreshTable(); // Refresh the table when this tab is selected
+          _refreshTable();
         }
       });
   }
@@ -60,17 +93,37 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage>
     });
   }
 
+  void _openSettings() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return SettingsModal(
+          themeMode: widget.themeMode,
+          onThemeChanged: widget.updateTheme,
+          isKg: widget.isKg,
+          onUnitChanged: widget.toggleUnit,
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('IronFlow'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: _openSettings,
+          ),
+        ],
         bottom: TabBar(
           controller: _tabController,
           onTap: (index) {
             _pageController.jumpToPage(index);
           },
-          labelStyle: TextStyle(fontSize: 12),
+          labelStyle: const TextStyle(fontSize: 12),
           tabs: const [
             Tab(icon: Icon(Icons.add)),
             Tab(icon: Icon(Icons.calendar_month)),
@@ -84,13 +137,11 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage>
         bucket: bucket,
         child: PageView(
           controller: _pageController,
-          physics:
-              const NeverScrollableScrollPhysics(), // Disable swipe gesture
+          physics: const NeverScrollableScrollPhysics(),
           onPageChanged: (index) {
             _tabController.animateTo(index);
           },
           children: [
-            // Log Exercise Tab
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: ExerciseSetter(
@@ -99,20 +150,16 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage>
                 },
               ),
             ),
-            // Summary Tab
             SummaryTab(
               selectedDay: _selectedDay,
               onDateSelected: _onDateSelected,
             ),
-            // Records Tab
-            RecordsTab(), // New Records tab
-            // Visualize Data Tab
+            RecordsTab(),
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: VisualizationTab(key: PageStorageKey('visualizationTab')),
             ),
-            // View Table Tab
-            TableTab(), // Replaced with TableTab widget
+            TableTab(),
           ],
         ),
       ),

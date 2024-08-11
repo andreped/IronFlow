@@ -6,16 +6,36 @@ Future<void> main() async {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
 
   @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  ThemeMode _themeMode = ThemeMode.system;
+  bool _isKg = true; // Default unit system
+
+  void _toggleThemeMode(ThemeMode newThemeMode) {
+    setState(() {
+      _themeMode = newThemeMode;
+    });
+  }
+
+  void _toggleUnit(bool newUnit) {
+    setState(() {
+      _isKg = newUnit;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrangeAccent),
-      ),
-      home: ExerciseStoreHomePage(),
+    return ExerciseStoreApp(
+      themeMode: _themeMode,
+      updateTheme: _toggleThemeMode,
+      isKg: _isKg,
+      toggleUnit: _toggleUnit,
     );
   }
 }
