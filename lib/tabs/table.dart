@@ -133,7 +133,6 @@ class _TableTabState extends State<TableTab> {
               final exercises = snapshot.data!;
               return DataTable(
                 columns: const [
-                  DataColumn(label: Text('ID')),
                   DataColumn(label: Text('Exercise')),
                   DataColumn(label: Text('Weight')),
                   DataColumn(label: Text('Reps')),
@@ -143,7 +142,6 @@ class _TableTabState extends State<TableTab> {
                 ],
                 rows: exercises.map((exercise) {
                   return DataRow(cells: [
-                    DataCell(Text(exercise['id'].toString())),
                     DataCell(Text(exercise['exercise'])),
                     DataCell(Text(exercise['weight'])),
                     DataCell(Text(exercise['reps'].toString())),
