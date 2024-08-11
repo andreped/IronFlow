@@ -99,6 +99,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
           const SizedBox(height: 16.0),
           _buildChartTypeToggle(),
           const SizedBox(height: 16.0),
+          // SizedBox to limit the height of the chart
           SizedBox(
             height: 300.0, // Set the desired height here
             child: _dataPoints.isEmpty
@@ -194,6 +195,19 @@ class _VisualizationTabState extends State<VisualizationTab> {
   }
 
   Widget _buildChart() {
+    // Determine the min and max values of the data points
+    final minY = _dataPoints.isNotEmpty
+        ? _dataPoints.map((spot) => spot.y).reduce((a, b) => a < b ? a : b)
+        : 0.0;
+    final maxY = _dataPoints.isNotEmpty
+        ? _dataPoints.map((spot) => spot.y).reduce((a, b) => a > b ? a : b)
+        : 0.0;
+
+    // Add padding to min and max values
+    final padding = 2; // Adjust this value for more or less padding
+    final paddedMinY = minY - padding;
+    final paddedMaxY = maxY + padding;
+
     return _chartType == 'Line'
         ? LineChart(
             LineChartData(
@@ -209,6 +223,8 @@ class _VisualizationTabState extends State<VisualizationTab> {
               titlesData: _buildTitlesData(),
               borderData: FlBorderData(show: true),
               gridData: const FlGridData(show: true),
+              minY: paddedMinY, // Set the minY value
+              maxY: paddedMaxY, // Set the maxY value
             ),
           )
         : ScatterChart(
@@ -224,6 +240,8 @@ class _VisualizationTabState extends State<VisualizationTab> {
               titlesData: _buildTitlesData(),
               borderData: FlBorderData(show: true),
               gridData: const FlGridData(show: true),
+              minY: paddedMinY, // Set the minY value
+              maxY: paddedMaxY, // Set the maxY value
             ),
           );
   }
