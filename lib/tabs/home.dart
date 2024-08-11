@@ -125,7 +125,7 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage>
           },
           labelStyle: const TextStyle(fontSize: 12),
           tabs: const [
-            Tab(icon: Icon(Icons.add)),
+            Tab(icon: Icon(Icons.add_box)),
             Tab(icon: Icon(Icons.calendar_month)),
             Tab(icon: Icon(Icons.celebration)),
             Tab(icon: Icon(Icons.insert_chart)),
