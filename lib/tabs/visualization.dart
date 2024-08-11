@@ -99,7 +99,8 @@ class _VisualizationTabState extends State<VisualizationTab> {
           const SizedBox(height: 16.0),
           _buildChartTypeToggle(),
           const SizedBox(height: 16.0),
-          Expanded(
+          SizedBox(
+            height: 300.0, // Set the desired height here
             child: _dataPoints.isEmpty
                 ? const Center(child: Text('No data available'))
                 : _buildChart(),
