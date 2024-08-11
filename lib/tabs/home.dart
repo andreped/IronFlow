@@ -145,13 +145,11 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage>
           },
           labelStyle: TextStyle(fontSize: 12),
           tabs: const [
-            Tab(icon: Icon(Icons.add), text: 'Log\nExercise'),
-            Tab(icon: Icon(Icons.calendar_today), text: 'Summary'),
-            Tab(
-                icon: Icon(Icons.celebration),
-                text: 'Records'), // New Records tab
-            Tab(icon: Icon(Icons.show_chart), text: 'Visualize\nData'),
-            Tab(icon: Icon(Icons.table_chart), text: 'View\nTable'),
+            Tab(icon: Icon(Icons.add)),
+            Tab(icon: Icon(Icons.calendar_month)),
+            Tab(icon: Icon(Icons.celebration)),
+            Tab(icon: Icon(Icons.insert_chart)),
+            Tab(icon: Icon(Icons.table_chart)),
           ],
         ),
       ),
