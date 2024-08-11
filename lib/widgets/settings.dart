@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 class SettingsModal extends StatefulWidget {
   final ThemeMode themeMode;
-  final void Function(ThemeMode) onThemeChanged;
+  final ValueChanged<ThemeMode> onThemeChanged;
   final bool isKg;
-  final void Function(bool) onUnitChanged;
+  final ValueChanged<bool> onUnitChanged;
 
   const SettingsModal({
     Key? key,
@@ -38,13 +38,11 @@ class _SettingsModalState extends State<SettingsModal> {
     }
   }
 
-  void _handleUnitChange(bool? newValue) {
-    if (newValue != null) {
-      setState(() {
-        _isKg = newValue;
-      });
-      widget.onUnitChanged(newValue);
-    }
+  void _handleUnitChange(bool newValue) {
+    setState(() {
+      _isKg = newValue;
+    });
+    widget.onUnitChanged(newValue);
   }
 
   @override

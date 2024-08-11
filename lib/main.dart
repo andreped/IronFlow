@@ -14,18 +14,18 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  // inherit system theme as default
   ThemeMode _themeMode = ThemeMode.system;
+  bool _isKg = true;  // Default unit system
 
-  void _toggleThemeMode() {
+  void _toggleThemeMode(ThemeMode newThemeMode) {
     setState(() {
-      if (_themeMode == ThemeMode.light) {
-        _themeMode = ThemeMode.dark;
-      } else if (_themeMode == ThemeMode.dark) {
-        _themeMode = ThemeMode.light;
-      } else {
-        _themeMode = ThemeMode.light;
-      }
+      _themeMode = newThemeMode;
+    });
+  }
+
+  void _toggleUnit(bool newUnit) {
+    setState(() {
+      _isKg = newUnit;
     });
   }
 
@@ -33,7 +33,9 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return ExerciseStoreApp(
       themeMode: _themeMode,
-      toggleTheme: _toggleThemeMode,
+      updateTheme: _toggleThemeMode,
+      isKg: _isKg,
+      toggleUnit: _toggleUnit,
     );
   }
 }
