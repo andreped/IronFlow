@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../core/database.dart';
 import '../widgets/exercise_edit_dialog.dart';
+import 'package:intl/intl.dart'; // Add this import
 
 class TableTab extends StatefulWidget {
   @override
@@ -101,6 +102,12 @@ class _TableTabState extends State<TableTab> {
     }
   }
 
+  String _formatDate(String timestamp) {
+    final DateTime dateTime = DateTime.parse(timestamp);
+    final DateFormat dateFormat = DateFormat('yyyy-MM-dd');
+    return dateFormat.format(dateTime);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -131,42 +138,61 @@ class _TableTabState extends State<TableTab> {
               }
 
               final exercises = snapshot.data!;
-              return DataTable(
-                columns: const [
-                  DataColumn(label: Text('Exercise')),
-                  DataColumn(label: Text('Weight')),
-                  DataColumn(label: Text('Reps')),
-                  DataColumn(label: Text('Sets')),
-                  DataColumn(label: Text('Timestamp')),
-                  DataColumn(label: Text('Actions')),
-                ],
-                rows: exercises.map((exercise) {
-                  return DataRow(cells: [
-                    DataCell(Text(exercise['exercise'])),
-                    DataCell(Text(exercise['weight'])),
-                    DataCell(Text(exercise['reps'].toString())),
-                    DataCell(Text(exercise['sets'].toString())),
-                    DataCell(Text(exercise['timestamp'])),
-                    DataCell(
-                      Row(
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.edit),
-                            onPressed: () {
-                              _showEditDialog(exercise);
-                            },
+              return Table(
+                columnWidths: {
+                  0: FixedColumnWidth(100.0), // Exercise name column
+                  1: FixedColumnWidth(80.0), // Weight column
+                  2: FixedColumnWidth(60.0),  // Reps column
+                  3: FixedColumnWidth(60.0),  // Sets column
+                  4: FixedColumnWidth(100.0), // Timestamp column
+                  5: FixedColumnWidth(120.0), // Actions column
+                },
+                border: TableBorder.all(
+                  color: Colors.transparent, // No lines
+                  width: 0.0,
+                ),
+                children: [
+                  TableRow(
+                    children: [
+                      TableCell(child: Padding(padding: const EdgeInsets.all(8.0), child: Text('Exercise', style: TextStyle(fontWeight: FontWeight.bold)))),
+                      TableCell(child: Padding(padding: const EdgeInsets.all(8.0), child: Text('Weight', style: TextStyle(fontWeight: FontWeight.bold)))),
+                      TableCell(child: Padding(padding: const EdgeInsets.all(8.0), child: Text('Reps', style: TextStyle(fontWeight: FontWeight.bold)))),
+                      TableCell(child: Padding(padding: const EdgeInsets.all(8.0), child: Text('Sets', style: TextStyle(fontWeight: FontWeight.bold)))),
+                      TableCell(child: Padding(padding: const EdgeInsets.all(8.0), child: Text('Timestamp', style: TextStyle(fontWeight: FontWeight.bold)))),
+                      TableCell(child: Padding(padding: const EdgeInsets.all(8.0), child: Text('Actions', style: TextStyle(fontWeight: FontWeight.bold)))),
+                    ],
+                  ),
+                  for (var exercise in exercises)
+                    TableRow(
+                      children: [
+                        TableCell(child: Padding(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 14.0), child: Text(exercise['exercise']))),
+                        TableCell(child: Padding(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 14.0), child: Text(exercise['weight']))),
+                        TableCell(child: Padding(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 14.0), child: Text(exercise['reps'].toString()))),
+                        TableCell(child: Padding(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 14.0), child: Text(exercise['sets'].toString()))),
+                        TableCell(child: Padding(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 14.0), child: Text(_formatDate(exercise['timestamp'])))),
+                        TableCell(child: Padding(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0.0), 
+                            child: Row(
+                              children: [
+                                IconButton(
+                                  icon: Icon(Icons.edit, size: 18.0), // Smaller icon size
+                                  onPressed: () {
+                                    _showEditDialog(exercise);
+                                  },
+                                ),
+                                SizedBox(width: 0.0), // Space between icons
+                                IconButton(
+                                  icon: Icon(Icons.delete, size: 18.0), // Smaller icon size
+                                  onPressed: () async {
+                                    await _deleteExercise(exercise['id']);
+                                  },
+                                ),
+                              ],
+                            ),
                           ),
-                          IconButton(
-                            icon: const Icon(Icons.delete),
-                            onPressed: () async {
-                              await _deleteExercise(exercise['id']);
-                            },
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                  ]);
-                }).toList(),
+                ],
               );
             },
           ),
