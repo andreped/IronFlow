@@ -26,7 +26,6 @@ class ExerciseStoreHomePage extends StatefulWidget {
 
 class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage>
     with SingleTickerProviderStateMixin {
-  final DatabaseHelper _dbHelper = DatabaseHelper();
   DateTime _selectedDay = DateTime.now();
   late TabController _tabController;
   final PageController _pageController = PageController();
@@ -55,74 +54,10 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage>
     super.dispose();
   }
 
-  Future<void> _clearDatabase() async {
-    await _dbHelper.clearDatabase();
-    setState(() {});
-  }
-
   void _onDateSelected(DateTime date) {
     setState(() {
       _selectedDay = date;
     });
-  }
-
-  Future<void> _showConfirmationDialogs() async {
-    final bool? firstDialogConfirmed = await showDialog<bool>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('⚠️ Confirm Deletion'),
-          content: const Text(
-              '🚨 Clicking this button deletes all the recorded exercise data. Are you sure you want to do this?'),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('No'),
-              onPressed: () => Navigator.of(context).pop(false),
-            ),
-            TextButton(
-              child: const Text('Yes'),
-              onPressed: () => Navigator.of(context).pop(true),
-            ),
-          ],
-        );
-      },
-    );
-
-    if (firstDialogConfirmed == true) {
-      final bool? secondDialogConfirmed = await showDialog<bool>(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('❗️ Are you really sure?'),
-            content: const Text(
-                '💥 Are you really sure you want to lose all your data? There is no going back!'),
-            actions: <Widget>[
-              TextButton(
-                child: const Text('No'),
-                onPressed: () => Navigator.of(context).pop(false),
-              ),
-              TextButton(
-                child: const Text('Yes'),
-                onPressed: () => Navigator.of(context).pop(true),
-              ),
-            ],
-          );
-        },
-      );
-
-      if (secondDialogConfirmed == true) {
-        await _clearDatabase();
-
-        // Show success SnackBar
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text('✅ Database cleared successfully!'),
-            backgroundColor: Colors.green,
-            duration: const Duration(seconds: 2),
-          ),
-        );
-      }
-    }
   }
 
   @override
@@ -130,14 +65,6 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage>
     return Scaffold(
       appBar: AppBar(
         title: const Text('IronFlow'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.delete_sweep),
-            onPressed: () async {
-              await _showConfirmationDialogs();
-            },
-          ),
-        ],
         bottom: TabBar(
           controller: _tabController,
           onTap: (index) {
