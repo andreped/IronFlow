@@ -55,7 +55,7 @@ class _SettingsModalState extends State<SettingsModal> {
         style: Theme.of(context).textTheme.titleMedium?.copyWith(fontSize: 16),
       ),
       content: SizedBox(
-        width: 300,  // Set the width of the modal
+        width: 300,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -64,13 +64,18 @@ class _SettingsModalState extends State<SettingsModal> {
             ListTile(
               title: Text(
                 'Theme',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontSize: 14),
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyMedium
+                    ?.copyWith(fontSize: 14),
               ),
               trailing: DropdownButton<ThemeMode>(
                 value: _themeMode,
                 style: TextStyle(
                   fontSize: 14,
-                  color: isDarkMode ? Colors.white : Colors.black,  // Set text color based on theme
+                  color: isDarkMode
+                      ? Colors.white
+                      : Colors.black, // Set text color based on theme
                 ),
                 items: const [
                   DropdownMenuItem(
@@ -93,15 +98,19 @@ class _SettingsModalState extends State<SettingsModal> {
             ListTile(
               title: Text(
                 'Use kg (or lbs)',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontSize: 14),
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyMedium
+                    ?.copyWith(fontSize: 14),
               ),
               trailing: Transform.scale(
-                scale: 0.8,  // Adjust the scale to resize the switch
+                scale: 0.8, // Adjust the scale to resize the switch
                 child: Switch(
                   value: _isKg,
                   onChanged: _handleUnitChange,
                   activeColor: Theme.of(context).colorScheme.primary,
-                  inactiveTrackColor: Theme.of(context).colorScheme.onSurface.withOpacity(0.38),
+                  inactiveTrackColor:
+                      Theme.of(context).colorScheme.onSurface.withOpacity(0.38),
                 ),
               ),
             ),
@@ -115,7 +124,8 @@ class _SettingsModalState extends State<SettingsModal> {
           },
           child: Text(
             'Close',
-            style: Theme.of(context).textTheme.labelLarge?.copyWith(fontSize: 14),
+            style:
+                Theme.of(context).textTheme.labelLarge?.copyWith(fontSize: 14),
           ),
         ),
       ],

@@ -10,8 +10,8 @@ import '../widgets/settings.dart';
 class ExerciseStoreApp extends StatelessWidget {
   final ThemeMode themeMode;
   final ValueChanged<ThemeMode> updateTheme;
-  final bool isKg;  // Pass the unit state
-  final ValueChanged<bool> toggleUnit;  // Pass the toggle function
+  final bool isKg;
+  final ValueChanged<bool> toggleUnit;
 
   const ExerciseStoreApp({
     Key? key,

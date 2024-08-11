@@ -213,10 +213,10 @@ class _VisualizationTabState extends State<VisualizationTab> {
     final paddedMinY = minY - padding;
     final paddedMaxY = maxY + padding;
 
-    final lineColor = theme.colorScheme.primary; 
-    final dotColor = theme.colorScheme.secondary; 
-    final gridColor = theme.colorScheme.onSurface.withOpacity(0.1); 
-    final textColor = theme.textTheme.bodyLarge?.color ?? Colors.black; 
+    final lineColor = theme.colorScheme.primary;
+    final dotColor = theme.colorScheme.secondary;
+    final gridColor = theme.colorScheme.onSurface.withOpacity(0.1);
+    final textColor = theme.textTheme.bodyLarge?.color ?? Colors.black;
 
     return _chartType == 'Line'
         ? LineChart(
@@ -232,9 +232,12 @@ class _VisualizationTabState extends State<VisualizationTab> {
               ],
               titlesData: _buildTitlesData(textColor),
               borderData: FlBorderData(show: true),
-              gridData: FlGridData(show: true, drawVerticalLine: true, getDrawingHorizontalLine: (value) {
-                return FlLine(color: gridColor, strokeWidth: 1);
-              }),
+              gridData: FlGridData(
+                  show: true,
+                  drawVerticalLine: true,
+                  getDrawingHorizontalLine: (value) {
+                    return FlLine(color: gridColor, strokeWidth: 1);
+                  }),
               minY: paddedMinY,
               maxY: paddedMaxY,
             ),
@@ -244,15 +247,19 @@ class _VisualizationTabState extends State<VisualizationTab> {
               scatterSpots: _dataPoints,
               scatterTouchData: ScatterTouchData(
                 touchTooltipData: ScatterTouchTooltipData(
-                  getTooltipColor: (ScatterSpot touchedSpot) => theme.colorScheme.secondary,
+                  getTooltipColor: (ScatterSpot touchedSpot) =>
+                      theme.colorScheme.secondary,
                 ),
                 enabled: true,
               ),
               titlesData: _buildTitlesData(textColor),
               borderData: FlBorderData(show: true),
-              gridData: FlGridData(show: true, drawVerticalLine: true, getDrawingHorizontalLine: (value) {
-                return FlLine(color: gridColor, strokeWidth: 1);
-              }),
+              gridData: FlGridData(
+                  show: true,
+                  drawVerticalLine: true,
+                  getDrawingHorizontalLine: (value) {
+                    return FlLine(color: gridColor, strokeWidth: 1);
+                  }),
               minY: paddedMinY,
               maxY: paddedMaxY,
             ),

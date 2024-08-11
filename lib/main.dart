@@ -15,7 +15,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   ThemeMode _themeMode = ThemeMode.system;
-  bool _isKg = true;  // Default unit system
+  bool _isKg = true; // Default unit system
 
   void _toggleThemeMode(ThemeMode newThemeMode) {
     setState(() {
