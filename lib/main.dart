@@ -6,16 +6,34 @@ Future<void> main() async {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
 
   @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  // inherit system theme as default
+  ThemeMode _themeMode = ThemeMode.system;
+
+  void _toggleThemeMode() {
+    setState(() {
+      if (_themeMode == ThemeMode.light) {
+        _themeMode = ThemeMode.dark;
+      } else if (_themeMode == ThemeMode.dark) {
+        _themeMode = ThemeMode.light;
+      } else {
+        _themeMode = ThemeMode.light;
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrangeAccent),
-      ),
-      home: ExerciseStoreHomePage(),
+    return ExerciseStoreApp(
+      themeMode: _themeMode,
+      toggleTheme: _toggleThemeMode,
     );
   }
 }
