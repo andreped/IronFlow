@@ -89,6 +89,8 @@ class _VisualizationTabState extends State<VisualizationTab> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -99,12 +101,18 @@ class _VisualizationTabState extends State<VisualizationTab> {
           const SizedBox(height: 16.0),
           _buildChartTypeToggle(),
           const SizedBox(height: 16.0),
-          // SizedBox to limit the height of the chart
           SizedBox(
-            height: 300.0, // Set the desired height here
+            height: 300.0,
             child: _dataPoints.isEmpty
-                ? const Center(child: Text('No data available'))
-                : _buildChart(),
+                ? Center(
+                    child: Text(
+                      'No data available',
+                      style: TextStyle(
+                        color: theme.textTheme.bodyLarge?.color,
+                      ),
+                    ),
+                  )
+                : _buildChart(theme),
           ),
         ],
       ),
@@ -194,19 +202,21 @@ class _VisualizationTabState extends State<VisualizationTab> {
     );
   }
 
-  Widget _buildChart() {
-    // Determine the min and max values of the data points
+  Widget _buildChart(ThemeData theme) {
     final minY = _dataPoints.isNotEmpty
         ? _dataPoints.map((spot) => spot.y).reduce((a, b) => a < b ? a : b)
         : 0.0;
     final maxY = _dataPoints.isNotEmpty
         ? _dataPoints.map((spot) => spot.y).reduce((a, b) => a > b ? a : b)
         : 0.0;
-
-    // Add padding to min and max values
-    final padding = 2; // Adjust this value for more or less padding
+    final padding = 2;
     final paddedMinY = minY - padding;
     final paddedMaxY = maxY + padding;
+
+    final lineColor = theme.colorScheme.primary; 
+    final dotColor = theme.colorScheme.secondary; 
+    final gridColor = theme.colorScheme.onSurface.withOpacity(0.1); 
+    final textColor = theme.textTheme.bodyLarge?.color ?? Colors.black; 
 
     return _chartType == 'Line'
         ? LineChart(
@@ -214,17 +224,19 @@ class _VisualizationTabState extends State<VisualizationTab> {
               lineBarsData: [
                 LineChartBarData(
                   spots: _dataPoints,
-                  isCurved: false, // Straight lines
-                  color: Colors.blue,
+                  isCurved: false,
+                  color: lineColor,
                   dotData: FlDotData(show: false),
                   belowBarData: BarAreaData(show: false),
                 ),
               ],
-              titlesData: _buildTitlesData(),
+              titlesData: _buildTitlesData(textColor),
               borderData: FlBorderData(show: true),
-              gridData: const FlGridData(show: true),
-              minY: paddedMinY, // Set the minY value
-              maxY: paddedMaxY, // Set the maxY value
+              gridData: FlGridData(show: true, drawVerticalLine: true, getDrawingHorizontalLine: (value) {
+                return FlLine(color: gridColor, strokeWidth: 1);
+              }),
+              minY: paddedMinY,
+              maxY: paddedMaxY,
             ),
           )
         : ScatterChart(
@@ -232,21 +244,22 @@ class _VisualizationTabState extends State<VisualizationTab> {
               scatterSpots: _dataPoints,
               scatterTouchData: ScatterTouchData(
                 touchTooltipData: ScatterTouchTooltipData(
-                  getTooltipColor: (ScatterSpot touchedSpot) =>
-                      Colors.blueAccent,
+                  getTooltipColor: (ScatterSpot touchedSpot) => theme.colorScheme.secondary,
                 ),
                 enabled: true,
               ),
-              titlesData: _buildTitlesData(),
+              titlesData: _buildTitlesData(textColor),
               borderData: FlBorderData(show: true),
-              gridData: const FlGridData(show: true),
-              minY: paddedMinY, // Set the minY value
-              maxY: paddedMaxY, // Set the maxY value
+              gridData: FlGridData(show: true, drawVerticalLine: true, getDrawingHorizontalLine: (value) {
+                return FlLine(color: gridColor, strokeWidth: 1);
+              }),
+              minY: paddedMinY,
+              maxY: paddedMaxY,
             ),
           );
   }
 
-  FlTitlesData _buildTitlesData() {
+  FlTitlesData _buildTitlesData(Color textColor) {
     return FlTitlesData(
       leftTitles: AxisTitles(
         sideTitles: SideTitles(
@@ -255,18 +268,18 @@ class _VisualizationTabState extends State<VisualizationTab> {
           getTitlesWidget: (value, meta) {
             return Text(
               value.toInt().toString(),
-              style: const TextStyle(
-                color: Colors.black,
+              style: TextStyle(
+                color: textColor,
                 fontWeight: FontWeight.bold,
                 fontSize: 12,
               ),
             );
           },
         ),
-        axisNameWidget: const Text(
+        axisNameWidget: Text(
           'Weights [kg]',
           style: TextStyle(
-            color: Colors.black,
+            color: textColor,
             fontWeight: FontWeight.bold,
             fontSize: 14,
           ),
@@ -281,18 +294,18 @@ class _VisualizationTabState extends State<VisualizationTab> {
           getTitlesWidget: (value, meta) {
             return Text(
               value.toInt().toString(),
-              style: const TextStyle(
-                color: Colors.black,
+              style: TextStyle(
+                color: textColor,
                 fontWeight: FontWeight.bold,
                 fontSize: 12,
               ),
             );
           },
         ),
-        axisNameWidget: const Text(
+        axisNameWidget: Text(
           'Days',
           style: TextStyle(
-            color: Colors.black,
+            color: textColor,
             fontWeight: FontWeight.bold,
             fontSize: 14,
           ),
