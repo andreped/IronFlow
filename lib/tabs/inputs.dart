@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../core/database.dart';
 
 class ExerciseSetter extends StatefulWidget {
@@ -69,7 +70,7 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
           ? _newExerciseController.text.trim()
           : _selectedExercise!;
 
-      final weight = double.parse(_weightController.text);
+      final weight = double.parse(_weightController.text.replaceAll(',', '.')); // Handle comma as a decimal
       final reps = int.parse(_repsController.text);
       final sets = int.parse(_setsController.text);
 
@@ -258,12 +259,17 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
           TextFormField(
             controller: _weightController,
             decoration: const InputDecoration(labelText: 'Weight'),
-            keyboardType: TextInputType.number,
+            keyboardType: TextInputType.text,  // Change to allow punctuation
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(
+                RegExp(r'^[\d,.]+$'),  // Allow digits, comma, and period
+              ),
+            ],
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return 'Please enter the exercise weight';
               }
-              if (double.tryParse(value) == null) {
+              if (double.tryParse(value.replaceAll(',', '.')) == null) {
                 return 'Please enter a valid number';
               }
               return null;
