@@ -144,7 +144,7 @@ class _TableTabState extends State<TableTab> {
                   1: FixedColumnWidth(80.0), // Weight column
                   2: FixedColumnWidth(60.0), // Reps column
                   3: FixedColumnWidth(60.0), // Sets column
-                  4: FixedColumnWidth(100.0), // Timestamp column
+                  4: FixedColumnWidth(110.0), // Timestamp column
                   5: FixedColumnWidth(120.0), // Actions column
                 },
                 border: TableBorder(
