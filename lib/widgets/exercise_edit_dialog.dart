@@ -21,16 +21,11 @@ class _ExerciseEditDialogState extends State<ExerciseEditDialog> {
   @override
   void initState() {
     super.initState();
-    _exerciseController =
-        TextEditingController(text: widget.exerciseData['exercise']);
-    _weightController =
-        TextEditingController(text: widget.exerciseData['weight']);
-    _repsController =
-        TextEditingController(text: widget.exerciseData['reps'].toString());
-    _setsController =
-        TextEditingController(text: widget.exerciseData['sets'].toString());
-    _timestampController =
-        TextEditingController(text: widget.exerciseData['timestamp']);
+    _exerciseController = TextEditingController(text: widget.exerciseData['exercise']);
+    _weightController = TextEditingController(text: widget.exerciseData['weight']);
+    _repsController = TextEditingController(text: widget.exerciseData['reps'].toString());
+    _setsController = TextEditingController(text: widget.exerciseData['sets'].toString());
+    _timestampController = TextEditingController(text: widget.exerciseData['timestamp']);
   }
 
   @override
@@ -59,52 +54,87 @@ class _ExerciseEditDialogState extends State<ExerciseEditDialog> {
                     return null;
                   },
                 ),
-                TextFormField(
-                  controller: _weightController,
-                  decoration: const InputDecoration(labelText: 'Weight'),
-                  keyboardType: TextInputType.text,
-                  inputFormatters: [
-                    FilteringTextInputFormatter.allow(
-                      RegExp(r'^[\d,.]+$'),
+                GestureDetector(
+                  onTap: () {
+                    _showNumberInputSheet(
+                      controller: _weightController,
+                      label: 'Weight',
+                      initialValue: _weightController.text,
+                      isDouble: true,
+                    );
+                  },
+                  child: AbsorbPointer(
+                    child: TextFormField(
+                      controller: _weightController,
+                      decoration: const InputDecoration(labelText: 'Weight'),
+                      keyboardType: TextInputType.numberWithOptions(decimal: true),
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(RegExp(r'^[\d,.]+$')),
+                      ],
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter the weight';
+                        }
+                        final parsedWeight = double.tryParse(value.replaceAll(',', '.'));
+                        if (parsedWeight == null || !_isValidWeight(value)) {
+                          return 'Please enter a valid number';
+                        }
+                        return null;
+                      },
                     ),
-                  ],
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter the weight';
-                    }
-                    if (double.tryParse(value.replaceAll(',', '.')) == null || !_isValidWeight(value)) {
-                      return 'Please enter a valid number';
-                    }
-                    return null;
-                  },
+                  ),
                 ),
-                TextFormField(
-                  controller: _repsController,
-                  decoration: const InputDecoration(labelText: 'Reps'),
-                  keyboardType: TextInputType.number,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter the number of reps';
-                    }
-                    if (int.tryParse(value) == null) {
-                      return 'Please enter a valid integer';
-                    }
-                    return null;
+                GestureDetector(
+                  onTap: () {
+                    _showNumberInputSheet(
+                      controller: _repsController,
+                      label: 'Reps',
+                      initialValue: _repsController.text,
+                      isDouble: false,
+                    );
                   },
+                  child: AbsorbPointer(
+                    child: TextFormField(
+                      controller: _repsController,
+                      decoration: const InputDecoration(labelText: 'Reps'),
+                      keyboardType: TextInputType.number,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter the number of reps';
+                        }
+                        if (int.tryParse(value) == null) {
+                          return 'Please enter a valid integer';
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
                 ),
-                TextFormField(
-                  controller: _setsController,
-                  decoration: const InputDecoration(labelText: 'Sets'),
-                  keyboardType: TextInputType.number,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter the number of sets';
-                    }
-                    if (int.tryParse(value) == null) {
-                      return 'Please enter a valid integer';
-                    }
-                    return null;
+                GestureDetector(
+                  onTap: () {
+                    _showNumberInputSheet(
+                      controller: _setsController,
+                      label: 'Sets',
+                      initialValue: _setsController.text,
+                      isDouble: false,
+                    );
                   },
+                  child: AbsorbPointer(
+                    child: TextFormField(
+                      controller: _setsController,
+                      decoration: const InputDecoration(labelText: 'Sets'),
+                      keyboardType: TextInputType.number,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter the number of sets';
+                        }
+                        if (int.tryParse(value) == null) {
+                          return 'Please enter a valid integer';
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
                 ),
                 TextFormField(
                   controller: _timestampController,
@@ -136,22 +166,25 @@ class _ExerciseEditDialogState extends State<ExerciseEditDialog> {
           ElevatedButton(
             onPressed: () {
               if (_formKey.currentState!.validate()) {
-                String weight = _weightController.text.replaceAll(',', '.');
-                double? parsedWeight = double.tryParse(weight);
-                if (parsedWeight != null) {
-                  if (parsedWeight == parsedWeight.truncateToDouble()) {
-                    weight = '${parsedWeight.toStringAsFixed(1)}';
-                  } else {
-                    weight = parsedWeight.toString();
-                  }
+                final weight = double.tryParse(_weightController.text.replaceAll(',', '.'));
+                final reps = int.tryParse(_repsController.text);
+                final sets = int.tryParse(_setsController.text);
+
+                if (weight == null || reps == null || sets == null) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text('Please enter valid values'),
+                    duration: Duration(seconds: 2),
+                    backgroundColor: Colors.red,
+                  ));
+                  return;
                 }
 
                 Navigator.of(context).pop({
                   'id': widget.exerciseData['id'],
                   'exercise': _exerciseController.text,
-                  'weight': weight,
-                  'reps': int.parse(_repsController.text),
-                  'sets': int.parse(_setsController.text),
+                  'weight': weight.toString(),
+                  'reps': reps,
+                  'sets': sets,
                   'timestamp': _timestampController.text,
                 });
               }
@@ -160,6 +193,79 @@ class _ExerciseEditDialogState extends State<ExerciseEditDialog> {
           ),
         ],
       ),
+    );
+  }
+
+  void _showNumberInputSheet({
+    required TextEditingController controller,
+    required String label,
+    required String initialValue,
+    required bool isDouble,
+  }) {
+    final FocusNode focusNode = FocusNode();
+    final TextEditingController localController = TextEditingController(text: initialValue);
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      enableDrag: true,
+      isDismissible: true,
+      builder: (BuildContext context) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          FocusScope.of(context).requestFocus(focusNode);
+        });
+
+        return Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          child: Container(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(label, style: TextStyle(fontSize: 18)),
+                TextField(
+                  focusNode: focusNode,
+                  controller: localController,
+                  keyboardType: isDouble
+                      ? TextInputType.numberWithOptions(decimal: true)
+                      : TextInputType.number,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(RegExp(r'^[\d,.]+$')),
+                  ],
+                  decoration: InputDecoration(
+                    labelText: label,
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    final value = isDouble
+                        ? double.tryParse(localController.text.replaceAll(',', '.'))
+                        : int.tryParse(localController.text);
+
+                    if (value != null) {
+                      setState(() {
+                        controller.text = value.toString();
+                      });
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text('Please enter a valid number'),
+                        duration: Duration(seconds: 2),
+                        backgroundColor: Colors.red,
+                      ));
+                    }
+                  },
+                  child: Text('Done'),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
