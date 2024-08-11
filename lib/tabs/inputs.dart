@@ -36,6 +36,7 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
 
   Future<void> _loadPredefinedExercises() async {
     List<String> exercises = await _dbHelper.getPredefinedExercises();
+    exercises.sort(); // Sort alphabetically
     setState(() {
       _predefinedExercises = exercises;
       _selectedExercise =
@@ -113,6 +114,7 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
         await _dbHelper.addPredefinedExercise(exerciseName);
         setState(() {
           _predefinedExercises.add(exerciseName);
+          _predefinedExercises.sort(); // Keep the list sorted
           _selectedExercise = exerciseName;
         });
       } else {
@@ -281,6 +283,7 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
                     final index = _predefinedExercises.indexOf(oldName);
                     if (index != -1) {
                       _predefinedExercises[index] = newName;
+                      _predefinedExercises.sort(); // Keep the list sorted
                       if (_selectedExercise == oldName) {
                         _selectedExercise = newName;
                       }
