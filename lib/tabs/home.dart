@@ -7,6 +7,15 @@ import 'records.dart';
 import 'table.dart';
 
 class ExerciseStoreApp extends StatelessWidget {
+  final ThemeMode themeMode;
+  final VoidCallback toggleTheme;
+
+  const ExerciseStoreApp({
+    Key? key,
+    required this.themeMode,
+    required this.toggleTheme,
+  }) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -14,12 +23,18 @@ class ExerciseStoreApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: ExerciseStoreHomePage(),
+      darkTheme: ThemeData.dark(),
+      themeMode: themeMode,
+      home: ExerciseStoreHomePage(toggleTheme: toggleTheme),
     );
   }
 }
 
 class ExerciseStoreHomePage extends StatefulWidget {
+  final VoidCallback toggleTheme;
+
+  const ExerciseStoreHomePage({Key? key, required this.toggleTheme}) : super(key: key);
+
   @override
   _ExerciseStoreHomePageState createState() => _ExerciseStoreHomePageState();
 }
@@ -65,6 +80,12 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage>
     return Scaffold(
       appBar: AppBar(
         title: const Text('IronFlow'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.brightness_6),
+            onPressed: widget.toggleTheme,
+          ),
+        ],
         bottom: TabBar(
           controller: _tabController,
           onTap: (index) {
@@ -84,8 +105,7 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage>
         bucket: bucket,
         child: PageView(
           controller: _pageController,
-          physics:
-              const NeverScrollableScrollPhysics(), // Disable swipe gesture
+          physics: const NeverScrollableScrollPhysics(), // Disable swipe gesture
           onPageChanged: (index) {
             _tabController.animateTo(index);
           },
