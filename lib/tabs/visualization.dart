@@ -101,8 +101,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
           const SizedBox(height: 16.0),
           _buildChartTypeToggle(),
           const SizedBox(height: 16.0),
-          SizedBox(
-            height: 300.0,
+          Expanded(
             child: _dataPoints.isEmpty
                 ? Center(
                     child: Text(
@@ -112,7 +111,22 @@ class _VisualizationTabState extends State<VisualizationTab> {
                       ),
                     ),
                   )
-                : _buildChart(theme),
+                : LayoutBuilder(
+                    builder: (context, constraints) {
+                      // Calculate height dynamically based on screen size
+                      final chartHeight = constraints.maxHeight;
+
+                      return ConstrainedBox(
+                        constraints: BoxConstraints(
+                          maxHeight: chartHeight,
+                        ),
+                        child: SizedBox(
+                          height: chartHeight,
+                          child: _buildChart(theme),
+                        ),
+                      );
+                    },
+                  ),
           ),
         ],
       ),
