@@ -1,4 +1,4 @@
-name: Build IPA
+name: Build IPA for App Store
 
 on:
   # Allows you to run this workflow manually from the Actions tab
@@ -67,7 +67,7 @@ jobs:
         run: |
           python -m pip install codemagic-cli-tools
           which xcode-project
-          xcode-project use-profiles --archive-method=ad-hoc
+          xcode-project use-profiles --archive-method=app-store
           cat /Users/runner/export_options.plist
 
       - name: Build IPA
