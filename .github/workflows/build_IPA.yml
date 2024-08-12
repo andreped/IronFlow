@@ -71,7 +71,7 @@ jobs:
           cat /Users/runner/export_options.plist
 
       - name: Build iOS
-        run: flutter pub get && flutter build ios --release --export-options-plist /Users/runner/export_options.plist
+        run: flutter pub get && flutter build ipa --release --export-options-plist /Users/runner/export_options.plist
       
       - name: Create IPA
         run: |
