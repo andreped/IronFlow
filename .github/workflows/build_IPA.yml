@@ -6,7 +6,7 @@ on:
 
 jobs:
   build-ipa:
-    runs-on: macos-latest
+    runs-on: macos-12
     steps:
       - uses: actions/checkout@v4
 
@@ -50,7 +50,7 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.22.2'
-          architecture: x64
+          # architecture: x64
 
       - name: Upgrade CocoaPods
         run: sudo gem install cocoapods
