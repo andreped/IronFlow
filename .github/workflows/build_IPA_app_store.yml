@@ -80,7 +80,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: IronFlow
-          path: ./IronFlow.ipa
+          path: ./build/ios/IronFlow.ipa
           if-no-files-found: error
 
       - name: Clean up keychain and provisioning profile
