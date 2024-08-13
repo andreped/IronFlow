@@ -62,7 +62,7 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage>
     with SingleTickerProviderStateMixin {
   DateTime _selectedDay = DateTime.now();
   late TabController _tabController;
-  final PageController _pageController = PageController();
+  late PageController _pageController;
   final PageStorageBucket bucket = PageStorageBucket();
 
   void _refreshTable() {
@@ -72,12 +72,13 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 5, vsync: this)
+    _tabController = TabController(length: 5, vsync: this, initialIndex: 2)
       ..addListener(() {
         if (_tabController.index == 4) {
           _refreshTable();
         }
       });
+    _pageController = PageController(initialPage: 2);
   }
 
   @override
