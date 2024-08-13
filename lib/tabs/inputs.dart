@@ -140,6 +140,13 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
     final TextEditingController localController =
         TextEditingController(text: initialValue);
 
+    // Add a listener to the focusNode to clear the initial value when focused
+    focusNode.addListener(() {
+      if (focusNode.hasFocus) {
+        localController.text = ''; // Clear the initial value when the field is focused
+      }
+    });
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -180,8 +187,7 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
                     Navigator.pop(context);
                     // Handle type casting based on `isDouble`
                     final value = isDouble
-                        ? double.tryParse(
-                            localController.text.replaceAll(',', '.'))
+                        ? double.tryParse(localController.text.replaceAll(',', '.'))
                         : int.tryParse(localController.text);
 
                     if (value != null) {
