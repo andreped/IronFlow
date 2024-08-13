@@ -24,13 +24,13 @@ class _RecordsTabState extends State<RecordsTab> {
       // Sort by maximum weight
       _maxWeights = Map.fromEntries(
         _maxWeights.entries.toList()
-          ..sort((a, b) => (b.value['maxWeight'] as double).compareTo(a.value['maxWeight'] as double)),
+          ..sort((a, b) => (b.value['maxWeight'] as double)
+              .compareTo(a.value['maxWeight'] as double)),
       );
     } else {
       // Sort alphabetically by exercise name
       _maxWeights = Map.fromEntries(
-        _maxWeights.entries.toList()
-          ..sort((a, b) => a.key.compareTo(b.key)),
+        _maxWeights.entries.toList()..sort((a, b) => a.key.compareTo(b.key)),
       );
     }
   }
@@ -48,7 +48,8 @@ class _RecordsTabState extends State<RecordsTab> {
         title: const Text('Records'),
         actions: [
           IconButton(
-            icon: Icon(_isSortedByWeight ? Icons.fitness_center : Icons.sort_by_alpha),
+            icon: Icon(
+                _isSortedByWeight ? Icons.fitness_center : Icons.sort_by_alpha),
             onPressed: () {
               setState(() {
                 _isSortedByWeight = !_isSortedByWeight;
@@ -74,7 +75,8 @@ class _RecordsTabState extends State<RecordsTab> {
                     children: [
                       ListTile(
                         title: Text(exercise),
-                        trailing: Text('${weight!.toStringAsFixed(2)} kg x $reps reps'),
+                        trailing: Text(
+                            '${weight!.toStringAsFixed(2)} kg x $reps reps'),
                       ),
                       if (index < _maxWeights.length - 1) Divider(),
                     ],
