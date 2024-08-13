@@ -8,48 +8,79 @@ class RecordsTab extends StatefulWidget {
 
 class _RecordsTabState extends State<RecordsTab> {
   final DatabaseHelper _dbHelper = DatabaseHelper();
+  Map<String, Map<String, dynamic>> _maxWeights = {};
+  bool _isSortedByWeight = false;
 
-  Future<Map<String, Map<String, dynamic>>> _getMaxWeights() async {
-    return await _dbHelper.getMaxWeightsForExercises();
+  Future<void> _fetchAndSortRecords() async {
+    final data = await _dbHelper.getMaxWeightsForExercises();
+    setState(() {
+      _maxWeights = data;
+      _sortRecords();
+    });
+  }
+
+  void _sortRecords() {
+    if (_isSortedByWeight) {
+      // Sort by maximum weight
+      _maxWeights = Map.fromEntries(
+        _maxWeights.entries.toList()
+          ..sort((a, b) => (b.value['maxWeight'] as double).compareTo(a.value['maxWeight'] as double)),
+      );
+    } else {
+      // Sort alphabetically by exercise name
+      _maxWeights = Map.fromEntries(
+        _maxWeights.entries.toList()
+          ..sort((a, b) => a.key.compareTo(b.key)),
+      );
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchAndSortRecords();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: FutureBuilder<Map<String, Map<String, dynamic>>>(
-        future: _getMaxWeights(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('No records available'));
-          }
-
-          final maxWeights = snapshot.data!;
-          return ListView.builder(
-            itemCount: maxWeights.length,
-            itemBuilder: (context, index) {
-              final exercise = maxWeights.keys.elementAt(index);
-              final weightData = maxWeights[exercise]!;
-              final weight = weightData['maxWeight'];
-              final reps = weightData['reps'];
-              
-              return Column(
-                children: [
-                  ListTile(
-                    title: Text(exercise),
-                    trailing: Text('${weight!.toStringAsFixed(2)} kg x $reps reps'),
-                  ),
-                  if (index < maxWeights.length - 1) 
-                    Divider(), // Add divider between items
-                ],
-              );
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Records'),
+        actions: [
+          IconButton(
+            icon: Icon(_isSortedByWeight ? Icons.fitness_center : Icons.sort_by_alpha),
+            onPressed: () {
+              setState(() {
+                _isSortedByWeight = !_isSortedByWeight;
+                _sortRecords();
+              });
             },
-          );
-        },
+          ),
+        ],
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: _maxWeights.isEmpty
+            ? const Center(child: CircularProgressIndicator())
+            : ListView.builder(
+                itemCount: _maxWeights.length,
+                itemBuilder: (context, index) {
+                  final exercise = _maxWeights.keys.elementAt(index);
+                  final weightData = _maxWeights[exercise]!;
+                  final weight = weightData['maxWeight'];
+                  final reps = weightData['reps'];
+
+                  return Column(
+                    children: [
+                      ListTile(
+                        title: Text(exercise),
+                        trailing: Text('${weight!.toStringAsFixed(2)} kg x $reps reps'),
+                      ),
+                      if (index < _maxWeights.length - 1) Divider(),
+                    ],
+                  );
+                },
+              ),
       ),
     );
   }
