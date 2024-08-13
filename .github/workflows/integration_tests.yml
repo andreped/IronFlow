@@ -37,5 +37,5 @@ jobs:
       - name: Run integration tests
         uses: dniHze/maestro-test-action@v1
         with:
-          flow: maestro test .maestro
+          flow: .maestro
           report: report.xml
