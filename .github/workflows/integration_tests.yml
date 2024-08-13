@@ -1,0 +1,39 @@
+name: Integration tests
+
+on:
+  pull_request:
+    branches:
+      - "*"
+    paths:
+      - lib/**
+      - test/flows/**
+      - '.github/workflows/integration_tests.yml'
+  workflow_dispatch:
+
+jobs:
+  tests:
+    runs-on: macos-12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Java
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'zulu'
+          java-version: '11'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.22.2'
+     
+      - name: Configure flutter
+        run: flutter clean && flutter pub get
+      
+      - name: Install Maestro
+        run: |
+          curl -Ls "https://get.maestro.mobile.dev" | bash
+          brew tap facebook/fb
+          brew install facebook/fb/idb-companion
+      
+      - name: Run integration tests
+        run: maestro test test/flows/flow.yml
