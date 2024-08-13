@@ -30,8 +30,10 @@ jobs:
         run: flutter clean && flutter pub get
       
       - name: Install Maestro
+        run: curl -Ls "https://get.maestro.mobile.dev" | bash
+      
+      - name: Configure Maestro
         run: |
-          curl -Ls "https://get.maestro.mobile.dev" | bash
           export PATH="$PATH":"$HOME/.maestro/bin"
           brew tap facebook/fb
           brew install facebook/fb/idb-companion
