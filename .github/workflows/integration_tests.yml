@@ -29,14 +29,13 @@ jobs:
       - name: Configure flutter
         run: flutter clean && flutter pub get
       
-      - name: Install Maestro
-        run: curl -Ls "https://get.maestro.mobile.dev" | bash
-      
-      - name: Configure Maestro
-        run: |
-          export PATH="$PATH":"$HOME/.maestro/bin"
-          brew tap facebook/fb
-          brew install facebook/fb/idb-companion
+      - name: Configure iPhone simulator
+        uses: futureware-tech/simulator-action@v2
+        with:
+          model: 'iPhone 14 Pro'
       
       - name: Run integration tests
-        run: maestro test test/flows/flow.yml
+        uses: dniHze/maestro-test-action@v1
+        with:
+          flow: maestro test .maestro
+          report: report.xml
