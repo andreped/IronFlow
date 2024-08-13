@@ -128,6 +128,11 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage>
             _tabController.animateTo(index);
           },
           children: [
+            RecordsTab(),
+            SummaryTab(
+              selectedDay: _selectedDay,
+              onDateSelected: _onDateSelected,
+            ),
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: ExerciseSetter(
@@ -136,11 +141,6 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage>
                 },
               ),
             ),
-            SummaryTab(
-              selectedDay: _selectedDay,
-              onDateSelected: _onDateSelected,
-            ),
-            RecordsTab(),
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: VisualizationTab(key: PageStorageKey('visualizationTab')),
@@ -157,9 +157,9 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage>
           },
           labelStyle: const TextStyle(fontSize: 12),
           tabs: const [
-            Tab(icon: Icon(Icons.add_box)),
-            Tab(icon: Icon(Icons.calendar_month)),
             Tab(icon: Icon(Icons.celebration)),
+            Tab(icon: Icon(Icons.calendar_month)),
+            Tab(icon: Icon(Icons.add_box)),
             Tab(icon: Icon(Icons.insert_chart)),
             Tab(icon: Icon(Icons.table_chart)),
           ],
