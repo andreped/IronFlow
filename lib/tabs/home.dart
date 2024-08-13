@@ -118,20 +118,6 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage>
             onPressed: _openSettings,
           ),
         ],
-        bottom: TabBar(
-          controller: _tabController,
-          onTap: (index) {
-            _pageController.jumpToPage(index);
-          },
-          labelStyle: const TextStyle(fontSize: 12),
-          tabs: const [
-            Tab(icon: Icon(Icons.add_box)),
-            Tab(icon: Icon(Icons.calendar_month)),
-            Tab(icon: Icon(Icons.celebration)),
-            Tab(icon: Icon(Icons.insert_chart)),
-            Tab(icon: Icon(Icons.table_chart)),
-          ],
-        ),
       ),
       body: PageStorage(
         bucket: bucket,
@@ -142,6 +128,11 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage>
             _tabController.animateTo(index);
           },
           children: [
+            RecordsTab(),
+            SummaryTab(
+              selectedDay: _selectedDay,
+              onDateSelected: _onDateSelected,
+            ),
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: ExerciseSetter(
@@ -150,16 +141,27 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage>
                 },
               ),
             ),
-            SummaryTab(
-              selectedDay: _selectedDay,
-              onDateSelected: _onDateSelected,
-            ),
-            RecordsTab(),
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: VisualizationTab(key: PageStorageKey('visualizationTab')),
             ),
             TableTab(),
+          ],
+        ),
+      ),
+      bottomNavigationBar: BottomAppBar(
+        child: TabBar(
+          controller: _tabController,
+          onTap: (index) {
+            _pageController.jumpToPage(index);
+          },
+          labelStyle: const TextStyle(fontSize: 12),
+          tabs: const [
+            Tab(icon: Icon(Icons.celebration, size: 27.0)),
+            Tab(icon: Icon(Icons.calendar_month, size: 27.0)),
+            Tab(icon: Icon(Icons.add_box, size: 27.0)),
+            Tab(icon: Icon(Icons.insert_chart, size: 27.0)),
+            Tab(icon: Icon(Icons.table_chart, size: 27.0)),
           ],
         ),
       ),
