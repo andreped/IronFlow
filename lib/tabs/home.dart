@@ -118,20 +118,6 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage>
             onPressed: _openSettings,
           ),
         ],
-        bottom: TabBar(
-          controller: _tabController,
-          onTap: (index) {
-            _pageController.jumpToPage(index);
-          },
-          labelStyle: const TextStyle(fontSize: 12),
-          tabs: const [
-            Tab(icon: Icon(Icons.add_box)),
-            Tab(icon: Icon(Icons.calendar_month)),
-            Tab(icon: Icon(Icons.celebration)),
-            Tab(icon: Icon(Icons.insert_chart)),
-            Tab(icon: Icon(Icons.table_chart)),
-          ],
-        ),
       ),
       body: PageStorage(
         bucket: bucket,
@@ -160,6 +146,22 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage>
               child: VisualizationTab(key: PageStorageKey('visualizationTab')),
             ),
             TableTab(),
+          ],
+        ),
+      ),
+      bottomNavigationBar: BottomAppBar(
+        child: TabBar(
+          controller: _tabController,
+          onTap: (index) {
+            _pageController.jumpToPage(index);
+          },
+          labelStyle: const TextStyle(fontSize: 12),
+          tabs: const [
+            Tab(icon: Icon(Icons.add_box)),
+            Tab(icon: Icon(Icons.calendar_month)),
+            Tab(icon: Icon(Icons.celebration)),
+            Tab(icon: Icon(Icons.insert_chart)),
+            Tab(icon: Icon(Icons.table_chart)),
           ],
         ),
       ),
