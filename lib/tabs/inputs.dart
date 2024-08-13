@@ -134,11 +134,17 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
     required TextEditingController controller,
     required String label,
     required String initialValue,
-    required bool isDouble, // Added to determine if value is double or int
+    required bool isDouble,
   }) {
     final FocusNode focusNode = FocusNode();
     final TextEditingController localController =
         TextEditingController(text: initialValue);
+
+    focusNode.addListener(() {
+      if (focusNode.hasFocus) {
+        localController.text = '';
+      }
+    });
 
     showModalBottomSheet(
       context: context,
@@ -150,60 +156,88 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
           FocusScope.of(context).requestFocus(focusNode);
         });
 
-        return Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom,
-          ),
-          child: Container(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(label, style: TextStyle(fontSize: 18)),
-                TextField(
-                  focusNode: focusNode,
-                  controller: localController,
-                  keyboardType: isDouble
-                      ? TextInputType.numberWithOptions(decimal: true)
-                      : TextInputType.number,
-                  inputFormatters: [
-                    FilteringTextInputFormatter.allow(RegExp(r'^[\d,.]+$')),
-                  ],
-                  decoration: InputDecoration(
-                    labelText: label,
-                    border: OutlineInputBorder(),
+        return WillPopScope(
+          onWillPop: () async {
+            _updateValueAndClose(
+                context, localController, controller, isDouble);
+            return true;
+          },
+          child: GestureDetector(
+            behavior: HitTestBehavior
+                .opaque, // Ensures the gesture detector covers the whole screen
+            onTap: () {
+              _updateValueAndClose(
+                  context, localController, controller, isDouble);
+            },
+            child: Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom,
+              ),
+              child: GestureDetector(
+                onTap:
+                    () {}, // Prevents triggering the parent GestureDetector when tapping on modal content
+                child: Container(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(label, style: TextStyle(fontSize: 18)),
+                      TextField(
+                        focusNode: focusNode,
+                        controller: localController,
+                        keyboardType: isDouble
+                            ? TextInputType.numberWithOptions(decimal: true)
+                            : TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.allow(
+                              RegExp(r'^[\d,.]+$')),
+                        ],
+                        decoration: InputDecoration(
+                          labelText: label,
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      ElevatedButton(
+                        onPressed: () {
+                          _updateValueAndClose(
+                              context, localController, controller, isDouble);
+                        },
+                        child: Text('Done'),
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(height: 10),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                    // Handle type casting based on `isDouble`
-                    final value = isDouble
-                        ? double.tryParse(
-                            localController.text.replaceAll(',', '.'))
-                        : int.tryParse(localController.text);
-
-                    if (value != null) {
-                      setState(() {
-                        controller.text = value.toString();
-                      });
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text('Please enter a valid number'),
-                        duration: Duration(seconds: 2),
-                        backgroundColor: Colors.red,
-                      ));
-                    }
-                  },
-                  child: Text('Done'),
-                ),
-              ],
+              ),
             ),
           ),
         );
       },
     );
+  }
+
+  void _updateValueAndClose(
+    BuildContext context,
+    TextEditingController localController,
+    TextEditingController controller,
+    bool isDouble,
+  ) {
+    Navigator.pop(context);
+    final value = isDouble
+        ? double.tryParse(localController.text.replaceAll(',', '.'))
+        : int.tryParse(localController.text);
+
+    if (value != null) {
+      setState(() {
+        controller.text = value.toString();
+      });
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Please enter a valid number'),
+        duration: Duration(seconds: 2),
+        backgroundColor: Colors.red,
+      ));
+    }
   }
 
   void _openExerciseSelectionSheet() {
