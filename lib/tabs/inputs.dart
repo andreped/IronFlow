@@ -129,7 +129,7 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
       widget.onExerciseAdded();
     }
   }
- 
+
   void _showNumberInputSheet({
     required TextEditingController controller,
     required String label,
@@ -158,20 +158,24 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
 
         return WillPopScope(
           onWillPop: () async {
-            _updateValueAndClose(context, localController, controller, isDouble);
+            _updateValueAndClose(
+                context, localController, controller, isDouble);
             return true;
           },
           child: GestureDetector(
-            behavior: HitTestBehavior.opaque, // Ensures the gesture detector covers the whole screen
+            behavior: HitTestBehavior
+                .opaque, // Ensures the gesture detector covers the whole screen
             onTap: () {
-              _updateValueAndClose(context, localController, controller, isDouble);
+              _updateValueAndClose(
+                  context, localController, controller, isDouble);
             },
             child: Padding(
               padding: EdgeInsets.only(
                 bottom: MediaQuery.of(context).viewInsets.bottom,
               ),
               child: GestureDetector(
-                onTap: () {}, // Prevents triggering the parent GestureDetector when tapping on modal content
+                onTap:
+                    () {}, // Prevents triggering the parent GestureDetector when tapping on modal content
                 child: Container(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
@@ -185,7 +189,8 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
                             ? TextInputType.numberWithOptions(decimal: true)
                             : TextInputType.number,
                         inputFormatters: [
-                          FilteringTextInputFormatter.allow(RegExp(r'^[\d,.]+$')),
+                          FilteringTextInputFormatter.allow(
+                              RegExp(r'^[\d,.]+$')),
                         ],
                         decoration: InputDecoration(
                           labelText: label,
@@ -234,7 +239,6 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
       ));
     }
   }
-
 
   void _openExerciseSelectionSheet() {
     showModalBottomSheet(
