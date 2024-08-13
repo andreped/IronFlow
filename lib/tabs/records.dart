@@ -36,9 +36,16 @@ class _RecordsTabState extends State<RecordsTab> {
               final weightData = maxWeights[exercise]!;
               final weight = weightData['maxWeight'];
               final reps = weightData['reps'];
-              return ListTile(
-                title: Text(exercise),
-                trailing: Text('${weight!.toStringAsFixed(2)} kg x $reps reps'),
+              
+              return Column(
+                children: [
+                  ListTile(
+                    title: Text(exercise),
+                    trailing: Text('${weight!.toStringAsFixed(2)} kg x $reps reps'),
+                  ),
+                  if (index < maxWeights.length - 1) 
+                    Divider(), // Add divider between items
+                ],
               );
             },
           );
