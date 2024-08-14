@@ -1,0 +1,7 @@
+appId: com.andreped.IronFlow
+---
+- tapOn:
+    point: 50%,17%
+- tapOn: Deadlift
+- tapOn:
+    point: 50%,23%

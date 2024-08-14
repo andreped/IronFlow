@@ -1,0 +1,71 @@
+name: Integration Tests
+
+on:
+  pull_request:
+    branches:
+      - "*"
+    paths:
+      - lib/**
+      - test/flows/**
+      - '.github/workflows/integration_tests.yml'
+  workflow_dispatch:
+
+env:
+  MAESTRO_VERSION: 1.33.0
+
+jobs:
+  ios_e2e:
+    runs-on: macos-12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Java
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'zulu'
+          java-version: '11'
+      
+      #- name: Setup Xcode
+      #  uses: maxim-lobanov/setup-xcode@v1
+      #  with:
+      #    xcode-version: '15.2.0'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.22.2'
+     
+      - name: Configure flutter
+        run: flutter clean && flutter pub get
+      
+      - name: Fix Pod issue
+        run: cd ios && pod install
+
+      - name: Installing maestro
+        run: curl -Ls "https://get.maestro.mobile.dev" | bash
+
+      - name: Installing maestro dependencies
+        run: |
+          brew tap facebook/fb
+          brew install facebook/fb/idb-companion
+      
+      - name: Build iOS
+        run: |
+          xcrun xcodebuild \
+            -scheme "Runner" \
+            -workspace "ios/Runner.xcworkspace" \
+            -configuration "Debug" \
+            -sdk "iphonesimulator" \
+            -destination "generic/platform=iOS Simulator" \
+            -derivedDataPath ./
+      
+      - name: Launch iOS simulator
+        run: xcrun simctl boot "iPhone 14 Pro"
+      
+      - name: Install app on simulator
+        run: xcrun simctl install booted ./Build/Products/Debug-iphonesimulator/Runner.app
+      
+      - name: Launch app on simulator
+        run: xcrun simctl launch booted com.andreped.IronFlow && sleep 1
+      
+      - name: Running tests with maestro
+        run: sh .github/shell/maestro_tests.sh < /dev/null
