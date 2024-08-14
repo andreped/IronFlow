@@ -25,6 +25,12 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.22.2'
+      
+      - name: Upgrade CocoaPods
+        run: sudo gem install cocoapods
+      
+      - name: Fix pod install
+        run: sudo arch -x86_64 gem install ffi
      
       - name: Configure flutter
         run: flutter clean && flutter pub get
@@ -39,6 +45,9 @@ jobs:
         
       - name: Launch iOS simulator
         run: xcrun simctl boot "iPhone 14 Pro"
+      
+      - name: Configure pod
+        run: pod install
       
       - name: Build iOS
         run: |
