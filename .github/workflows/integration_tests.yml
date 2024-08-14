@@ -21,7 +21,7 @@ jobs:
           distribution: 'zulu'
           java-version: '11'
       
-      - name: Setup XCode
+      - name: Setup Xcode
         uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: '15.4'
