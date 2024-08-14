@@ -11,7 +11,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  tests:
+  ios_e2e:
     runs-on: macos-12
     steps:
       - uses: actions/checkout@v4
@@ -28,18 +28,38 @@ jobs:
      
       - name: Configure flutter
         run: flutter clean && flutter pub get
+
+      - name: Installing maestro
+        run: curl -Ls "https://get.maestro.mobile.dev" | bash # will use `MAESTRO_VERSION` from env
+
+      - name: Installing maestro dependencies
+        run: |
+          brew tap facebook/fb
+          brew install facebook/fb/idb-companion
+        
+      - name: Launch iOS simulator
+        run: xcrun simctl boot "iPhone 14 Pro"
       
-      - name: Configure maestro testing
-        uses: dniHze/maestro-test-action@v1
+      - name: Build flutter iOS app
+        run: flutter build ios
       
-      - name: Run Android integration tests
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: 29
-          arch: x86_64
-          ram-size: 2048M
-          target: default
-          script: maestro test --format=junit --output=report.xml --no-ansi .maestro
+      - name: Install app on simulator
+        run: xcrun simctl install booted ./build/ios/iphoneos/Runner.app
+      
+      - name: Running tests with maestro
+        run: $HOME/.maestro/bin/maestro test .maestro/ --format junit
+      
+      #- name: Configure maestro testing
+      #  uses: dniHze/maestro-test-action@v1
+      
+      #- name: Run Android integration tests
+      #  uses: reactivecircus/android-emulator-runner@v2
+      #  with:
+      #    api-level: 29
+      #    arch: x86_64
+      #    ram-size: 2048M
+      #    target: default
+      #    script: maestro test --format=junit --output=report.xml --no-ansi .maestro/
       
       #- name: Configure iPhone simulator
       #  uses: futureware-tech/simulator-action@v2
