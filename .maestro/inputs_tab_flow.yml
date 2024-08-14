@@ -6,5 +6,5 @@ appId: com.andreped.IronFlow
 - tapOn:
     point: 50%,23%
 - tapOn: Weight
-    inputText: 90
+- inputText: 90
 - tapOn: Scrim
