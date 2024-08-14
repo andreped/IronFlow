@@ -10,6 +10,9 @@ on:
       - '.github/workflows/integration_tests.yml'
   workflow_dispatch:
 
+env:
+  MAESTRO_VERSION: 1.37.0
+
 jobs:
   ios_e2e:
     runs-on: macos-13
