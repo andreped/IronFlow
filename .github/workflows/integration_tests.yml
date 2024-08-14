@@ -64,5 +64,8 @@ jobs:
       - name: Launch app on simulator
         run: xcrun simctl launch booted com.andreped.IronFlow && sleep 10
       
+      - name: Fix maestro
+        run: pgrep -lf maestro | awk '{print $1}' | xargs -r kill
+      
       - name: Running tests with maestro
         run: $HOME/.maestro/bin/maestro test .maestro/ --format junit
