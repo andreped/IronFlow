@@ -30,7 +30,7 @@ jobs:
         run: sudo gem install cocoapods
       
       - name: Fix pod install
-        run: sudo arch -x86_64 gem install ffi
+        run: pod cache clean --all
      
       - name: Configure flutter
         run: flutter clean && flutter pub get
@@ -46,9 +46,6 @@ jobs:
       - name: Launch iOS simulator
         run: xcrun simctl boot "iPhone 14 Pro"
       
-      - name: Configure pod
-        run: pod install
-      
       - name: Build iOS
         run: |
           xcrun xcodebuild \
@@ -62,7 +59,7 @@ jobs:
         run: xcrun simctl install booted ./build/ios/iphonesimulator/Runner.app
       
       - name: Launch app on simulator
-        run: xcrun simctl launch booted com.andreped.IronFlow   
+        run: xcrun simctl launch booted com.andreped.IronFlow
       
       - name: Running tests with maestro
         run: $HOME/.maestro/bin/maestro test .maestro/ --format junit
