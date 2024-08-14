@@ -46,7 +46,13 @@ The app is compatible with both Android and iOS.
 | **Build APK** | ![CI](https://github.com/andreped/IronFlow/workflows/Build%20APK/badge.svg) |
 | **Build IPA** | ![CI](https://github.com/andreped/IronFlow/workflows/Build%20IPA/badge.svg) |
 | **Create Release** | ![CI](https://github.com/andreped/IronFlow/workflows/Create%20Release/badge.svg) |
+| **Integration tests** | ![CI](https://github.com/andreped/IronFlow/workflows/Integration%20Tests/badge.svg) |
 | **Linting** | ![CI](https://github.com/andreped/IronFlow/workflows/Linting/badge.svg) |
+
+## [Integration Tests](https://github.com/andreped/IronFlow#Integration-Tests)
+
+For testing the application, we use [Maestro](https://github.com/mobile-dev-inc/maestro).  
+Integration tests are performed for all pull requests and before releases using [GitHub Actions](https://github.com/andreped/IronFlow/actions/workflows/integration_tests.yml).
 
 ## [Getting Started](https://github.com/andreped/IronFlow#Getting-Started)
 
@@ -83,6 +89,9 @@ This project has [MIT License](https://github.com/andreped/IronFlow/blob/main/LI
 I want to acknowledge [Scarlet](https://usescarlet.com) for providing me a free service to
 sign my IPA which allows me to support iOS.
 
+Using [Maestro](https://maestro.mobile.dev) has allowed us to implement integration tests with ease!
+Especially, Maestro studio which provided a user-friendly, no-code interface to create test flows.
+
 To reduce development time and get experience with Copilots, 
-this Flutter application was heavily assisted by OpenAI's Chat-GPT,
-primarily using GPT-4o-mini.
+this Flutter application was heavily assisted by [OpenAI's ChatGPT](https://chatgpt.com),
+primarily using `GPT-4o-mini`.
