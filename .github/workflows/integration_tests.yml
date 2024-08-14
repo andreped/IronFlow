@@ -35,7 +35,7 @@ jobs:
         run: flutter clean && flutter pub get
       
       - name: Fix Pod issue
-        run: brew install cocoapods && cd ios && pod install
+        run: cd ios && pod install
 
       - name: Installing maestro
         run: curl -Ls "https://get.maestro.mobile.dev" | bash
