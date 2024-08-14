@@ -65,10 +65,7 @@ jobs:
         run: xcrun simctl install booted ./Build/Products/Debug-iphonesimulator/Runner.app
       
       - name: Launch app on simulator
-        run: xcrun simctl launch booted com.andreped.IronFlow && sleep 10
-      
-      - name: Fix maestro
-        run: pgrep -lf maestro | awk '{print $1}' | xargs -r kill
+        run: xcrun simctl launch booted com.andreped.IronFlow && sleep 2
       
       - name: Running tests with maestro
         run: sh .github/shell/maestro_tests.sh < /dev/null
