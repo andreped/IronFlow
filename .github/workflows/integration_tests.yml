@@ -55,10 +55,11 @@ jobs:
             -workspace "ios/Runner.xcworkspace" \
             -configuration "Debug" \
             -sdk "iphonesimulator" \
-            -destination "generic/platform=iOS Simulator"
+            -destination "generic/platform=iOS Simulator" \
+            -derivedDataPath ./
       
       - name: Install app on simulator
-        run: xcrun simctl install booted ./build/ios/iphonesimulator/Runner.app
+        run: xcrun simctl install booted ./Build/Products/Debug-iphonesimulator/Runner.app
       
       - name: Launch app on simulator
         run: xcrun simctl launch booted com.andreped.IronFlow
