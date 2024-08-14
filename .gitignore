@@ -12,6 +12,7 @@
 .buildlog/
 .history
 .svn/
+*report.xml
 
 # IntelliJ related
 *.iml
