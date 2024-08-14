@@ -38,7 +38,7 @@ jobs:
           brew install facebook/fb/idb-companion
         
       - name: Launch iOS simulator
-        run: xcrun simctl boot "iPhone 15 Pro Max"
+        run: xcrun simctl boot "iPhone 14 Pro"
       
       - name: Build iOS
         run: |
