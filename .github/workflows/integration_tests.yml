@@ -11,7 +11,7 @@ on:
   workflow_dispatch:
 
 env:
-  MAESTRO_VERSION: 1.37.8
+  MAESTRO_VERSION: 1.33.0
 
 jobs:
   ios_e2e:
