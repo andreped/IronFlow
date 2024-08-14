@@ -62,7 +62,7 @@ jobs:
         run: xcrun simctl install booted ./Build/Products/Debug-iphonesimulator/Runner.app
       
       - name: Launch app on simulator
-        run: xcrun simctl launch booted com.andreped.IronFlow
+        run: xcrun simctl launch booted com.andreped.IronFlow && sleep 10
       
       - name: Running tests with maestro
         run: $HOME/.maestro/bin/maestro test .maestro/ --format junit
