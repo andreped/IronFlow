@@ -12,7 +12,7 @@ on:
 
 jobs:
   ios_e2e:
-    runs-on: macos-12
+    runs-on: macos-13
     steps:
       - uses: actions/checkout@v4
       - name: Setup Java
@@ -20,17 +20,16 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: '11'
+      
+      - name: Setup XCode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '15.4'
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.22.2'
-      
-      - name: Upgrade CocoaPods
-        run: sudo gem install cocoapods
-      
-      - name: Fix pod install
-        run: pod cache clean --all
      
       - name: Configure flutter
         run: flutter clean && flutter pub get
