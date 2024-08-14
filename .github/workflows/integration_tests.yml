@@ -29,8 +29,11 @@ jobs:
       - name: Configure flutter
         run: flutter clean && flutter pub get
       
-      - uses: dniHze/maestro-test-action@v1
-      - uses: reactivecircus/android-emulator-runner@v2
+      - name: Configure maestro testing
+        uses: dniHze/maestro-test-action@v1
+      
+      - name: Run Android integration tests
+        uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 29
           arch: x86_64
