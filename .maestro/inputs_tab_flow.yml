@@ -1,8 +1,10 @@
 appId: com.andreped.IronFlow
 ---
-- tapOn: "Select Exercise\nBenchpress"
-- tapOn: "Deadlift"
 - tapOn:
-    point: "50%,23%"
-- tapOn: "Weight"
-- tapOn: "Scrim"
+    point: 50%,17%
+- tapOn: Deadlift
+- tapOn:
+    point: 50%,23%
+- tapOn: Weight
+    inputText: 90
+- tapOn: Scrim
