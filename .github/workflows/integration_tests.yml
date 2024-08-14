@@ -47,9 +47,6 @@ jobs:
         run: |
           brew tap facebook/fb
           brew install facebook/fb/idb-companion
-        
-      - name: Launch iOS simulator
-        run: xcrun simctl boot "iPhone 14 Pro"
       
       - name: Build iOS
         run: |
@@ -61,11 +58,14 @@ jobs:
             -destination "generic/platform=iOS Simulator" \
             -derivedDataPath ./
       
+      - name: Launch iOS simulator
+        run: xcrun simctl boot "iPhone 14 Pro"
+      
       - name: Install app on simulator
         run: xcrun simctl install booted ./Build/Products/Debug-iphonesimulator/Runner.app
       
       - name: Launch app on simulator
-        run: xcrun simctl launch booted com.andreped.IronFlow && sleep 2
+        run: xcrun simctl launch booted com.andreped.IronFlow && sleep 1
       
       - name: Running tests with maestro
         run: sh .github/shell/maestro_tests.sh < /dev/null

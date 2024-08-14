@@ -1,5 +1,4 @@
 #! /bin/bash
-export MAESTRO_DRIVER_STARTUP_TIMEOUT=60000
 $HOME/.maestro/bin/maestro -v
 i=0
 while [ $i -le 9 ]; do
