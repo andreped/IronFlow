@@ -45,6 +45,9 @@ jobs:
       - name: Launch iOS simulator
         run: xcrun simctl boot "iPhone 14 Pro"
       
+      - name: Fix Pod issue
+        run: cd ios && rm Podfile.lock && pod install
+      
       - name: Build iOS
         run: |
           xcrun xcodebuild \
