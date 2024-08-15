@@ -11,8 +11,14 @@ class TableTab extends StatefulWidget {
 class _TableTabState extends State<TableTab> {
   final DatabaseHelper _dbHelper = DatabaseHelper();
 
+  String _sortColumn = 'timestamp';
+  bool _sortAscending = false;
+
   Future<List<Map<String, dynamic>>> _getExercises() async {
-    return await _dbHelper.getExercises();
+    return await _dbHelper.getExercises(
+      sortColumn: _sortColumn,
+      ascending: _sortAscending,
+    );
   }
 
   Future<void> _deleteExercise(int id) async {
@@ -108,6 +114,41 @@ class _TableTabState extends State<TableTab> {
     return dateFormat.format(dateTime);
   }
 
+  void _sortTable(String column) {
+    setState(() {
+      if (_sortColumn == column) {
+        _sortAscending = !_sortAscending;
+      } else {
+        _sortColumn = column;
+        _sortAscending = true;
+      }
+    });
+  }
+
+  TableCell _buildHeader(String title, String column) {
+    return TableCell(
+      child: GestureDetector(
+        onTap: () => _sortTable(column),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            children: [
+              Text(
+                title,
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              if (_sortColumn == column)
+                Icon(
+                  _sortAscending ? Icons.arrow_upward : Icons.arrow_downward,
+                  size: 16,
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -127,7 +168,7 @@ class _TableTabState extends State<TableTab> {
         child: SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: FutureBuilder<List<Map<String, dynamic>>>(
-            future: _getExercises(), // Fetch fresh data
+            future: _getExercises(),
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
                 return const Center(child: CircularProgressIndicator());
@@ -140,12 +181,12 @@ class _TableTabState extends State<TableTab> {
               final exercises = snapshot.data!;
               return Table(
                 columnWidths: {
-                  0: FixedColumnWidth(140.0), // Exercise name column
-                  1: FixedColumnWidth(80.0), // Weight column
-                  2: FixedColumnWidth(60.0), // Reps column
-                  3: FixedColumnWidth(60.0), // Sets column
-                  4: FixedColumnWidth(110.0), // Timestamp column
-                  5: FixedColumnWidth(120.0), // Actions column
+                  0: FixedColumnWidth(150.0),
+                  1: FixedColumnWidth(90.0),
+                  2: FixedColumnWidth(70.0),
+                  3: FixedColumnWidth(70.0),
+                  4: FixedColumnWidth(120.0),
+                  5: FixedColumnWidth(130.0),
                 },
                 border: TableBorder(
                   horizontalInside: BorderSide(
@@ -159,42 +200,18 @@ class _TableTabState extends State<TableTab> {
                 children: [
                   TableRow(
                     children: [
+                      _buildHeader('Exercise', 'exercise'),
+                      _buildHeader('Weight', 'weight'),
+                      _buildHeader('Reps', 'reps'),
+                      _buildHeader('Sets', 'sets'),
+                      _buildHeader('Timestamp', 'timestamp'),
                       TableCell(
-                          child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text('Exercise',
-                                  style:
-                                      TextStyle(fontWeight: FontWeight.bold)))),
-                      TableCell(
-                          child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text('Weight',
-                                  style:
-                                      TextStyle(fontWeight: FontWeight.bold)))),
-                      TableCell(
-                          child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text('Reps',
-                                  style:
-                                      TextStyle(fontWeight: FontWeight.bold)))),
-                      TableCell(
-                          child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text('Sets',
-                                  style:
-                                      TextStyle(fontWeight: FontWeight.bold)))),
-                      TableCell(
-                          child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text('Timestamp',
-                                  style:
-                                      TextStyle(fontWeight: FontWeight.bold)))),
-                      TableCell(
-                          child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text('Actions',
-                                  style:
-                                      TextStyle(fontWeight: FontWeight.bold)))),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text('Actions',
+                              style: TextStyle(fontWeight: FontWeight.bold)),
+                        ),
+                      ),
                     ],
                   ),
                   for (var exercise in exercises)
@@ -233,16 +250,14 @@ class _TableTabState extends State<TableTab> {
                             child: Row(
                               children: [
                                 IconButton(
-                                  icon: Icon(Icons.edit,
-                                      size: 18.0), // Smaller icon size
+                                  icon: Icon(Icons.edit, size: 18.0),
                                   onPressed: () {
                                     _showEditDialog(exercise);
                                   },
                                 ),
-                                SizedBox(width: 0.0), // Space between icons
+                                SizedBox(width: 0.0),
                                 IconButton(
-                                  icon: Icon(Icons.delete,
-                                      size: 18.0), // Smaller icon size
+                                  icon: Icon(Icons.delete, size: 18.0),
                                   onPressed: () async {
                                     await _deleteExercise(exercise['id']);
                                   },
