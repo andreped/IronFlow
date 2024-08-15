@@ -113,16 +113,24 @@ class _VisualizationTabState extends State<VisualizationTab> {
                   )
                 : LayoutBuilder(
                     builder: (context, constraints) {
-                      // Calculate height dynamically based on screen size
                       final chartHeight = constraints.maxHeight;
 
                       return ConstrainedBox(
                         constraints: BoxConstraints(
                           maxHeight: chartHeight,
                         ),
-                        child: SizedBox(
-                          height: chartHeight,
-                          child: _buildChart(theme),
+                        child: Stack(
+                          children: [
+                            Positioned.fill(
+                              child: _buildChart(theme),
+                            ),
+                            if (_selectedExercise != null)
+                              Positioned(
+                                bottom: 44,
+                                right: 8,
+                                child: _buildLegend(theme),
+                              ),
+                          ],
                         ),
                       );
                     },
@@ -162,7 +170,6 @@ class _VisualizationTabState extends State<VisualizationTab> {
         if (newValue != null) {
           setState(() {
             _aggregationMethod = newValue;
-            // Automatically switch to Scatter if 'None' is selected
             if (_aggregationMethod == 'None' && _chartType == 'Line') {
               _chartType = 'Scatter';
             }
@@ -278,6 +285,37 @@ class _VisualizationTabState extends State<VisualizationTab> {
               maxY: paddedMaxY,
             ),
           );
+  }
+
+  Widget _buildLegend(ThemeData theme) {
+    final legendColor = theme.colorScheme.primary;
+    return Container(
+      padding: const EdgeInsets.all(4.0), // Reduced padding
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.8),
+        borderRadius: BorderRadius.circular(6.0), // Reduced border radius
+        border: Border.all(color: legendColor, width: 1.0), // Reduced border width
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 10, // Reduced width
+            height: 10, // Reduced height
+            color: legendColor,
+          ),
+          const SizedBox(width: 4.0), // Reduced spacing
+          Text(
+            _selectedExercise!,
+            style: TextStyle(
+              color: theme.textTheme.bodyLarge?.color,
+              fontWeight: FontWeight.bold,
+              fontSize: 8, // Reduced font size
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   FlTitlesData _buildTitlesData(Color textColor) {
