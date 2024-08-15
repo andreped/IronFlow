@@ -15,6 +15,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
   String _chartType = 'Line'; // Default chart type
   List<String> _exerciseNames = [];
   List<ScatterSpot> _dataPoints = [];
+  final Color fixedColor = Colors.blue;
 
   final DatabaseHelper _dbHelper = DatabaseHelper();
 
@@ -234,8 +235,8 @@ class _VisualizationTabState extends State<VisualizationTab> {
     final paddedMinY = minY - padding;
     final paddedMaxY = maxY + padding;
 
-    final lineColor = theme.colorScheme.primary;
-    final dotColor = theme.colorScheme.secondary;
+    final plotColor = fixedColor; // Apply fixed color here
+
     final gridColor = theme.colorScheme.onSurface.withOpacity(0.1);
     final textColor = theme.textTheme.bodyLarge?.color ?? Colors.black;
 
@@ -246,7 +247,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
                 LineChartBarData(
                   spots: _dataPoints,
                   isCurved: false,
-                  color: lineColor,
+                  color: plotColor, // Apply fixed color here
                   dotData: FlDotData(show: false),
                   belowBarData: BarAreaData(show: false),
                 ),
@@ -268,8 +269,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
               scatterSpots: _dataPoints,
               scatterTouchData: ScatterTouchData(
                 touchTooltipData: ScatterTouchTooltipData(
-                  getTooltipColor: (ScatterSpot touchedSpot) =>
-                      theme.colorScheme.secondary,
+                  getTooltipColor: (ScatterSpot touchedSpot) => plotColor, // Apply fixed color here
                 ),
                 enabled: true,
               ),
@@ -288,29 +288,30 @@ class _VisualizationTabState extends State<VisualizationTab> {
   }
 
   Widget _buildLegend(ThemeData theme) {
-    final legendColor = theme.colorScheme.primary;
+    final legendColor = fixedColor; // Use the fixed color
+
     return Container(
-      padding: const EdgeInsets.all(4.0), // Reduced padding
+      padding: const EdgeInsets.all(4.0),
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.8),
-        borderRadius: BorderRadius.circular(6.0), // Reduced border radius
-        border: Border.all(color: legendColor, width: 1.0), // Reduced border width
+        borderRadius: BorderRadius.circular(6.0),
+        border: Border.all(color: legendColor, width: 1.0),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            width: 10, // Reduced width
-            height: 10, // Reduced height
+            width: 10, // Smaller size
+            height: 10, // Smaller size
             color: legendColor,
           ),
-          const SizedBox(width: 4.0), // Reduced spacing
+          const SizedBox(width: 4.0),
           Text(
             _selectedExercise!,
             style: TextStyle(
               color: theme.textTheme.bodyLarge?.color,
               fontWeight: FontWeight.bold,
-              fontSize: 8, // Reduced font size
+              fontSize: 8, // Smaller font size
             ),
           ),
         ],
