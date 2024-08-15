@@ -22,8 +22,32 @@ class _TableTabState extends State<TableTab> {
   }
 
   Future<void> _deleteExercise(int id) async {
-    await _dbHelper.deleteExercise(id);
-    setState(() {});
+    // Confirm deletion
+    final bool? confirmed = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirm Deletion'),
+          content:
+              const Text('🚨 Are you sure you want to delete this record?'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () => Navigator.of(context).pop(false),
+            ),
+            TextButton(
+              child: const Text('Delete'),
+              onPressed: () => Navigator.of(context).pop(true),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirmed == true) {
+      await _dbHelper.deleteExercise(id);
+      setState(() {});
+    }
   }
 
   void _showEditDialog(Map<String, dynamic> exercise) {
