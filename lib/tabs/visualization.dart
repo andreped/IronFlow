@@ -15,6 +15,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
   String _chartType = 'Line'; // Default chart type
   List<String> _exerciseNames = [];
   List<ScatterSpot> _dataPoints = [];
+  final Color fixedColor = Colors.purple;
 
   final DatabaseHelper _dbHelper = DatabaseHelper();
 
@@ -76,7 +77,11 @@ class _VisualizationTabState extends State<VisualizationTab> {
             break;
         }
         final dayDifference = date.difference(earliestDate).inDays.toDouble();
-        aggregatedDataPoints.add(ScatterSpot(dayDifference, value));
+        aggregatedDataPoints.add(ScatterSpot(
+          dayDifference,
+          value,
+          dotPainter: FlDotCirclePainter(color: fixedColor, radius: 6),
+        ));
       });
 
       setState(() {
@@ -113,16 +118,24 @@ class _VisualizationTabState extends State<VisualizationTab> {
                   )
                 : LayoutBuilder(
                     builder: (context, constraints) {
-                      // Calculate height dynamically based on screen size
                       final chartHeight = constraints.maxHeight;
 
                       return ConstrainedBox(
                         constraints: BoxConstraints(
                           maxHeight: chartHeight,
                         ),
-                        child: SizedBox(
-                          height: chartHeight,
-                          child: _buildChart(theme),
+                        child: Stack(
+                          children: [
+                            Positioned.fill(
+                              child: _buildChart(theme),
+                            ),
+                            if (_selectedExercise != null)
+                              Positioned(
+                                bottom: 44,
+                                right: 8,
+                                child: _buildLegend(theme),
+                              ),
+                          ],
                         ),
                       );
                     },
@@ -162,7 +175,6 @@ class _VisualizationTabState extends State<VisualizationTab> {
         if (newValue != null) {
           setState(() {
             _aggregationMethod = newValue;
-            // Automatically switch to Scatter if 'None' is selected
             if (_aggregationMethod == 'None' && _chartType == 'Line') {
               _chartType = 'Scatter';
             }
@@ -227,8 +239,8 @@ class _VisualizationTabState extends State<VisualizationTab> {
     final paddedMinY = minY - padding;
     final paddedMaxY = maxY + padding;
 
-    final lineColor = theme.colorScheme.primary;
-    final dotColor = theme.colorScheme.secondary;
+    final plotColor = fixedColor; // Apply fixed color here
+
     final gridColor = theme.colorScheme.onSurface.withOpacity(0.1);
     final textColor = theme.textTheme.bodyLarge?.color ?? Colors.black;
 
@@ -239,7 +251,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
                 LineChartBarData(
                   spots: _dataPoints,
                   isCurved: false,
-                  color: lineColor,
+                  color: plotColor, // Apply fixed color here
                   dotData: FlDotData(show: false),
                   belowBarData: BarAreaData(show: false),
                 ),
@@ -262,7 +274,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
               scatterTouchData: ScatterTouchData(
                 touchTooltipData: ScatterTouchTooltipData(
                   getTooltipColor: (ScatterSpot touchedSpot) =>
-                      theme.colorScheme.secondary,
+                      plotColor, // Apply fixed color here
                 ),
                 enabled: true,
               ),
@@ -278,6 +290,38 @@ class _VisualizationTabState extends State<VisualizationTab> {
               maxY: paddedMaxY,
             ),
           );
+  }
+
+  Widget _buildLegend(ThemeData theme) {
+    final legendColor = fixedColor; // Use the fixed color
+
+    return Container(
+      padding: const EdgeInsets.all(4.0),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.8),
+        borderRadius: BorderRadius.circular(6.0),
+        border: Border.all(color: legendColor, width: 1.0),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 10, // Smaller size
+            height: 10, // Smaller size
+            color: legendColor,
+          ),
+          const SizedBox(width: 4.0),
+          Text(
+            _selectedExercise!,
+            style: TextStyle(
+              color: theme.textTheme.bodyLarge?.color,
+              fontWeight: FontWeight.bold,
+              fontSize: 8, // Smaller font size
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   FlTitlesData _buildTitlesData(Color textColor) {
