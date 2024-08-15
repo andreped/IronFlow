@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:table_calendar/table_calendar.dart';  // Import TableCalendar
+import 'package:table_calendar/table_calendar.dart';
 import '../core/database.dart';
 
 class SummaryTab extends StatefulWidget {
@@ -43,10 +43,9 @@ class _SummaryTabState extends State<SummaryTab> {
             setState(() {
               widget.onDateSelected(selectedDay);
             });
-            Navigator.of(context).pop();  // Close the modal after selection
+            Navigator.of(context).pop(); // Close the modal after selection
           },
           eventLoader: (day) {
-            // Provide events for the day if needed
             return _trainedDates.where((d) => isSameDay(d, day)).toList();
           },
           headerStyle: HeaderStyle(
@@ -62,23 +61,23 @@ class _SummaryTabState extends State<SummaryTab> {
               shape: BoxShape.circle,
             ),
             todayTextStyle: TextStyle(color: Colors.white),
-            markerDecoration: BoxDecoration(
-              color: Colors.red,
-              shape: BoxShape.circle,
-            ),
-            markersAnchor: 1.0,
+            markersMaxCount: 1,
           ),
           calendarBuilders: CalendarBuilders(
             markerBuilder: (context, date, events) {
               if (_trainedDates.any((d) => isSameDay(d, date))) {
-                return Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 1.5),
-                  decoration: BoxDecoration(
-                    color: Colors.red,
-                    shape: BoxShape.circle,
+                return Center(
+                  child: Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Colors.red,
+                        width: 2.0,
+                      ),
+                      shape: BoxShape.circle,
+                    ),
                   ),
-                  width: 5,
-                  height: 5,
                 );
               }
               return SizedBox.shrink();
