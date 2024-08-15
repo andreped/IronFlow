@@ -135,7 +135,7 @@ class _SummaryTabState extends State<SummaryTab> {
                       child: ExpansionTile(
                         title: Text(exercise),
                         subtitle: Text(
-                            'Total Weight: ${totalWeight.toStringAsFixed(2)} kg, Sets: $totalSets, Reps: $totalReps, Avg Weight per Set: ${avgWeight.toStringAsFixed(2)} kg'),
+                            'Total Weight: ${totalWeight.toStringAsFixed(1)} kg, Sets: $totalSets, Reps: $totalReps, Avg Weight per Set: ${avgWeight.toStringAsFixed(1)} kg'),
                         children: records.map((record) {
                           return ListTile(
                             title: Text(
