@@ -35,12 +35,11 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
   }
 
   Future<void> _loadPredefinedExercises() async {
+    _selectedExercise = await _dbHelper.getLastLoggedExerciseName();
     List<String> exercises = await _dbHelper.getPredefinedExercises();
     exercises.sort(); // Sort alphabetically
     setState(() {
       _predefinedExercises = exercises;
-      _selectedExercise =
-          _predefinedExercises.isNotEmpty ? _predefinedExercises.first : null;
       if (_selectedExercise != null) {
         _loadLastLoggedExercise();
       }
