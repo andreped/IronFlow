@@ -77,7 +77,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
             break;
         }
         final dayDifference = date.difference(earliestDate).inDays.toDouble();
-        aggregatedDataPoints.add(ScatterSpot(dayDifference, value));
+        aggregatedDataPoints.add(ScatterSpot(dayDifference, value, dotPainter: FlDotCirclePainter(color: fixedColor, radius: 6),));
       });
 
       setState(() {
