@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:table_calendar/table_calendar.dart';  // Import TableCalendar
 import '../core/database.dart';
 
 class SummaryTab extends StatefulWidget {
@@ -13,17 +14,64 @@ class SummaryTab extends StatefulWidget {
 
 class _SummaryTabState extends State<SummaryTab> {
   final DatabaseHelper _dbHelper = DatabaseHelper();
+  Map<DateTime, List<dynamic>> _events = {}; // To store events for each day
 
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
+  @override
+  void initState() {
+    super.initState();
+    _loadEvents();
+  }
+
+  Future<void> _loadEvents() async {
+    // Load events from your database or any source
+    // Here you would populate the _events map with the dates that have been trained.
+    // For example:
+    // _events[DateTime(2024, 8, 14)] = [...]; // List of events for the date
+    // You may need to adjust this based on your actual data structure.
+    // You can also use this example to manually add events:
+    // _events[DateTime.now()] = ['Event 1', 'Event 2'];
+
+    // Call setState to update the UI with loaded events
+    setState(() {});
+  }
+
+  Future<void> _showCalendarModal(BuildContext context) async {
+    await showModalBottomSheet(
       context: context,
-      initialDate: widget.selectedDay,
-      firstDate: DateTime(2020),
-      lastDate: DateTime.now(),
+      builder: (BuildContext context) {
+        return TableCalendar(
+          focusedDay: widget.selectedDay,
+          firstDay: DateTime.utc(2020, 1, 1),
+          lastDay: DateTime.now(),
+          selectedDayPredicate: (day) => isSameDay(day, widget.selectedDay),
+          calendarFormat: CalendarFormat.month,
+          onDaySelected: (selectedDay, focusedDay) {
+            setState(() {
+              widget.onDateSelected(selectedDay);
+            });
+            Navigator.of(context).pop();  // Close the modal after selection
+          },
+          eventLoader: (day) {
+            // Provide events for the day
+            return _events[day] ?? [];
+          },
+          headerStyle: HeaderStyle(
+            formatButtonVisible: false,
+          ),
+          calendarStyle: CalendarStyle(
+            todayDecoration: BoxDecoration(
+              color: Colors.blueAccent,
+              shape: BoxShape.circle,
+            ),
+            selectedDecoration: BoxDecoration(
+              color: Colors.orange,
+              shape: BoxShape.circle,
+            ),
+            todayTextStyle: TextStyle(color: Colors.white),
+          ),
+        );
+      },
     );
-    if (picked != null && picked != widget.selectedDay) {
-      widget.onDateSelected(picked);
-    }
   }
 
   @override
@@ -38,7 +86,7 @@ class _SummaryTabState extends State<SummaryTab> {
               children: [
                 const Text('Select Day: '),
                 TextButton(
-                  onPressed: () => _selectDate(context),
+                  onPressed: () => _showCalendarModal(context),
                   child: Text(
                       '${widget.selectedDay.year}-${widget.selectedDay.month}-${widget.selectedDay.day}'),
                 ),
