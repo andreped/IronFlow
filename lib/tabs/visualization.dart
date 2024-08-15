@@ -15,7 +15,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
   String _chartType = 'Line'; // Default chart type
   List<String> _exerciseNames = [];
   List<ScatterSpot> _dataPoints = [];
-  final Color fixedColor = Colors.blue;
+  final Color fixedColor = Colors.purple;
 
   final DatabaseHelper _dbHelper = DatabaseHelper();
 
