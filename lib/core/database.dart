@@ -95,11 +95,15 @@ class DatabaseHelper {
     await db.delete('exercises');
   }
 
-  Future<List<Map<String, dynamic>>> getExercises() async {
+  Future<List<Map<String, dynamic>>> getExercises({
+    String sortColumn = 'timestamp',
+    bool ascending = false,
+  }) async {
     final db = await database;
+    final orderBy = '$sortColumn ${ascending ? 'ASC' : 'DESC'}';
     return await db.query(
       'exercises',
-      orderBy: 'timestamp DESC', // Order by timestamp in descending order
+      orderBy: orderBy,
     );
   }
 
