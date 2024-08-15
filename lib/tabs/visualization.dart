@@ -77,7 +77,11 @@ class _VisualizationTabState extends State<VisualizationTab> {
             break;
         }
         final dayDifference = date.difference(earliestDate).inDays.toDouble();
-        aggregatedDataPoints.add(ScatterSpot(dayDifference, value, dotPainter: FlDotCirclePainter(color: fixedColor, radius: 6),));
+        aggregatedDataPoints.add(ScatterSpot(
+          dayDifference,
+          value,
+          dotPainter: FlDotCirclePainter(color: fixedColor, radius: 6),
+        ));
       });
 
       setState(() {
@@ -269,7 +273,8 @@ class _VisualizationTabState extends State<VisualizationTab> {
               scatterSpots: _dataPoints,
               scatterTouchData: ScatterTouchData(
                 touchTooltipData: ScatterTouchTooltipData(
-                  getTooltipColor: (ScatterSpot touchedSpot) => plotColor, // Apply fixed color here
+                  getTooltipColor: (ScatterSpot touchedSpot) =>
+                      plotColor, // Apply fixed color here
                 ),
                 enabled: true,
               ),
