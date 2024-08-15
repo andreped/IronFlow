@@ -14,25 +14,19 @@ class SummaryTab extends StatefulWidget {
 
 class _SummaryTabState extends State<SummaryTab> {
   final DatabaseHelper _dbHelper = DatabaseHelper();
-  Map<DateTime, List<dynamic>> _events = {}; // To store events for each day
+  List<DateTime> _trainedDates = [];
 
   @override
   void initState() {
     super.initState();
-    _loadEvents();
+    _loadTrainedDates();
   }
 
-  Future<void> _loadEvents() async {
-    // Load events from your database or any source
-    // Here you would populate the _events map with the dates that have been trained.
-    // For example:
-    // _events[DateTime(2024, 8, 14)] = [...]; // List of events for the date
-    // You may need to adjust this based on your actual data structure.
-    // You can also use this example to manually add events:
-    // _events[DateTime.now()] = ['Event 1', 'Event 2'];
-
-    // Call setState to update the UI with loaded events
-    setState(() {});
+  Future<void> _loadTrainedDates() async {
+    List<DateTime> dates = await _dbHelper.getExerciseDates();
+    setState(() {
+      _trainedDates = dates;
+    });
   }
 
   Future<void> _showCalendarModal(BuildContext context) async {
@@ -52,8 +46,8 @@ class _SummaryTabState extends State<SummaryTab> {
             Navigator.of(context).pop();  // Close the modal after selection
           },
           eventLoader: (day) {
-            // Provide events for the day
-            return _events[day] ?? [];
+            // Provide events for the day if needed
+            return _trainedDates.where((d) => isSameDay(d, day)).toList();
           },
           headerStyle: HeaderStyle(
             formatButtonVisible: false,
@@ -68,6 +62,27 @@ class _SummaryTabState extends State<SummaryTab> {
               shape: BoxShape.circle,
             ),
             todayTextStyle: TextStyle(color: Colors.white),
+            markerDecoration: BoxDecoration(
+              color: Colors.red,
+              shape: BoxShape.circle,
+            ),
+            markersAnchor: 1.0,
+          ),
+          calendarBuilders: CalendarBuilders(
+            markerBuilder: (context, date, events) {
+              if (_trainedDates.any((d) => isSameDay(d, date))) {
+                return Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 1.5),
+                  decoration: BoxDecoration(
+                    color: Colors.red,
+                    shape: BoxShape.circle,
+                  ),
+                  width: 5,
+                  height: 5,
+                );
+              }
+              return SizedBox.shrink();
+            },
           ),
         );
       },
