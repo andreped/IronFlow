@@ -352,20 +352,20 @@ class DatabaseHelper {
 
   Future<String?> getLastLoggedExerciseName() async {
     final db = await database;
-    
+
     // Query to get the most recent exercise entry based on the timestamp
     final List<Map<String, dynamic>> result = await db.query(
       'exercises',
       orderBy: 'timestamp DESC',
       limit: 1, // Fetch only the latest entry
     );
-    
+
     // Check if we have any results
     if (result.isNotEmpty) {
       final row = result.first;
       return row['exercise'] as String?;
     }
-    
+
     // Return null if no result found
     return null;
   }
