@@ -15,7 +15,7 @@ appId: com.andreped.IronFlow
 - tapOn: .*Sets.*
 - inputText: "3"
 - tapOn: .*Done.*
-- tapOn: Save Changes
+- tapOn: .*Save Changes.*
 - assertVisible: .*Exercise Added Successfully.*
 
 - tapOn: .*Weight.*
