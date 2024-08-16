@@ -64,8 +64,8 @@ jobs:
       - name: Install app on simulator
         run: xcrun simctl install booted ./Build/Products/Debug-iphonesimulator/Runner.app
       
-      - name: Launch app on simulator
-        run: xcrun simctl launch booted com.andreped.IronFlow && sleep 1
+      #- name: Launch app on simulator
+      #  run: xcrun simctl launch booted com.andreped.IronFlow && sleep 1
       
       - name: Running tests with maestro
         run: sh .github/shell/maestro_tests.sh < /dev/null
