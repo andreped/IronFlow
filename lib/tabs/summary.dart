@@ -15,17 +15,28 @@ class SummaryTab extends StatefulWidget {
 class _SummaryTabState extends State<SummaryTab> {
   final DatabaseHelper _dbHelper = DatabaseHelper();
   List<DateTime> _trainedDates = [];
+  List<String> _predefinedExercises = [];
+  String? _selectedExercise;
+  bool _isDayView = true; // Toggle state
 
   @override
   void initState() {
     super.initState();
     _loadTrainedDates();
+    _loadPredefinedExercises();
   }
 
   Future<void> _loadTrainedDates() async {
     List<DateTime> dates = await _dbHelper.getExerciseDates();
     setState(() {
       _trainedDates = dates;
+    });
+  }
+
+  Future<void> _loadPredefinedExercises() async {
+    List<String> exercises = await _dbHelper.getPredefinedExercises();
+    setState(() {
+      _predefinedExercises = exercises;
     });
   }
 
@@ -97,24 +108,59 @@ class _SummaryTabState extends State<SummaryTab> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text('Select Day: '),
                 TextButton(
                   onPressed: () => _showCalendarModal(context),
                   child: Text(
                       '${widget.selectedDay.year}-${widget.selectedDay.month}-${widget.selectedDay.day}'),
                 ),
+                Switch(
+                  value: _isDayView,
+                  onChanged: (value) {
+                    setState(() {
+                      _isDayView = value;
+                      _selectedExercise = null;
+                    });
+                  },
+                  activeColor: Colors.blueAccent,
+                  activeTrackColor: Colors.blueAccent.withOpacity(0.3),
+                  inactiveThumbColor: Colors.orange,
+                  inactiveTrackColor: Colors.orange.withOpacity(0.3),
+                ),
+                Text(_isDayView ? 'Day View' : 'Exercise View'),
               ],
             ),
+            if (!_isDayView)
+              DropdownButton<String>(
+                value: _selectedExercise,
+                hint: Text('Select Exercise'),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    _selectedExercise = newValue!;
+                  });
+                },
+                items: _predefinedExercises
+                    .map<DropdownMenuItem<String>>((String exercise) {
+                  return DropdownMenuItem<String>(
+                    value: exercise,
+                    child: Text(exercise),
+                  );
+                }).toList(),
+              ),
             FutureBuilder<Map<String, dynamic>>(
-              future: _dbHelper.getSummaryForDay(widget.selectedDay),
+              future: _isDayView
+                  ? _dbHelper.getSummaryForDay(widget.selectedDay)
+                  : (_selectedExercise != null
+                      ? _dbHelper.getSummaryForExercise(_selectedExercise!)
+                      : Future.value({})),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const CircularProgressIndicator();
                 } else if (snapshot.hasError) {
                   return Text('Error: ${snapshot.error}');
                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return const Text('No data available for selected day');
+                  return const Text('No data available for selected view');
                 }
 
                 final summaryData = snapshot.data!;

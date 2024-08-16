@@ -267,6 +267,46 @@ class DatabaseHelper {
     return summary;
   }
 
+  Future<Map<String, dynamic>> getSummaryForExercise(String exercise) async {
+    final db = await database;
+    final List<Map<String, dynamic>> exercises = await db.query(
+      'exercises',
+      where: 'exercise = ?',
+      whereArgs: [exercise],
+    );
+
+    Map<String, dynamic> summary = {};
+
+    if (exercises.isNotEmpty) {
+      double totalWeight = 0;
+      int totalSets = 0;
+      int totalReps = 0;
+      List<Map<String, dynamic>> records = [];
+
+      for (var record in exercises) {
+        double weight = double.parse(record['weight']);
+        int reps = record['reps'];
+        int sets = record['sets'];
+        double weightPerSession = weight * reps * sets;
+
+        totalWeight += weightPerSession;
+        totalSets += sets;
+        totalReps += reps;
+        records.add(record);
+      }
+
+      summary[exercise] = {
+        'totalWeight': totalWeight,
+        'totalSets': totalSets,
+        'totalReps': totalReps,
+        'avgWeight': totalWeight / totalSets,
+        'records': records,
+      };
+    }
+
+    return summary;
+  }
+
   Future<List<String>> getPredefinedExercises() async {
     final db = await database;
     final List<Map<String, dynamic>> result =
