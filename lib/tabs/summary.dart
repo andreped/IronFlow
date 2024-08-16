@@ -136,12 +136,28 @@ class _SummaryTabState extends State<SummaryTab> {
           children: [
             Row(
               children: [
-                const Text('View Mode: '),
-                ToggleButtons(
-                  isSelected: [_isExerciseView, !_isExerciseView],
-                  onPressed: (int index) {
+                _isExerciseView
+                    ? const Text('Select Exercise: ')
+                    : const Text('Select Day: '),
+                _isExerciseView
+                    ? TextButton(
+                        onPressed: () => _showExerciseSelectionModal(context),
+                        child: Text(_selectedExercise ?? 'None', style: TextStyle(color: textColor)),
+                      )
+                    : TextButton(
+                        onPressed: () => _showCalendarModal(context),
+                        child: Text(
+                            '${widget.selectedDay.year}-${widget.selectedDay.month}-${widget.selectedDay.day}', style: TextStyle(color: textColor)),
+                      ),
+                SizedBox(width: 8), // Add space between button and icon
+                IconButton(
+                  icon: Icon(
+                    _isExerciseView ? Icons.visibility : Icons.visibility_off,
+                    color: primaryColor,
+                  ),
+                  onPressed: () {
                     setState(() {
-                      _isExerciseView = index == 0;
+                      _isExerciseView = !_isExerciseView;
                       if (!_isExerciseView) {
                         // Clear exercise data when switching to Day View
                         _selectedExercise = null;
@@ -149,50 +165,9 @@ class _SummaryTabState extends State<SummaryTab> {
                       }
                     });
                   },
-                  color: textColor,
-                  selectedColor: primaryColor,
-                  fillColor: secondaryColor.withOpacity(0.2),
-                  borderColor: textColor,
-                  selectedBorderColor: primaryColor,
-                  borderRadius: BorderRadius.circular(8),
-                  constraints: BoxConstraints(
-                    minHeight: 40.0, // Adjust the height here
-                    minWidth: 100.0, // Adjust the width here
-                  ),
-                  children: const <Widget>[
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 8.0), // Adjust horizontal padding here
-                      child: Text('Exercise View'),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 8.0), // Adjust horizontal padding here
-                      child: Text('Day View'),
-                    ),
-                  ],
-                )
+                ),
               ],
             ),
-            const SizedBox(height: 10),
-            _isExerciseView
-                ? Row(
-                    children: [
-                      const Text('Select Exercise: '),
-                      TextButton(
-                        onPressed: () => _showExerciseSelectionModal(context),
-                        child: Text(_selectedExercise ?? 'None', style: TextStyle(color: textColor)),
-                      ),
-                    ],
-                  )
-                : Row(
-                    children: [
-                      const Text('Select Day: '),
-                      TextButton(
-                        onPressed: () => _showCalendarModal(context),
-                        child: Text(
-                            '${widget.selectedDay.year}-${widget.selectedDay.month}-${widget.selectedDay.day}', style: TextStyle(color: textColor)),
-                      ),
-                    ],
-                  ),
             const SizedBox(height: 20),
             _isExerciseView && _selectedExercise != null
                 ? _dailyRecords.isEmpty
