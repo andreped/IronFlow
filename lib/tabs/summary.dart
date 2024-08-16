@@ -155,17 +155,21 @@ class _SummaryTabState extends State<SummaryTab> {
                   borderColor: textColor,
                   selectedBorderColor: primaryColor,
                   borderRadius: BorderRadius.circular(8),
+                  constraints: BoxConstraints(
+                    minHeight: 40.0, // Adjust the height here
+                    minWidth: 100.0, // Adjust the width here
+                  ),
                   children: const <Widget>[
                     Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16.0),
+                      padding: EdgeInsets.symmetric(horizontal: 8.0), // Adjust horizontal padding here
                       child: Text('Exercise View'),
                     ),
                     Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16.0),
+                      padding: EdgeInsets.symmetric(horizontal: 8.0), // Adjust horizontal padding here
                       child: Text('Day View'),
                     ),
                   ],
-                ),
+                )
               ],
             ),
             const SizedBox(height: 10),
