@@ -54,7 +54,8 @@ class _SummaryTabState extends State<SummaryTab> {
           },
           headerStyle: HeaderStyle(
             formatButtonVisible: false,
-            titleTextStyle: TextStyle(color: Theme.of(context).colorScheme.primary),
+            titleTextStyle:
+                TextStyle(color: Theme.of(context).colorScheme.primary),
           ),
           calendarStyle: CalendarStyle(
             todayDecoration: BoxDecoration(
@@ -65,7 +66,8 @@ class _SummaryTabState extends State<SummaryTab> {
               color: Theme.of(context).colorScheme.primary,
               shape: BoxShape.circle,
             ),
-            todayTextStyle: TextStyle(color: Theme.of(context).colorScheme.onBackground),
+            todayTextStyle:
+                TextStyle(color: Theme.of(context).colorScheme.onBackground),
             markersMaxCount: 1,
           ),
           calendarBuilders: CalendarBuilders(
@@ -105,7 +107,8 @@ class _SummaryTabState extends State<SummaryTab> {
             return ListTile(
               title: Text(exercise),
               onTap: () async {
-                final dailyRecords = await _dbHelper.getDailyRecordsForExercise(exercise);
+                final dailyRecords =
+                    await _dbHelper.getDailyRecordsForExercise(exercise);
                 setState(() {
                   _selectedExercise = exercise;
                   _dailyRecords = dailyRecords;
@@ -142,17 +145,21 @@ class _SummaryTabState extends State<SummaryTab> {
                 _isExerciseView
                     ? TextButton(
                         onPressed: () => _showExerciseSelectionModal(context),
-                        child: Text(_selectedExercise ?? 'None', style: TextStyle(color: textColor)),
+                        child: Text(_selectedExercise ?? 'None',
+                            style: TextStyle(color: textColor)),
                       )
                     : TextButton(
                         onPressed: () => _showCalendarModal(context),
                         child: Text(
-                            '${widget.selectedDay.year}-${widget.selectedDay.month}-${widget.selectedDay.day}', style: TextStyle(color: textColor)),
+                            '${widget.selectedDay.year}-${widget.selectedDay.month}-${widget.selectedDay.day}',
+                            style: TextStyle(color: textColor)),
                       ),
                 SizedBox(width: 8), // Add space between button and icon
                 IconButton(
                   icon: Icon(
-                    _isExerciseView ? Icons.calendar_today : Icons.fitness_center,
+                    _isExerciseView
+                        ? Icons.calendar_today
+                        : Icons.fitness_center,
                     color: primaryColor,
                   ),
                   onPressed: () {
@@ -171,7 +178,8 @@ class _SummaryTabState extends State<SummaryTab> {
             const SizedBox(height: 20),
             _isExerciseView && _selectedExercise != null
                 ? _dailyRecords.isEmpty
-                    ? Text('No data available for selected exercise', style: TextStyle(color: textColor))
+                    ? Text('No data available for selected exercise',
+                        style: TextStyle(color: textColor))
                     : Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: _dailyRecords.entries.map((entry) {
@@ -188,7 +196,8 @@ class _SummaryTabState extends State<SummaryTab> {
                                   padding: const EdgeInsets.all(8.0),
                                   decoration: BoxDecoration(
                                     color: primaryColor.withOpacity(0.2),
-                                    borderRadius: BorderRadius.vertical(top: Radius.circular(4)),
+                                    borderRadius: BorderRadius.vertical(
+                                        top: Radius.circular(4)),
                                   ),
                                   child: Text(
                                     '${day.year}-${day.month}-${day.day}',
@@ -203,7 +212,8 @@ class _SummaryTabState extends State<SummaryTab> {
                                   return ListTile(
                                     title: Text(
                                         'Sets: ${record['sets']}, Reps: ${record['reps']}, Weight: ${record['weight']} kg'),
-                                    subtitle: Text('Timestamp: ${record['timestamp']}'),
+                                    subtitle: Text(
+                                        'Timestamp: ${record['timestamp']}'),
                                   );
                                 }).toList(),
                               ],
@@ -212,16 +222,21 @@ class _SummaryTabState extends State<SummaryTab> {
                         }).toList(),
                       )
                 : _isExerciseView
-                    ? Text('Please select an exercise to view data.', style: TextStyle(color: textColor))
+                    ? Text('Please select an exercise to view data.',
+                        style: TextStyle(color: textColor))
                     : FutureBuilder<Map<String, dynamic>>(
                         future: _dbHelper.getSummaryForDay(widget.selectedDay),
                         builder: (context, snapshot) {
-                          if (snapshot.connectionState == ConnectionState.waiting) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
                             return const CircularProgressIndicator();
                           } else if (snapshot.hasError) {
-                            return Text('Error: ${snapshot.error}', style: TextStyle(color: textColor));
-                          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                            return Text('No data available for selected day', style: TextStyle(color: textColor));
+                            return Text('Error: ${snapshot.error}',
+                                style: TextStyle(color: textColor));
+                          } else if (!snapshot.hasData ||
+                              snapshot.data!.isEmpty) {
+                            return Text('No data available for selected day',
+                                style: TextStyle(color: textColor));
                           }
 
                           final summaryData = snapshot.data!;
@@ -230,18 +245,20 @@ class _SummaryTabState extends State<SummaryTab> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: summaryData.entries.map((entry) {
                               final exercise = entry.key;
-                              final details = entry.value as Map<String, dynamic>;
+                              final details =
+                                  entry.value as Map<String, dynamic>;
                               final totalWeight = details['totalWeight'];
                               final totalSets = details['totalSets'];
                               final totalReps = details['totalReps'];
                               final avgWeight = details['avgWeight'];
-                              final records =
-                                  details['records'] as List<Map<String, dynamic>>;
+                              final records = details['records']
+                                  as List<Map<String, dynamic>>;
 
                               return Card(
                                 color: cardColor,
                                 child: ExpansionTile(
-                                  title: Text(exercise, style: TextStyle(color: textColor)),
+                                  title: Text(exercise,
+                                      style: TextStyle(color: textColor)),
                                   subtitle: Text(
                                       'Total Weight: ${totalWeight.toStringAsFixed(1)} kg, Total Sets: $totalSets, Total Reps: $totalReps, Avg Weight: ${avgWeight.toStringAsFixed(1)} kg',
                                       style: TextStyle(color: textColor)),
@@ -249,7 +266,8 @@ class _SummaryTabState extends State<SummaryTab> {
                                     return ListTile(
                                       title: Text(
                                           'Sets: ${record['sets']}, Reps: ${record['reps']}, Weight: ${record['weight']} kg'),
-                                      subtitle: Text('Timestamp: ${record['timestamp']}'),
+                                      subtitle: Text(
+                                          'Timestamp: ${record['timestamp']}'),
                                     );
                                   }).toList(),
                                 ),

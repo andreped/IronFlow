@@ -267,7 +267,8 @@ class DatabaseHelper {
     return summary;
   }
 
-  Future<Map<DateTime, List<Map<String, dynamic>>>> getDailyRecordsForExercise(String exerciseName) async {
+  Future<Map<DateTime, List<Map<String, dynamic>>>> getDailyRecordsForExercise(
+      String exerciseName) async {
     final db = await database;
     final List<Map<String, dynamic>> records = await db.query(
       'exercises',
@@ -291,7 +292,8 @@ class DatabaseHelper {
     return dailyRecords;
   }
 
-  Future<Map<String, dynamic>> getSummaryForExercise(String exerciseName) async {
+  Future<Map<String, dynamic>> getSummaryForExercise(
+      String exerciseName) async {
     final db = await database;
     final List<Map<String, dynamic>> exercises = await db.query(
       'exercises',
@@ -312,7 +314,8 @@ class DatabaseHelper {
         int reps = record['reps'];
         int sets = record['sets'];
         DateTime timestamp = DateTime.parse(record['timestamp']);
-        String dateKey = '${timestamp.year}-${timestamp.month}-${timestamp.day}';
+        String dateKey =
+            '${timestamp.year}-${timestamp.month}-${timestamp.day}';
 
         double weightPerSession = weight * reps * sets;
         totalWeight += weightPerSession;
