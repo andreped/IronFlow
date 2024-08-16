@@ -267,40 +267,70 @@ class DatabaseHelper {
     return summary;
   }
 
-  Future<Map<String, dynamic>> getSummaryForExercise(String exercise) async {
+  Future<Map<DateTime, List<Map<String, dynamic>>>> getDailyRecordsForExercise(String exerciseName) async {
+    final db = await database;
+    final List<Map<String, dynamic>> records = await db.query(
+      'exercises',
+      where: 'exercise = ?',
+      whereArgs: [exerciseName],
+      orderBy: 'timestamp DESC', // Optional: order by timestamp
+    );
+
+    Map<DateTime, List<Map<String, dynamic>>> dailyRecords = {};
+
+    for (var record in records) {
+      DateTime date = DateTime.parse(record['timestamp']).toLocal();
+      DateTime day = DateTime(date.year, date.month, date.day);
+
+      if (!dailyRecords.containsKey(day)) {
+        dailyRecords[day] = [];
+      }
+      dailyRecords[day]!.add(record);
+    }
+
+    return dailyRecords;
+  }
+
+  Future<Map<String, dynamic>> getSummaryForExercise(String exerciseName) async {
     final db = await database;
     final List<Map<String, dynamic>> exercises = await db.query(
       'exercises',
       where: 'exercise = ?',
-      whereArgs: [exercise],
+      whereArgs: [exerciseName],
     );
 
     Map<String, dynamic> summary = {};
+    Map<String, List<Map<String, dynamic>>> recordsByDate = {};
 
     if (exercises.isNotEmpty) {
       double totalWeight = 0;
       int totalSets = 0;
       int totalReps = 0;
-      List<Map<String, dynamic>> records = [];
 
       for (var record in exercises) {
         double weight = double.parse(record['weight']);
         int reps = record['reps'];
         int sets = record['sets'];
-        double weightPerSession = weight * reps * sets;
+        DateTime timestamp = DateTime.parse(record['timestamp']);
+        String dateKey = '${timestamp.year}-${timestamp.month}-${timestamp.day}';
 
+        double weightPerSession = weight * reps * sets;
         totalWeight += weightPerSession;
         totalSets += sets;
         totalReps += reps;
-        records.add(record);
+
+        if (recordsByDate[dateKey] == null) {
+          recordsByDate[dateKey] = [];
+        }
+        recordsByDate[dateKey]!.add(record);
       }
 
-      summary[exercise] = {
+      summary[exerciseName] = {
         'totalWeight': totalWeight,
         'totalSets': totalSets,
         'totalReps': totalReps,
         'avgWeight': totalWeight / totalSets,
-        'records': records,
+        'recordsByDate': recordsByDate,
       };
     }
 

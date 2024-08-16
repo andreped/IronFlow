@@ -15,28 +15,20 @@ class SummaryTab extends StatefulWidget {
 class _SummaryTabState extends State<SummaryTab> {
   final DatabaseHelper _dbHelper = DatabaseHelper();
   List<DateTime> _trainedDates = [];
-  List<String> _predefinedExercises = [];
+  bool _isExerciseView = false;
   String? _selectedExercise;
-  bool _isDayView = true; // Toggle state
+  Map<DateTime, List<Map<String, dynamic>>> _dailyRecords = {};
 
   @override
   void initState() {
     super.initState();
     _loadTrainedDates();
-    _loadPredefinedExercises();
   }
 
   Future<void> _loadTrainedDates() async {
     List<DateTime> dates = await _dbHelper.getExerciseDates();
     setState(() {
       _trainedDates = dates;
-    });
-  }
-
-  Future<void> _loadPredefinedExercises() async {
-    List<String> exercises = await _dbHelper.getPredefinedExercises();
-    setState(() {
-      _predefinedExercises = exercises;
     });
   }
 
@@ -53,8 +45,9 @@ class _SummaryTabState extends State<SummaryTab> {
           onDaySelected: (selectedDay, focusedDay) {
             setState(() {
               widget.onDateSelected(selectedDay);
+              _isExerciseView = false;
             });
-            Navigator.of(context).pop(); // Close the modal after selection
+            Navigator.of(context).pop();
           },
           eventLoader: (day) {
             return _trainedDates.where((d) => isSameDay(d, day)).toList();
@@ -99,6 +92,33 @@ class _SummaryTabState extends State<SummaryTab> {
     );
   }
 
+  Future<void> _showExerciseSelectionModal(BuildContext context) async {
+    List<String> exercises = await _dbHelper.getPredefinedExercises();
+    await showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return ListView.builder(
+          itemCount: exercises.length,
+          itemBuilder: (context, index) {
+            final exercise = exercises[index];
+            return ListTile(
+              title: Text(exercise),
+              onTap: () async {
+                final dailyRecords = await _dbHelper.getDailyRecordsForExercise(exercise);
+                setState(() {
+                  _selectedExercise = exercise;
+                  _dailyRecords = dailyRecords;
+                  _isExerciseView = true;
+                });
+                Navigator.of(context).pop();
+              },
+            );
+          },
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -108,93 +128,130 @@ class _SummaryTabState extends State<SummaryTab> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                TextButton(
-                  onPressed: () => _showCalendarModal(context),
-                  child: Text(
-                      '${widget.selectedDay.year}-${widget.selectedDay.month}-${widget.selectedDay.day}'),
-                ),
-                Switch(
-                  value: _isDayView,
-                  onChanged: (value) {
+                const Text('View Mode: '),
+                ToggleButtons(
+                  isSelected: [_isExerciseView, !_isExerciseView],
+                  onPressed: (int index) {
                     setState(() {
-                      _isDayView = value;
-                      _selectedExercise = null;
+                      _isExerciseView = index == 0;
                     });
                   },
-                  activeColor: Colors.blueAccent,
-                  activeTrackColor: Colors.blueAccent.withOpacity(0.3),
-                  inactiveThumbColor: Colors.orange,
-                  inactiveTrackColor: Colors.orange.withOpacity(0.3),
+                  children: const <Widget>[
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16.0),
+                      child: Text('Exercise View'),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16.0),
+                      child: Text('Day View'),
+                    ),
+                  ],
                 ),
-                Text(_isDayView ? 'Day View' : 'Exercise View'),
               ],
             ),
-            if (!_isDayView)
-              DropdownButton<String>(
-                value: _selectedExercise,
-                hint: Text('Select Exercise'),
-                onChanged: (String? newValue) {
-                  setState(() {
-                    _selectedExercise = newValue!;
-                  });
-                },
-                items: _predefinedExercises
-                    .map<DropdownMenuItem<String>>((String exercise) {
-                  return DropdownMenuItem<String>(
-                    value: exercise,
-                    child: Text(exercise),
-                  );
-                }).toList(),
-              ),
-            FutureBuilder<Map<String, dynamic>>(
-              future: _isDayView
-                  ? _dbHelper.getSummaryForDay(widget.selectedDay)
-                  : (_selectedExercise != null
-                      ? _dbHelper.getSummaryForExercise(_selectedExercise!)
-                      : Future.value({})),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const CircularProgressIndicator();
-                } else if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
-                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return const Text('No data available for selected view');
-                }
+            const SizedBox(height: 10),
+            _isExerciseView
+                ? Row(
+                    children: [
+                      const Text('Select Exercise: '),
+                      TextButton(
+                        onPressed: () => _showExerciseSelectionModal(context),
+                        child: Text(_selectedExercise ?? 'None'),
+                      ),
+                    ],
+                  )
+                : Row(
+                    children: [
+                      const Text('Select Day: '),
+                      TextButton(
+                        onPressed: () => _showCalendarModal(context),
+                        child: Text(
+                            '${widget.selectedDay.year}-${widget.selectedDay.month}-${widget.selectedDay.day}'),
+                      ),
+                    ],
+                  ),
+            const SizedBox(height: 20),
+            _isExerciseView && _selectedExercise != null
+                ? _dailyRecords.isEmpty
+                    ? const Text('No data available for selected exercise')
+                    : Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: _dailyRecords.entries.map((entry) {
+                          final day = entry.key;
+                          final records = entry.value;
 
-                final summaryData = snapshot.data!;
-
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: summaryData.entries.map((entry) {
-                    final exercise = entry.key;
-                    final details = entry.value as Map<String, dynamic>;
-                    final totalWeight = details['totalWeight'];
-                    final totalSets = details['totalSets'];
-                    final totalReps = details['totalReps'];
-                    final avgWeight = details['avgWeight'];
-                    final records =
-                        details['records'] as List<Map<String, dynamic>>;
-
-                    return Card(
-                      child: ExpansionTile(
-                        title: Text(exercise),
-                        subtitle: Text(
-                            'Total Weight: ${totalWeight.toStringAsFixed(1)} kg, Sets: $totalSets, Reps: $totalReps, Avg Weight per Set: ${avgWeight.toStringAsFixed(1)} kg'),
-                        children: records.map((record) {
-                          return ListTile(
-                            title: Text(
-                                'Sets: ${record['sets']}, Reps: ${record['reps']}, Weight: ${record['weight']} kg'),
-                            subtitle: Text('Timestamp: ${record['timestamp']}'),
+                          return Card(
+                            margin: const EdgeInsets.symmetric(vertical: 8.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(8.0),
+                                  decoration: BoxDecoration(
+                                    color: Colors.blue[100],
+                                    borderRadius: BorderRadius.vertical(top: Radius.circular(4)),
+                                  ),
+                                  child: Text(
+                                    '${day.year}-${day.month}-${day.day}',
+                                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                                  ),
+                                ),
+                                ...records.map((record) {
+                                  return ListTile(
+                                    title: Text(
+                                        'Sets: ${record['sets']}, Reps: ${record['reps']}, Weight: ${record['weight']} kg'),
+                                    subtitle: Text('Timestamp: ${record['timestamp']}'),
+                                  );
+                                }).toList(),
+                              ],
+                            ),
                           );
                         }).toList(),
-                      ),
-                    );
-                  }).toList(),
-                );
-              },
-            ),
+                      )
+                : FutureBuilder<Map<String, dynamic>>(
+                    future: _dbHelper.getSummaryForDay(widget.selectedDay),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const CircularProgressIndicator();
+                      } else if (snapshot.hasError) {
+                        return Text('Error: ${snapshot.error}');
+                      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                        return const Text('No data available for selected day');
+                      }
+
+                      final summaryData = snapshot.data!;
+
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: summaryData.entries.map((entry) {
+                          final exercise = entry.key;
+                          final details = entry.value as Map<String, dynamic>;
+                          final totalWeight = details['totalWeight'];
+                          final totalSets = details['totalSets'];
+                          final totalReps = details['totalReps'];
+                          final avgWeight = details['avgWeight'];
+                          final records =
+                              details['records'] as List<Map<String, dynamic>>;
+
+                          return Card(
+                            child: ExpansionTile(
+                              title: Text(exercise),
+                              subtitle: Text(
+                                  'Total Weight: ${totalWeight.toStringAsFixed(1)} kg, Sets: $totalSets, Reps: $totalReps, Avg Weight per Set: ${avgWeight.toStringAsFixed(1)} kg'),
+                              children: records.map((record) {
+                                return ListTile(
+                                  title: Text(
+                                      'Sets: ${record['sets']}, Reps: ${record['reps']}, Weight: ${record['weight']} kg'),
+                                  subtitle: Text('Timestamp: ${record['timestamp']}'),
+                                );
+                              }).toList(),
+                            ),
+                          );
+                        }).toList(),
+                      );
+                    },
+                  ),
           ],
         ),
       ),
