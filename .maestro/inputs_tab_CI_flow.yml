@@ -3,7 +3,7 @@ appId: com.andreped.IronFlow
 - clearState
 - launchApp
 - tapOn: .*Exercise.*
-- tapOn: Deadlift
+- tapOn: .*Deadlift.*
 - tapOn: .*Weight.*
 - inputText: "100"
 - tapOn:
