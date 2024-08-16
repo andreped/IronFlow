@@ -267,6 +267,79 @@ class DatabaseHelper {
     return summary;
   }
 
+  Future<Map<DateTime, List<Map<String, dynamic>>>> getDailyRecordsForExercise(
+      String exerciseName) async {
+    final db = await database;
+    final List<Map<String, dynamic>> records = await db.query(
+      'exercises',
+      where: 'exercise = ?',
+      whereArgs: [exerciseName],
+      orderBy: 'timestamp DESC', // Optional: order by timestamp
+    );
+
+    Map<DateTime, List<Map<String, dynamic>>> dailyRecords = {};
+
+    for (var record in records) {
+      DateTime date = DateTime.parse(record['timestamp']).toLocal();
+      DateTime day = DateTime(date.year, date.month, date.day);
+
+      if (!dailyRecords.containsKey(day)) {
+        dailyRecords[day] = [];
+      }
+      dailyRecords[day]!.add(record);
+    }
+
+    return dailyRecords;
+  }
+
+  Future<Map<String, dynamic>> getSummaryForExercise(
+      String exerciseName) async {
+    final db = await database;
+    final List<Map<String, dynamic>> exercises = await db.query(
+      'exercises',
+      where: 'exercise = ?',
+      whereArgs: [exerciseName],
+    );
+
+    Map<String, dynamic> summary = {};
+    Map<String, List<Map<String, dynamic>>> recordsByDate = {};
+
+    if (exercises.isNotEmpty) {
+      double totalWeight = 0;
+      int totalSets = 0;
+      int totalReps = 0;
+
+      for (var record in exercises) {
+        double weight = double.parse(record['weight']);
+        int reps = record['reps'];
+        int sets = record['sets'];
+        DateTime timestamp = DateTime.parse(record['timestamp']);
+        String dateKey =
+            '${timestamp.year}-${timestamp.month}-${timestamp.day}';
+
+        double weightPerSession = weight * reps * sets;
+        totalWeight += weightPerSession;
+        totalSets += sets;
+        totalReps += reps;
+
+        if (recordsByDate[dateKey] == null) {
+          recordsByDate[dateKey] = [];
+        }
+        recordsByDate[dateKey]!.add(record);
+      }
+
+      summary[exerciseName] = {
+        'totalWeight': totalWeight,
+        'totalSets': totalSets,
+        'totalReps': totalReps,
+        'avgWeight': totalWeight / totalSets,
+        'recordsByDate': recordsByDate,
+      };
+    }
+
+    return summary;
+  }
+
   Future<List<String>> getPredefinedExercises() async {
     final db = await database;
     final List<Map<String, dynamic>> result =
