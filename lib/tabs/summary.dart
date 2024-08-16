@@ -54,17 +54,18 @@ class _SummaryTabState extends State<SummaryTab> {
           },
           headerStyle: HeaderStyle(
             formatButtonVisible: false,
+            titleTextStyle: TextStyle(color: Theme.of(context).colorScheme.primary),
           ),
           calendarStyle: CalendarStyle(
             todayDecoration: BoxDecoration(
-              color: Colors.blueAccent,
+              color: Theme.of(context).colorScheme.secondary,
               shape: BoxShape.circle,
             ),
             selectedDecoration: BoxDecoration(
-              color: Colors.orange,
+              color: Theme.of(context).colorScheme.primary,
               shape: BoxShape.circle,
             ),
-            todayTextStyle: TextStyle(color: Colors.white),
+            todayTextStyle: TextStyle(color: Theme.of(context).colorScheme.onBackground),
             markersMaxCount: 1,
           ),
           calendarBuilders: CalendarBuilders(
@@ -76,7 +77,7 @@ class _SummaryTabState extends State<SummaryTab> {
                     height: 40,
                     decoration: BoxDecoration(
                       border: Border.all(
-                        color: Colors.red,
+                        color: Theme.of(context).colorScheme.secondary,
                         width: 2.0,
                       ),
                       shape: BoxShape.circle,
@@ -121,6 +122,12 @@ class _SummaryTabState extends State<SummaryTab> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final cardColor = theme.cardColor;
+    final secondaryColor = theme.colorScheme.secondary;
+    final primaryColor = theme.colorScheme.primary;
+    final textColor = theme.textTheme.bodyLarge?.color ?? Colors.black;
+
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: SingleChildScrollView(
@@ -142,6 +149,12 @@ class _SummaryTabState extends State<SummaryTab> {
                       }
                     });
                   },
+                  color: textColor,
+                  selectedColor: primaryColor,
+                  fillColor: secondaryColor.withOpacity(0.2),
+                  borderColor: textColor,
+                  selectedBorderColor: primaryColor,
+                  borderRadius: BorderRadius.circular(8),
                   children: const <Widget>[
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 16.0),
@@ -162,7 +175,7 @@ class _SummaryTabState extends State<SummaryTab> {
                       const Text('Select Exercise: '),
                       TextButton(
                         onPressed: () => _showExerciseSelectionModal(context),
-                        child: Text(_selectedExercise ?? 'None'),
+                        child: Text(_selectedExercise ?? 'None', style: TextStyle(color: textColor)),
                       ),
                     ],
                   )
@@ -172,14 +185,14 @@ class _SummaryTabState extends State<SummaryTab> {
                       TextButton(
                         onPressed: () => _showCalendarModal(context),
                         child: Text(
-                            '${widget.selectedDay.year}-${widget.selectedDay.month}-${widget.selectedDay.day}'),
+                            '${widget.selectedDay.year}-${widget.selectedDay.month}-${widget.selectedDay.day}', style: TextStyle(color: textColor)),
                       ),
                     ],
                   ),
             const SizedBox(height: 20),
             _isExerciseView && _selectedExercise != null
                 ? _dailyRecords.isEmpty
-                    ? const Text('No data available for selected exercise')
+                    ? Text('No data available for selected exercise', style: TextStyle(color: textColor))
                     : Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: _dailyRecords.entries.map((entry) {
@@ -188,18 +201,23 @@ class _SummaryTabState extends State<SummaryTab> {
 
                           return Card(
                             margin: const EdgeInsets.symmetric(vertical: 8.0),
+                            color: cardColor,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Container(
                                   padding: const EdgeInsets.all(8.0),
                                   decoration: BoxDecoration(
-                                    color: Colors.blue[100],
+                                    color: primaryColor.withOpacity(0.2),
                                     borderRadius: BorderRadius.vertical(top: Radius.circular(4)),
                                   ),
                                   child: Text(
                                     '${day.year}-${day.month}-${day.day}',
-                                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                      color: primaryColor,
+                                    ),
                                   ),
                                 ),
                                 ...records.map((record) {
@@ -215,16 +233,16 @@ class _SummaryTabState extends State<SummaryTab> {
                         }).toList(),
                       )
                 : _isExerciseView
-                    ? const Text('Please select an exercise to view data.')
+                    ? Text('Please select an exercise to view data.', style: TextStyle(color: textColor))
                     : FutureBuilder<Map<String, dynamic>>(
                         future: _dbHelper.getSummaryForDay(widget.selectedDay),
                         builder: (context, snapshot) {
                           if (snapshot.connectionState == ConnectionState.waiting) {
                             return const CircularProgressIndicator();
                           } else if (snapshot.hasError) {
-                            return Text('Error: ${snapshot.error}');
+                            return Text('Error: ${snapshot.error}', style: TextStyle(color: textColor));
                           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                            return const Text('No data available for selected day');
+                            return Text('No data available for selected day', style: TextStyle(color: textColor));
                           }
 
                           final summaryData = snapshot.data!;
@@ -242,10 +260,12 @@ class _SummaryTabState extends State<SummaryTab> {
                                   details['records'] as List<Map<String, dynamic>>;
 
                               return Card(
+                                color: cardColor,
                                 child: ExpansionTile(
-                                  title: Text(exercise),
+                                  title: Text(exercise, style: TextStyle(color: textColor)),
                                   subtitle: Text(
-                                      'Total Weight: ${totalWeight.toStringAsFixed(1)} kg, Sets: $totalSets, Reps: $totalReps, Avg Weight per Set: ${avgWeight.toStringAsFixed(1)} kg'),
+                                      'Total Weight: ${totalWeight.toStringAsFixed(1)} kg, Total Sets: $totalSets, Total Reps: $totalReps, Avg Weight: ${avgWeight.toStringAsFixed(1)} kg',
+                                      style: TextStyle(color: textColor)),
                                   children: records.map((record) {
                                     return ListTile(
                                       title: Text(
