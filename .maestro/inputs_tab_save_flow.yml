@@ -1,5 +1,6 @@
 appId: com.andreped.IronFlow
 ---
+- launchApp
 - tapOn: .*Exercise.*
 - tapOn: Deadlift
 - tapOn:
@@ -7,11 +8,12 @@ appId: com.andreped.IronFlow
 - inputText: "75"
 - tapOn:
     point: 50%,23%
-- tapOn: Reps
+- tapOn: .*Reps.*
 - inputText: "8"
 - tapOn:
     point: 50%,23%
-- tapOn: Sets
+- tapOn: .*Sets.*
 - inputText: "3"
-- tapOn: Done
+- tapOn: .*Done.*
 - tapOn: Save Changes
+- assertVisible: .*Exercise Added Successfully.*
