@@ -152,7 +152,7 @@ class _SummaryTabState extends State<SummaryTab> {
                 SizedBox(width: 8), // Add space between button and icon
                 IconButton(
                   icon: Icon(
-                    _isExerciseView ? Icons.visibility : Icons.visibility_off,
+                    _isExerciseView ? Icons.calendar_today : Icons.fitness_center,
                     color: primaryColor,
                   ),
                   onPressed: () {
