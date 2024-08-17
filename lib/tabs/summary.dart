@@ -209,8 +209,8 @@ class _SummaryTabState extends State<SummaryTab> {
                                 return ListTile(
                                   title: Text(
                                       'Sets: ${record['sets']}, Reps: ${record['reps']}, Weight: ${record['weight']} kg'),
-                                  subtitle: Text(
-                                      'Timestamp: ${record['timestamp']}'),
+                                  subtitle:
+                                      Text('Timestamp: ${record['timestamp']}'),
                                 );
                               }).toList(),
                             ),
@@ -251,7 +251,8 @@ class _SummaryTabState extends State<SummaryTab> {
                                   as List<Map<String, dynamic>>;
 
                               return Card(
-                                margin: const EdgeInsets.symmetric(vertical: 8.0),
+                                margin:
+                                    const EdgeInsets.symmetric(vertical: 8.0),
                                 color: cardColor,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(8.0),
