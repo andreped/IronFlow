@@ -54,8 +54,8 @@ class _SummaryTabState extends State<SummaryTab> {
           },
           headerStyle: HeaderStyle(
             formatButtonVisible: false,
-            titleTextStyle: TextStyle(
-                color: Theme.of(context).colorScheme.primary),
+            titleTextStyle:
+                TextStyle(color: Theme.of(context).colorScheme.primary),
           ),
           calendarStyle: CalendarStyle(
             todayDecoration: BoxDecoration(
@@ -66,8 +66,8 @@ class _SummaryTabState extends State<SummaryTab> {
               color: Theme.of(context).colorScheme.primary,
               shape: BoxShape.circle,
             ),
-            todayTextStyle: TextStyle(
-                color: Theme.of(context).colorScheme.onBackground),
+            todayTextStyle:
+                TextStyle(color: Theme.of(context).colorScheme.onBackground),
             markersMaxCount: 1,
           ),
           calendarBuilders: CalendarBuilders(
@@ -196,34 +196,23 @@ class _SummaryTabState extends State<SummaryTab> {
                               ),
                             ),
                             elevation: 4,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.all(8.0),
-                                  decoration: BoxDecoration(
-                                    color: primaryColor.withOpacity(0.2),
-                                    borderRadius: BorderRadius.vertical(
-                                        top: Radius.circular(4)),
-                                  ),
-                                  child: Text(
-                                    '${day.year}-${day.month}-${day.day}',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16,
-                                      color: primaryColor,
-                                    ),
-                                  ),
+                            child: ExpansionTile(
+                              title: Text(
+                                '${day.year}-${day.month}-${day.day}',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                  color: primaryColor,
                                 ),
-                                ...records.map((record) {
-                                  return ListTile(
-                                    title: Text(
-                                        'Sets: ${record['sets']}, Reps: ${record['reps']}, Weight: ${record['weight']} kg'),
-                                    subtitle: Text(
-                                        'Timestamp: ${record['timestamp']}'),
-                                  );
-                                }).toList(),
-                              ],
+                              ),
+                              children: records.map((record) {
+                                return ListTile(
+                                  title: Text(
+                                      'Sets: ${record['sets']}, Reps: ${record['reps']}, Weight: ${record['weight']} kg'),
+                                  subtitle: Text(
+                                      'Timestamp: ${record['timestamp']}'),
+                                );
+                              }).toList(),
                             ),
                           );
                         }).toList(),
