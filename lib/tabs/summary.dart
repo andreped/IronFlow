@@ -127,7 +127,6 @@ class _SummaryTabState extends State<SummaryTab> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final cardColor = theme.cardColor;
-    final secondaryColor = theme.colorScheme.secondary;
     final primaryColor = theme.colorScheme.primary;
     final textColor = theme.textTheme.bodyLarge?.color ?? Colors.black;
 
@@ -189,34 +188,31 @@ class _SummaryTabState extends State<SummaryTab> {
                           return Card(
                             margin: const EdgeInsets.symmetric(vertical: 8.0),
                             color: cardColor,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.all(8.0),
-                                  decoration: BoxDecoration(
-                                    color: primaryColor.withOpacity(0.2),
-                                    borderRadius: BorderRadius.vertical(
-                                        top: Radius.circular(4)),
-                                  ),
-                                  child: Text(
-                                    '${day.year}-${day.month}-${day.day}',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16,
-                                      color: primaryColor,
-                                    ),
-                                  ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                              side: BorderSide(
+                                color: primaryColor.withOpacity(0.5),
+                                width: 1.0,
+                              ),
+                            ),
+                            elevation: 4,
+                            child: ExpansionTile(
+                              title: Text(
+                                '${day.year}-${day.month}-${day.day}',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                  color: primaryColor,
                                 ),
-                                ...records.map((record) {
-                                  return ListTile(
-                                    title: Text(
-                                        'Sets: ${record['sets']}, Reps: ${record['reps']}, Weight: ${record['weight']} kg'),
-                                    subtitle: Text(
-                                        'Timestamp: ${record['timestamp']}'),
-                                  );
-                                }).toList(),
-                              ],
+                              ),
+                              children: records.map((record) {
+                                return ListTile(
+                                  title: Text(
+                                      'Sets: ${record['sets']}, Reps: ${record['reps']}, Weight: ${record['weight']} kg'),
+                                  subtitle:
+                                      Text('Timestamp: ${record['timestamp']}'),
+                                );
+                              }).toList(),
                             ),
                           );
                         }).toList(),
@@ -255,7 +251,17 @@ class _SummaryTabState extends State<SummaryTab> {
                                   as List<Map<String, dynamic>>;
 
                               return Card(
+                                margin:
+                                    const EdgeInsets.symmetric(vertical: 8.0),
                                 color: cardColor,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                  side: BorderSide(
+                                    color: primaryColor.withOpacity(0.5),
+                                    width: 1.0,
+                                  ),
+                                ),
+                                elevation: 4,
                                 child: ExpansionTile(
                                   title: Text(exercise,
                                       style: TextStyle(color: textColor)),
