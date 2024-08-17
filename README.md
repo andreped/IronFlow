@@ -49,7 +49,7 @@ The app is compatible with both Android and iOS.
 
 ## [Integration Tests](https://github.com/andreped/IronFlow#Integration-Tests)
 
-For testing the application, we use [Maestro](https://github.com/mobile-dev-inc/maestro).  
+For testing the application, we use [Maestro](https://github.com/mobile-dev-inc/maestro).
 Integration tests are performed for all pull requests and before releases using [GitHub Actions](https://github.com/andreped/IronFlow/actions/workflows/integration_tests.yml).
 
 ## [Getting Started](https://github.com/andreped/IronFlow#Getting-Started)
@@ -93,3 +93,5 @@ Especially, Maestro studio which provided a user-friendly, no-code interface to 
 To reduce development time and get experience with Copilots, 
 this Flutter application was heavily assisted by [OpenAI's ChatGPT](https://chatgpt.com),
 primarily using `GPT-4o-mini`.
+
+For visualizations, I have used [freepik](https://www.freepik.com/).
