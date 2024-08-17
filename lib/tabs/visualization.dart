@@ -62,26 +62,40 @@ class _VisualizationTabState extends State<VisualizationTab> {
       final aggregatedDataPoints = <ScatterSpot>[];
       final earliestDate = DateUtils.dateOnly(
           DateTime.parse(filteredExercises.last['timestamp']));
+
       groupedByDate.forEach((date, weights) {
-        double value;
-        switch (_aggregationMethod) {
-          case 'Max':
-            value = weights.reduce((a, b) => a > b ? a : b);
-            break;
-          case 'Average':
-            value = weights.reduce((a, b) => a + b) / weights.length;
-            break;
-          case 'None':
-          default:
-            value = weights.last;
-            break;
+        if (_aggregationMethod == 'None') {
+          // Plot all data points individually
+          for (var weight in weights) {
+            final dayDifference =
+                date.difference(earliestDate).inDays.toDouble();
+            aggregatedDataPoints.add(ScatterSpot(
+              dayDifference,
+              weight,
+              dotPainter: FlDotCirclePainter(color: fixedColor, radius: 6),
+            ));
+          }
+        } else {
+          // Apply Max or Average aggregation
+          double value;
+          switch (_aggregationMethod) {
+            case 'Max':
+              value = weights.reduce((a, b) => a > b ? a : b);
+              break;
+            case 'Average':
+              value = weights.reduce((a, b) => a + b) / weights.length;
+              break;
+            default:
+              value = weights.last;
+              break;
+          }
+          final dayDifference = date.difference(earliestDate).inDays.toDouble();
+          aggregatedDataPoints.add(ScatterSpot(
+            dayDifference,
+            value,
+            dotPainter: FlDotCirclePainter(color: fixedColor, radius: 6),
+          ));
         }
-        final dayDifference = date.difference(earliestDate).inDays.toDouble();
-        aggregatedDataPoints.add(ScatterSpot(
-          dayDifference,
-          value,
-          dotPainter: FlDotCirclePainter(color: fixedColor, radius: 6),
-        ));
       });
 
       setState(() {
@@ -239,7 +253,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
     final paddedMinY = minY - padding;
     final paddedMaxY = maxY + padding;
 
-    final plotColor = fixedColor; // Apply fixed color here
+    final plotColor = fixedColor;
 
     final gridColor = theme.colorScheme.onSurface.withOpacity(0.1);
     final textColor = theme.textTheme.bodyLarge?.color ?? Colors.black;
@@ -251,7 +265,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
                 LineChartBarData(
                   spots: _dataPoints,
                   isCurved: false,
-                  color: plotColor, // Apply fixed color here
+                  color: plotColor,
                   dotData: FlDotData(show: false),
                   belowBarData: BarAreaData(show: false),
                 ),
@@ -273,8 +287,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
               scatterSpots: _dataPoints,
               scatterTouchData: ScatterTouchData(
                 touchTooltipData: ScatterTouchTooltipData(
-                  getTooltipColor: (ScatterSpot touchedSpot) =>
-                      plotColor, // Apply fixed color here
+                  getTooltipColor: (ScatterSpot touchedSpot) => plotColor,
                 ),
                 enabled: true,
               ),
@@ -293,7 +306,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
   }
 
   Widget _buildLegend(ThemeData theme) {
-    final legendColor = fixedColor; // Use the fixed color
+    final legendColor = fixedColor;
 
     return Container(
       padding: const EdgeInsets.all(4.0),
@@ -306,8 +319,8 @@ class _VisualizationTabState extends State<VisualizationTab> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            width: 10, // Smaller size
-            height: 10, // Smaller size
+            width: 10,
+            height: 10,
             color: legendColor,
           ),
           const SizedBox(width: 4.0),
@@ -316,7 +329,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
             style: TextStyle(
               color: theme.textTheme.bodyLarge?.color,
               fontWeight: FontWeight.bold,
-              fontSize: 8, // Smaller font size
+              fontSize: 8,
             ),
           ),
         ],
