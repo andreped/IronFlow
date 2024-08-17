@@ -15,9 +15,7 @@
 **IronFlow** was developed to allow free, private, and seemless tracking of training progress and activities.
 </div>
 
-<p align="center" width="100%">
-<img src="assets/snapshots/log.png" width="18%" height="18%"> <img src="assets/snapshots/summary.png" width="18%" height="18%"> <img src="assets/snapshots/records.png" width="18%" height="18%"> <img src="assets/snapshots/visualize.png" width="18%" height="18%"> <img src="assets/snapshots/table.png" width="18%" height="18%">
-</p>
+<img src="assets/showcase/mobile_app_mosaic.png" width="100%" height="100%"> 
 
 ## [Features](https://github.com/andreped/IronFlow#Features)
 
@@ -51,7 +49,7 @@ The app is compatible with both Android and iOS.
 
 ## [Integration Tests](https://github.com/andreped/IronFlow#Integration-Tests)
 
-For testing the application, we use [Maestro](https://github.com/mobile-dev-inc/maestro).  
+For testing the application, we use [Maestro](https://github.com/mobile-dev-inc/maestro).
 Integration tests are performed for all pull requests and before releases using [GitHub Actions](https://github.com/andreped/IronFlow/actions/workflows/integration_tests.yml).
 
 ## [Getting Started](https://github.com/andreped/IronFlow#Getting-Started)
@@ -95,3 +93,5 @@ Especially, Maestro studio which provided a user-friendly, no-code interface to 
 To reduce development time and get experience with Copilots, 
 this Flutter application was heavily assisted by [OpenAI's ChatGPT](https://chatgpt.com),
 primarily using `GPT-4o-mini`.
+
+For visualizations, I have used [freepik](https://www.freepik.com/).
