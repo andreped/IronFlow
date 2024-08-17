@@ -54,8 +54,8 @@ class _SummaryTabState extends State<SummaryTab> {
           },
           headerStyle: HeaderStyle(
             formatButtonVisible: false,
-            titleTextStyle:
-                TextStyle(color: Theme.of(context).colorScheme.primary),
+            titleTextStyle: TextStyle(
+                color: Theme.of(context).colorScheme.primary),
           ),
           calendarStyle: CalendarStyle(
             todayDecoration: BoxDecoration(
@@ -66,8 +66,8 @@ class _SummaryTabState extends State<SummaryTab> {
               color: Theme.of(context).colorScheme.primary,
               shape: BoxShape.circle,
             ),
-            todayTextStyle:
-                TextStyle(color: Theme.of(context).colorScheme.onBackground),
+            todayTextStyle: TextStyle(
+                color: Theme.of(context).colorScheme.onBackground),
             markersMaxCount: 1,
           ),
           calendarBuilders: CalendarBuilders(
@@ -127,7 +127,6 @@ class _SummaryTabState extends State<SummaryTab> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final cardColor = theme.cardColor;
-    final secondaryColor = theme.colorScheme.secondary;
     final primaryColor = theme.colorScheme.primary;
     final textColor = theme.textTheme.bodyLarge?.color ?? Colors.black;
 
@@ -189,6 +188,14 @@ class _SummaryTabState extends State<SummaryTab> {
                           return Card(
                             margin: const EdgeInsets.symmetric(vertical: 8.0),
                             color: cardColor,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                              side: BorderSide(
+                                color: primaryColor.withOpacity(0.5),
+                                width: 1.0,
+                              ),
+                            ),
+                            elevation: 4,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -255,7 +262,16 @@ class _SummaryTabState extends State<SummaryTab> {
                                   as List<Map<String, dynamic>>;
 
                               return Card(
+                                margin: const EdgeInsets.symmetric(vertical: 8.0),
                                 color: cardColor,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                  side: BorderSide(
+                                    color: primaryColor.withOpacity(0.5),
+                                    width: 1.0,
+                                  ),
+                                ),
+                                elevation: 4,
                                 child: ExpansionTile(
                                   title: Text(exercise,
                                       style: TextStyle(color: textColor)),
