@@ -15,7 +15,7 @@
 **IronFlow** was developed to allow free, private, and seemless tracking of training progress and activities.
 </div>
 
-<img src="assets/showcase/mobile_app_mosaic.png" width="90%" height="90%"> 
+<img src="assets/showcase/mobile_app_mosaic.png" width="100%" height="100%"> 
 
 ## [Features](https://github.com/andreped/IronFlow#Features)
 
