@@ -1,5 +1,7 @@
 <p align="center" width="100%">
-<img src="assets/icon/app_icon_transparent.png" width="20%" height="20%">
+
+<img src="assets/showcase/mobile_app_mosaic.png" width="100%" height="100%"> 
+
 <h1 align="center">IronFlow</h1>
 <h3 align="center">Cross-platform mobile app for strength training progress tracking.</h3>
 
@@ -14,8 +16,6 @@
 
 **IronFlow** was developed to allow free, private, and seemless tracking of training progress and activities.
 </div>
-
-<img src="assets/showcase/mobile_app_mosaic.png" width="100%" height="100%"> 
 
 ## [Features](https://github.com/andreped/IronFlow#Features)
 
