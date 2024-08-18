@@ -124,7 +124,8 @@ class _SettingsModalState extends State<SettingsModal> {
         children: [
           Text(
             'Settings',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(fontSize: 16),
+            style:
+                Theme.of(context).textTheme.titleMedium?.copyWith(fontSize: 16),
           ),
           FutureBuilder<String>(
             future: _appVersion,
@@ -134,12 +135,18 @@ class _SettingsModalState extends State<SettingsModal> {
               } else if (snapshot.hasData) {
                 return Text(
                   'v${snapshot.data}',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontSize: 14),
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyMedium
+                      ?.copyWith(fontSize: 14),
                 );
               } else {
                 return Text(
                   'Version unknown',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontSize: 14),
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyMedium
+                      ?.copyWith(fontSize: 14),
                 );
               }
             },
