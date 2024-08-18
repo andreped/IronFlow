@@ -31,6 +31,9 @@ dependencies:
   flutter:
     sdk: flutter
   
+  # app info
+  package_info_plus: ^3.0.0
+  
   # calendar
   table_calendar: ^3.0.0
 
