@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:package_info_plus/package_info_plus.dart'; // Import the package
 import '../core/database.dart';
 
 class SettingsModal extends StatefulWidget {
@@ -21,15 +22,21 @@ class SettingsModal extends StatefulWidget {
 
 class _SettingsModalState extends State<SettingsModal> {
   final DatabaseHelper _dbHelper = DatabaseHelper();
-
   late ThemeMode _themeMode;
   late bool _isKg;
+  late Future<String> _appVersion;
 
   @override
   void initState() {
     super.initState();
     _themeMode = widget.themeMode;
     _isKg = widget.isKg;
+    _appVersion = _getAppVersion();
+  }
+
+  Future<String> _getAppVersion() async {
+    final packageInfo = await PackageInfo.fromPlatform();
+    return packageInfo.version;
   }
 
   void _handleThemeChange(ThemeMode? newThemeMode) {
@@ -112,9 +119,32 @@ class _SettingsModalState extends State<SettingsModal> {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return AlertDialog(
-      title: Text(
-        'Settings',
-        style: Theme.of(context).textTheme.titleMedium?.copyWith(fontSize: 16),
+      title: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            'Settings',
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(fontSize: 16),
+          ),
+          FutureBuilder<String>(
+            future: _appVersion,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return CircularProgressIndicator();
+              } else if (snapshot.hasData) {
+                return Text(
+                  'v${snapshot.data}',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontSize: 14),
+                );
+              } else {
+                return Text(
+                  'Version unknown',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontSize: 14),
+                );
+              }
+            },
+          ),
+        ],
       ),
       content: SizedBox(
         width: 300,
