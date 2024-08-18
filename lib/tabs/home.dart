@@ -3,8 +3,7 @@ import '../core/database.dart';
 import 'visualization.dart';
 import 'inputs.dart';
 import 'summary.dart';
-import 'records.dart';
-import 'table.dart';
+import 'data.dart';
 import '../widgets/settings.dart';
 
 class ExerciseStoreApp extends StatelessWidget {
@@ -72,13 +71,13 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 5, vsync: this, initialIndex: 2)
+    _tabController = TabController(length: 4, vsync: this, initialIndex: 1)
       ..addListener(() {
-        if (_tabController.index == 4) {
+        if (_tabController.index == 3) {
           _refreshTable();
         }
       });
-    _pageController = PageController(initialPage: 2);
+    _pageController = PageController(initialPage: 1);
   }
 
   @override
@@ -129,7 +128,6 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage>
             _tabController.animateTo(index);
           },
           children: [
-            RecordsTab(),
             SummaryTab(
               selectedDay: _selectedDay,
               onDateSelected: _onDateSelected,
@@ -146,7 +144,7 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage>
               padding: const EdgeInsets.all(16.0),
               child: VisualizationTab(key: PageStorageKey('visualizationTab')),
             ),
-            TableTab(),
+            DataTab(),
           ],
         ),
       ),
@@ -158,7 +156,6 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage>
           },
           labelStyle: const TextStyle(fontSize: 12),
           tabs: const [
-            Tab(icon: Icon(Icons.celebration, size: 27.0)),
             Tab(icon: Icon(Icons.calendar_month, size: 27.0)),
             Tab(icon: Icon(Icons.add_box, size: 27.0)),
             Tab(icon: Icon(Icons.insert_chart, size: 27.0)),
