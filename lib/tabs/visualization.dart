@@ -75,7 +75,8 @@ class _VisualizationTabState extends State<VisualizationTab> {
             aggregatedDataPoints.add(ScatterSpot(
               dayDifference,
               weight,
-              dotPainter: FlDotCirclePainter(color: Theme.of(context).primaryChartColor, radius: 6),
+              dotPainter: FlDotCirclePainter(
+                  color: Theme.of(context).primaryChartColor, radius: 6),
             ));
           }
         } else {
@@ -96,7 +97,8 @@ class _VisualizationTabState extends State<VisualizationTab> {
           aggregatedDataPoints.add(ScatterSpot(
             dayDifference,
             value,
-            dotPainter: FlDotCirclePainter(color: Theme.of(context).primaryChartColor, radius: 6),
+            dotPainter: FlDotCirclePainter(
+                color: Theme.of(context).primaryChartColor, radius: 6),
           ));
         }
       });
@@ -178,7 +180,8 @@ class _VisualizationTabState extends State<VisualizationTab> {
 
   Widget _buildExerciseDropdown(ThemeData theme) {
     return DropdownButton<String>(
-      hint: Text('Exercise', style: TextStyle(color: theme.textTheme.bodyLarge?.color)),
+      hint: Text('Exercise',
+          style: TextStyle(color: theme.textTheme.bodyLarge?.color)),
       value: _selectedExercise,
       onChanged: (newValue) {
         if (newValue != null) {
@@ -191,10 +194,13 @@ class _VisualizationTabState extends State<VisualizationTab> {
       items: _exerciseNames.map((exerciseName) {
         return DropdownMenuItem<String>(
           value: exerciseName,
-          child: Text(exerciseName, style: TextStyle(color: theme.textTheme.bodyLarge?.color)),
+          child: Text(exerciseName,
+              style: TextStyle(color: theme.textTheme.bodyLarge?.color)),
         );
       }).toList(),
-      dropdownColor: theme.dropdownMenuTheme.menuStyle?.backgroundColor?.resolve({}) ?? Colors.white,
+      dropdownColor:
+          theme.dropdownMenuTheme.menuStyle?.backgroundColor?.resolve({}) ??
+              Colors.white,
     );
   }
 
@@ -217,10 +223,13 @@ class _VisualizationTabState extends State<VisualizationTab> {
       items: ['Max', 'Average', 'None'].map((method) {
         return DropdownMenuItem<String>(
           value: method,
-          child: Text(method, style: TextStyle(color: theme.textTheme.bodyLarge?.color)),
+          child: Text(method,
+              style: TextStyle(color: theme.textTheme.bodyLarge?.color)),
         );
       }).toList(),
-      dropdownColor: theme.dropdownMenuTheme.menuStyle?.backgroundColor?.resolve({}) ?? Colors.white,
+      dropdownColor:
+          theme.dropdownMenuTheme.menuStyle?.backgroundColor?.resolve({}) ??
+              Colors.white,
     );
   }
 
@@ -243,15 +252,19 @@ class _VisualizationTabState extends State<VisualizationTab> {
       items: ['Line', 'Scatter'].map((type) {
         return DropdownMenuItem<String>(
           value: type,
-          child: Text(type, style: TextStyle(color: theme.textTheme.bodyLarge?.color)),
+          child: Text(type,
+              style: TextStyle(color: theme.textTheme.bodyLarge?.color)),
         );
       }).toList(),
-      dropdownColor: theme.dropdownMenuTheme.menuStyle?.backgroundColor?.resolve({}) ?? Colors.white,
+      dropdownColor:
+          theme.dropdownMenuTheme.menuStyle?.backgroundColor?.resolve({}) ??
+              Colors.white,
     );
   }
 
   Widget _buildChart(ThemeData theme) {
-    final chartColor = theme.primaryChartColor; // Use the theme's primary chart color
+    final chartColor =
+        theme.primaryChartColor; // Use the theme's primary chart color
     final gridColor = theme.colorScheme.onSurface.withOpacity(0.1);
     final textColor = theme.textTheme.bodyLarge?.color ?? Colors.black;
 
