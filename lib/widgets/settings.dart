@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:package_info_plus/package_info_plus.dart'; // Import the package
+import 'package:package_info_plus/package_info_plus.dart';
 import '../core/database.dart';
+import '../core/theme.dart'; // Make sure to import your AppThemes
 
 class SettingsModal extends StatefulWidget {
-  final ThemeMode themeMode;
-  final ValueChanged<ThemeMode> onThemeChanged;
+  final AppTheme appTheme;
+  final ValueChanged<AppTheme> onThemeChanged;
   final bool isKg;
   final ValueChanged<bool> onUnitChanged;
 
   const SettingsModal({
     Key? key,
-    required this.themeMode,
+    required this.appTheme,
     required this.onThemeChanged,
     required this.isKg,
     required this.onUnitChanged,
@@ -22,14 +23,14 @@ class SettingsModal extends StatefulWidget {
 
 class _SettingsModalState extends State<SettingsModal> {
   final DatabaseHelper _dbHelper = DatabaseHelper();
-  late ThemeMode _themeMode;
+  late AppTheme _appTheme;
   late bool _isKg;
   late Future<String> _appVersion;
 
   @override
   void initState() {
     super.initState();
-    _themeMode = widget.themeMode;
+    _appTheme = widget.appTheme;
     _isKg = widget.isKg;
     _appVersion = _getAppVersion();
   }
@@ -39,12 +40,12 @@ class _SettingsModalState extends State<SettingsModal> {
     return packageInfo.version;
   }
 
-  void _handleThemeChange(ThemeMode? newThemeMode) {
-    if (newThemeMode != null) {
+  void _handleThemeChange(AppTheme? newTheme) {
+    if (newTheme != null) {
       setState(() {
-        _themeMode = newThemeMode;
+        _appTheme = newTheme;
       });
-      widget.onThemeChanged(newThemeMode);
+      widget.onThemeChanged(newTheme);
     }
   }
 
@@ -168,26 +169,30 @@ class _SettingsModalState extends State<SettingsModal> {
                     .bodyMedium
                     ?.copyWith(fontSize: 14),
               ),
-              trailing: DropdownButton<ThemeMode>(
-                value: _themeMode,
+              trailing: DropdownButton<AppTheme>(
+                value: _appTheme,
                 style: TextStyle(
                   fontSize: 14,
                   color: isDarkMode
                       ? Colors.white
                       : Colors.black, // Set text color based on theme
                 ),
-                items: const [
+                items: [
                   DropdownMenuItem(
-                    value: ThemeMode.system,
+                    value: AppTheme.system,
                     child: Text('System Default'),
                   ),
                   DropdownMenuItem(
-                    value: ThemeMode.light,
+                    value: AppTheme.light,
                     child: Text('Light'),
                   ),
                   DropdownMenuItem(
-                    value: ThemeMode.dark,
+                    value: AppTheme.dark,
                     child: Text('Dark'),
+                  ),
+                  DropdownMenuItem(
+                    value: AppTheme.pink,
+                    child: Text('Pink'),
                   ),
                 ],
                 onChanged: _handleThemeChange,
