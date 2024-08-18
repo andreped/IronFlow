@@ -28,7 +28,8 @@ class _TableTabState extends State<TableTab> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Confirm Deletion'),
-          content: const Text('🚨 Are you sure you want to delete this record?'),
+          content:
+              const Text('🚨 Are you sure you want to delete this record?'),
           actions: <Widget>[
             TextButton(
               child: const Text('Cancel'),
@@ -158,7 +159,8 @@ class _TableTabState extends State<TableTab> {
                     TableCell(
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Text('Actions', style: TextStyle(fontWeight: FontWeight.bold)),
+                        child: Text('Actions',
+                            style: TextStyle(fontWeight: FontWeight.bold)),
                       ),
                     ),
                   ],
@@ -168,27 +170,33 @@ class _TableTabState extends State<TableTab> {
                     children: [
                       TableCell(
                           child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 14.0),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 14.0),
                               child: Text(exercise['exercise']))),
                       TableCell(
                           child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 14.0),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 14.0),
                               child: Text(exercise['weight']))),
                       TableCell(
                           child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 14.0),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 14.0),
                               child: Text(exercise['reps'].toString()))),
                       TableCell(
                           child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 14.0),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 14.0),
                               child: Text(exercise['sets'].toString()))),
                       TableCell(
                           child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 14.0),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 14.0),
                               child: Text(_formatDate(exercise['timestamp'])))),
                       TableCell(
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0.0),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 0.0),
                           child: Row(
                             children: [
                               IconButton(

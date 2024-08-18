@@ -57,7 +57,8 @@ class _RecordsTabState extends State<RecordsTab> {
                   children: [
                     ListTile(
                       title: Text(exercise),
-                      trailing: Text('${weight!.toStringAsFixed(1)} kg x $reps reps'),
+                      trailing:
+                          Text('${weight!.toStringAsFixed(1)} kg x $reps reps'),
                     ),
                     if (index < _maxWeights.length - 1) Divider(),
                   ],
