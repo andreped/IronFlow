@@ -69,7 +69,8 @@ class _RecordsTabState extends State<RecordsTab> {
             ? const Center(child: CircularProgressIndicator())
             : _errorMessage != null
                 ? Center(
-                    child: Text(_errorMessage!, style: TextStyle(color: Colors.red)),
+                    child: Text(_errorMessage!,
+                        style: TextStyle(color: Colors.red)),
                   )
                 : _maxWeights.isEmpty
                     ? const Center(child: Text('No data available'))
@@ -85,7 +86,8 @@ class _RecordsTabState extends State<RecordsTab> {
                             children: [
                               ListTile(
                                 title: Text(exercise),
-                                trailing: Text('${weight!.toStringAsFixed(1)} kg x $reps reps'),
+                                trailing: Text(
+                                    '${weight!.toStringAsFixed(1)} kg x $reps reps'),
                               ),
                               if (index < _maxWeights.length - 1) Divider(),
                             ],
