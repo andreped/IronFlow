@@ -28,7 +28,8 @@ class _TableTabState extends State<TableTab> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Confirm Deletion'),
-          content: const Text('🚨 Are you sure you want to delete this record?'),
+          content:
+              const Text('🚨 Are you sure you want to delete this record?'),
           actions: <Widget>[
             TextButton(
               child: const Text('Cancel'),
