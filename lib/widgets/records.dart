@@ -58,36 +58,41 @@ class _RecordsTabState extends State<RecordsTab> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : _errorMessage != null
-              ? Center(
-                  child:
-                      Text(_errorMessage!, style: TextStyle(color: Colors.red)))
-              : _maxWeights.isEmpty
-                  ? const Center(child: Text('No data available'))
-                  : ListView.builder(
-                      itemCount: _maxWeights.length,
-                      itemBuilder: (context, index) {
-                        final exercise = _maxWeights.keys.elementAt(index);
-                        final weightData = _maxWeights[exercise]!;
-                        final weight = weightData['maxWeight'];
-                        final reps = weightData['reps'];
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('High Scores'),
+        // Optionally, you can add actions or other AppBar customizations here
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: _isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : _errorMessage != null
+                ? Center(
+                    child: Text(_errorMessage!, style: TextStyle(color: Colors.red)),
+                  )
+                : _maxWeights.isEmpty
+                    ? const Center(child: Text('No data available'))
+                    : ListView.builder(
+                        itemCount: _maxWeights.length,
+                        itemBuilder: (context, index) {
+                          final exercise = _maxWeights.keys.elementAt(index);
+                          final weightData = _maxWeights[exercise]!;
+                          final weight = weightData['maxWeight'];
+                          final reps = weightData['reps'];
 
-                        return Column(
-                          children: [
-                            ListTile(
-                              title: Text(exercise),
-                              trailing: Text(
-                                  '${weight!.toStringAsFixed(1)} kg x $reps reps'),
-                            ),
-                            if (index < _maxWeights.length - 1) Divider(),
-                          ],
-                        );
-                      },
-                    ),
+                          return Column(
+                            children: [
+                              ListTile(
+                                title: Text(exercise),
+                                trailing: Text('${weight!.toStringAsFixed(1)} kg x $reps reps'),
+                              ),
+                              if (index < _maxWeights.length - 1) Divider(),
+                            ],
+                          );
+                        },
+                      ),
+      ),
     );
   }
 }
