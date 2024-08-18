@@ -28,8 +28,7 @@ class _TableTabState extends State<TableTab> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Confirm Deletion'),
-          content:
-              const Text('🚨 Are you sure you want to delete this record?'),
+          content: const Text('🚨 Are you sure you want to delete this record?'),
           actions: <Widget>[
             TextButton(
               child: const Text('Cancel'),
@@ -69,67 +68,6 @@ class _TableTabState extends State<TableTab> {
         setState(() {});
       }
     });
-  }
-
-  Future<void> _showConfirmationDialogs() async {
-    final bool? firstDialogConfirmed = await showDialog<bool>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('⚠️ Confirm Deletion'),
-          content: const Text(
-              '🚨 Clicking this button deletes all the recorded exercise data. Are you sure you want to do this?'),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('No'),
-              onPressed: () => Navigator.of(context).pop(false),
-            ),
-            TextButton(
-              child: const Text('Yes'),
-              onPressed: () => Navigator.of(context).pop(true),
-            ),
-          ],
-        );
-      },
-    );
-
-    if (firstDialogConfirmed == true) {
-      final bool? secondDialogConfirmed = await showDialog<bool>(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('❗️ Are you really sure?'),
-            content: const Text(
-                '💥 Are you really sure you want to lose all your data? There is no going back!'),
-            actions: <Widget>[
-              TextButton(
-                child: const Text('No'),
-                onPressed: () => Navigator.of(context).pop(false),
-              ),
-              TextButton(
-                child: const Text('Yes'),
-                onPressed: () => Navigator.of(context).pop(true),
-              ),
-            ],
-          );
-        },
-      );
-
-      if (secondDialogConfirmed == true) {
-        await _dbHelper.clearDatabase();
-
-        // Show success SnackBar
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text('✅ Database cleared successfully!'),
-            backgroundColor: Colors.green,
-            duration: const Duration(seconds: 2),
-          ),
-        );
-
-        setState(() {}); // Refresh the table after clearing the database
-      }
-    }
   }
 
   String _formatDate(String timestamp) {
@@ -178,14 +116,6 @@ class _TableTabState extends State<TableTab> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Exercise Data'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.delete_sweep),
-            onPressed: () async {
-              await _showConfirmationDialogs();
-            },
-          ),
-        ],
       ),
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
