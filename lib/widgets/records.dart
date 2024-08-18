@@ -11,7 +11,7 @@ class _RecordsTabState extends State<RecordsTab> {
   Map<String, Map<String, dynamic>> _maxWeights = {};
   bool _isSortedByWeight = false;
   bool _isLoading = true; // Track loading state
-  String? _errorMessage;  // Track error message
+  String? _errorMessage; // Track error message
 
   Future<void> _fetchAndSortRecords() async {
     setState(() {
@@ -29,7 +29,8 @@ class _RecordsTabState extends State<RecordsTab> {
     } catch (e) {
       setState(() {
         _isLoading = false; // Finished loading
-        _errorMessage = 'Failed to load data. Please try again later.'; // Set error message
+        _errorMessage =
+            'Failed to load data. Please try again later.'; // Set error message
       });
       print('Error fetching records: $e'); // Log error for debugging
     }
@@ -62,7 +63,9 @@ class _RecordsTabState extends State<RecordsTab> {
       child: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _errorMessage != null
-              ? Center(child: Text(_errorMessage!, style: TextStyle(color: Colors.red)))
+              ? Center(
+                  child:
+                      Text(_errorMessage!, style: TextStyle(color: Colors.red)))
               : _maxWeights.isEmpty
                   ? const Center(child: Text('No data available'))
                   : ListView.builder(
@@ -77,8 +80,8 @@ class _RecordsTabState extends State<RecordsTab> {
                           children: [
                             ListTile(
                               title: Text(exercise),
-                              trailing:
-                                  Text('${weight!.toStringAsFixed(1)} kg x $reps reps'),
+                              trailing: Text(
+                                  '${weight!.toStringAsFixed(1)} kg x $reps reps'),
                             ),
                             if (index < _maxWeights.length - 1) Divider(),
                           ],
