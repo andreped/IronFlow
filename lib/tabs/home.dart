@@ -111,7 +111,12 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('IronFlow'),
+        title: Image.asset(
+          'assets/icon/app_icon_transparent.png',
+          height: 40, // Adjust the height as needed
+          fit: BoxFit.contain,
+        ),
+        centerTitle: true, // Center the logo in the AppBar
         actions: [
           IconButton(
             icon: const Icon(Icons.settings),
