@@ -26,6 +26,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
   }
 
   Future<void> _fetchExerciseNames() async {
+    print('Fetching exercise names...');
     try {
       final variables = await _dbHelper.getExercises();
       final names = variables
@@ -41,6 +42,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
   }
 
   Future<void> _fetchDataPoints(String exerciseName) async {
+    print('Fetching data points for: $exerciseName');
     try {
       final exercises = await _dbHelper.getExercises();
       final filteredExercises = exercises
@@ -110,59 +112,72 @@ class _VisualizationTabState extends State<VisualizationTab> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        children: [
-          _buildExerciseDropdown(),
-          const SizedBox(height: 16.0),
-          _buildAggregationDropdown(),
-          const SizedBox(height: 16.0),
-          _buildChartTypeToggle(),
-          const SizedBox(height: 16.0),
-          Expanded(
-            child: _dataPoints.isEmpty
-                ? Center(
-                    child: Text(
-                      'No data available',
-                      style: TextStyle(
-                        color: theme.textTheme.bodyLarge?.color,
+    return Scaffold(
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            _buildExerciseDropdown(),
+            const SizedBox(height: 16.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                SizedBox(
+                  width: 90, // Adjust the width as needed
+                  child: _buildAggregationDropdown(),
+                ),
+                const SizedBox(width: 16.0),
+                SizedBox(
+                  width: 85, // Adjust the width as needed
+                  child: _buildChartTypeToggle(),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16.0),
+            Expanded(
+              child: _dataPoints.isEmpty
+                  ? Center(
+                      child: Text(
+                        'No data available',
+                        style: TextStyle(
+                          color: theme.textTheme.bodyLarge?.color,
+                        ),
                       ),
-                    ),
-                  )
-                : LayoutBuilder(
-                    builder: (context, constraints) {
-                      final chartHeight = constraints.maxHeight;
+                    )
+                  : LayoutBuilder(
+                      builder: (context, constraints) {
+                        final chartHeight = constraints.maxHeight;
 
-                      return ConstrainedBox(
-                        constraints: BoxConstraints(
-                          maxHeight: chartHeight,
-                        ),
-                        child: Stack(
-                          children: [
-                            Positioned.fill(
-                              child: _buildChart(theme),
-                            ),
-                            if (_selectedExercise != null)
-                              Positioned(
-                                bottom: 44,
-                                right: 8,
-                                child: _buildLegend(theme),
+                        return ConstrainedBox(
+                          constraints: BoxConstraints(
+                            maxHeight: chartHeight,
+                          ),
+                          child: Stack(
+                            children: [
+                              Positioned.fill(
+                                child: _buildChart(theme),
                               ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
-          ),
-        ],
+                              if (_selectedExercise != null)
+                                Positioned(
+                                  bottom: 44,
+                                  right: 8,
+                                  child: _buildLegend(theme),
+                                ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildExerciseDropdown() {
     return DropdownButton<String>(
-      hint: const Text('Select an exercise'),
+      hint: const Text('Exercise'),
       value: _selectedExercise,
       onChanged: (newValue) {
         if (newValue != null) {
@@ -183,7 +198,6 @@ class _VisualizationTabState extends State<VisualizationTab> {
 
   Widget _buildAggregationDropdown() {
     return DropdownButton<String>(
-      hint: const Text('Select aggregation method'),
       value: _aggregationMethod,
       onChanged: (newValue) {
         if (newValue != null) {
@@ -208,37 +222,28 @@ class _VisualizationTabState extends State<VisualizationTab> {
   }
 
   Widget _buildChartTypeToggle() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          'Chart Type:',
-          style: Theme.of(context).textTheme.titleMedium,
-        ),
-        DropdownButton<String>(
-          value: _chartType,
-          onChanged: (newValue) {
-            if (newValue != null) {
-              setState(() {
-                _chartType = newValue;
-              });
-            }
-          },
-          items: _aggregationMethod == 'None'
-              ? ['Scatter'].map((type) {
-                  return DropdownMenuItem<String>(
-                    value: type,
-                    child: Text(type),
-                  );
-                }).toList()
-              : ['Line', 'Scatter'].map((type) {
-                  return DropdownMenuItem<String>(
-                    value: type,
-                    child: Text(type),
-                  );
-                }).toList(),
-        ),
-      ],
+    return DropdownButton<String>(
+      value: _chartType,
+      onChanged: (newValue) {
+        if (newValue != null) {
+          setState(() {
+            _chartType = newValue;
+          });
+        }
+      },
+      items: _aggregationMethod == 'None'
+          ? ['Scatter'].map((type) {
+              return DropdownMenuItem<String>(
+                value: type,
+                child: Text(type),
+              );
+            }).toList()
+          : ['Line', 'Scatter'].map((type) {
+              return DropdownMenuItem<String>(
+                value: type,
+                child: Text(type),
+              );
+            }).toList(),
     );
   }
 
@@ -325,7 +330,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
           ),
           const SizedBox(width: 4.0),
           Text(
-            _selectedExercise!,
+            _selectedExercise ?? '',
             style: TextStyle(
               color: theme.textTheme.bodyLarge?.color,
               fontWeight: FontWeight.bold,
