@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../core/database.dart';
 
 class SettingsModal extends StatefulWidget {
   final ThemeMode themeMode;
@@ -19,6 +20,8 @@ class SettingsModal extends StatefulWidget {
 }
 
 class _SettingsModalState extends State<SettingsModal> {
+  final DatabaseHelper _dbHelper = DatabaseHelper();
+
   late ThemeMode _themeMode;
   late bool _isKg;
 
@@ -43,6 +46,65 @@ class _SettingsModalState extends State<SettingsModal> {
       _isKg = newValue;
     });
     widget.onUnitChanged(newValue);
+  }
+
+  Future<void> _showConfirmationDialogs() async {
+    final bool? firstDialogConfirmed = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('⚠️ Confirm Deletion'),
+          content: const Text(
+              '🚨 Clicking this button deletes all the recorded exercise data. Are you sure you want to do this?'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('No'),
+              onPressed: () => Navigator.of(context).pop(false),
+            ),
+            TextButton(
+              child: const Text('Yes'),
+              onPressed: () => Navigator.of(context).pop(true),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (firstDialogConfirmed == true) {
+      final bool? secondDialogConfirmed = await showDialog<bool>(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('❗️ Are you really sure?'),
+            content: const Text(
+                '💥 Are you really sure you want to lose all your data? There is no going back!'),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('No'),
+                onPressed: () => Navigator.of(context).pop(false),
+              ),
+              TextButton(
+                child: const Text('Yes'),
+                onPressed: () => Navigator.of(context).pop(true),
+              ),
+            ],
+          );
+        },
+      );
+
+      if (secondDialogConfirmed == true) {
+        await _dbHelper.clearDatabase();
+
+        // Show success SnackBar
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('✅ Database cleared successfully!'),
+            backgroundColor: Colors.green,
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      }
+    }
   }
 
   @override
@@ -112,6 +174,23 @@ class _SettingsModalState extends State<SettingsModal> {
                   inactiveTrackColor:
                       Theme.of(context).colorScheme.onSurface.withOpacity(0.38),
                 ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            // Clear database
+            ListTile(
+              title: Text(
+                'Clear Database',
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyMedium
+                    ?.copyWith(fontSize: 14),
+              ),
+              trailing: IconButton(
+                icon: Icon(Icons.delete_sweep, color: Colors.redAccent),
+                onPressed: () async {
+                  await _showConfirmationDialogs();
+                },
               ),
             ),
           ],
