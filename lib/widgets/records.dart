@@ -64,7 +64,7 @@ class _RecordsTabState extends State<RecordsTab> {
           : _errorMessage != null
               ? Center(child: Text(_errorMessage!, style: TextStyle(color: Colors.red)))
               : _maxWeights.isEmpty
-                  ? const Center(child: Text('No records available.'))
+                  ? const Center(child: Text('No data available'))
                   : ListView.builder(
                       itemCount: _maxWeights.length,
                       itemBuilder: (context, index) {
