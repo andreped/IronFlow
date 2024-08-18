@@ -1,8 +1,8 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'tabs/home.dart';
+import 'core/theme.dart'; // Import your AppThemes
 
-Future<void> main() async {
+void main() {
   runApp(const MyApp());
 }
 
@@ -14,12 +14,12 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  ThemeMode _themeMode = ThemeMode.system;
+  AppTheme _appTheme = AppTheme.system; // Default to system theme
   bool _isKg = true; // Default unit system
 
-  void _toggleThemeMode(ThemeMode newThemeMode) {
+  void _toggleTheme(AppTheme newTheme) {
     setState(() {
-      _themeMode = newThemeMode;
+      _appTheme = newTheme;
     });
   }
 
@@ -31,11 +31,23 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return ExerciseStoreApp(
-      themeMode: _themeMode,
-      updateTheme: _toggleThemeMode,
-      isKg: _isKg,
-      toggleUnit: _toggleUnit,
+    // Get current brightness
+    final brightness = MediaQuery.of(context).platformBrightness;
+    final themeData = AppThemes.getTheme(_appTheme, brightness);
+
+    return MaterialApp(
+      title: 'IronFlow',
+      theme: themeData,
+      darkTheme: AppThemes.darkTheme,
+      themeMode: _appTheme == AppTheme.system
+          ? ThemeMode.system
+          : (_appTheme == AppTheme.dark ? ThemeMode.dark : ThemeMode.light),
+      home: ExerciseStoreHomePage(
+        appTheme: _appTheme,
+        updateTheme: _toggleTheme,
+        isKg: _isKg,
+        toggleUnit: _toggleUnit,
+      ),
     );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../core/theme.dart'; // Import your AppThemes
 import '../core/database.dart';
 import 'visualization.dart';
 import 'inputs.dart';
@@ -7,14 +8,14 @@ import 'data.dart';
 import '../widgets/settings.dart';
 
 class ExerciseStoreApp extends StatelessWidget {
-  final ThemeMode themeMode;
-  final ValueChanged<ThemeMode> updateTheme;
+  final AppTheme appTheme;
+  final ValueChanged<AppTheme> updateTheme;
   final bool isKg;
   final ValueChanged<bool> toggleUnit;
 
   const ExerciseStoreApp({
     Key? key,
-    required this.themeMode,
+    required this.appTheme,
     required this.updateTheme,
     required this.isKg,
     required this.toggleUnit,
@@ -22,15 +23,18 @@ class ExerciseStoreApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final brightness = MediaQuery.of(context).platformBrightness;
+    final themeData = AppThemes.getTheme(appTheme, brightness);
+
     return MaterialApp(
       title: 'IronFlow',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      darkTheme: ThemeData.dark(),
-      themeMode: themeMode,
+      theme: themeData,
+      darkTheme: AppThemes.darkTheme,
+      themeMode: appTheme == AppTheme.system
+          ? ThemeMode.system
+          : (appTheme == AppTheme.dark ? ThemeMode.dark : ThemeMode.light),
       home: ExerciseStoreHomePage(
-        themeMode: themeMode,
+        appTheme: appTheme,
         updateTheme: updateTheme,
         isKg: isKg,
         toggleUnit: toggleUnit,
@@ -40,14 +44,14 @@ class ExerciseStoreApp extends StatelessWidget {
 }
 
 class ExerciseStoreHomePage extends StatefulWidget {
-  final ThemeMode themeMode;
-  final ValueChanged<ThemeMode> updateTheme;
+  final AppTheme appTheme;
+  final ValueChanged<AppTheme> updateTheme;
   final bool isKg;
   final ValueChanged<bool> toggleUnit;
 
   const ExerciseStoreHomePage({
     Key? key,
-    required this.themeMode,
+    required this.appTheme,
     required this.updateTheme,
     required this.isKg,
     required this.toggleUnit,
@@ -98,7 +102,7 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage>
       context: context,
       builder: (BuildContext context) {
         return SettingsModal(
-          themeMode: widget.themeMode,
+          appTheme: widget.appTheme,
           onThemeChanged: widget.updateTheme,
           isKg: widget.isKg,
           onUnitChanged: widget.toggleUnit,
