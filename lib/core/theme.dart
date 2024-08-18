@@ -20,6 +20,10 @@ class AppThemes {
   );
 
   static ThemeData darkTheme = ThemeData.dark().copyWith(
+    colorScheme: ColorScheme.dark().copyWith(
+      primary: Colors.purple,
+      secondary: Colors.purpleAccent,
+    ),
     dropdownMenuTheme: DropdownMenuThemeData(
       menuStyle: MenuStyle(
         backgroundColor: MaterialStateProperty.all(Colors.grey[850]),
@@ -63,3 +67,17 @@ class AppThemes {
 }
 
 enum AppTheme { system, light, dark, pink }
+
+// Extension on ThemeData to include the primaryChartColor
+extension ChartColors on ThemeData {
+  Color get primaryChartColor {
+    // Use primary color or fallback to specific colors based on brightness
+    if (brightness == Brightness.dark) {
+      return colorScheme.primary; // Typically purple in dark mode
+    } else if (colorScheme.primary == Colors.pink) {
+      return Colors.pink; // Pink theme case
+    } else {
+      return Colors.blue; // Default to blue in light mode
+    }
+  }
+}

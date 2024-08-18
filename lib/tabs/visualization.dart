@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../core/database.dart';
+import '../core/theme.dart'; // Import your theme with the ChartColors extension
 
 class VisualizationTab extends StatefulWidget {
   const VisualizationTab({Key? key}) : super(key: key);
@@ -74,7 +75,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
             aggregatedDataPoints.add(ScatterSpot(
               dayDifference,
               weight,
-              dotPainter: FlDotCirclePainter(color: fixedColor, radius: 6),
+              dotPainter: FlDotCirclePainter(color: Theme.of(context).primaryChartColor, radius: 6),
             ));
           }
         } else {
@@ -95,7 +96,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
           aggregatedDataPoints.add(ScatterSpot(
             dayDifference,
             value,
-            dotPainter: FlDotCirclePainter(color: fixedColor, radius: 6),
+            dotPainter: FlDotCirclePainter(color: Theme.of(context).primaryChartColor, radius: 6),
           ));
         }
       });
@@ -193,7 +194,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
           child: Text(exerciseName, style: TextStyle(color: theme.textTheme.bodyLarge?.color)),
         );
       }).toList(),
-      dropdownColor: theme.dropdownMenuTheme.menuStyle?.backgroundColor?.resolve({}) ?? Colors.white, // Set background color
+      dropdownColor: theme.dropdownMenuTheme.menuStyle?.backgroundColor?.resolve({}) ?? Colors.white,
     );
   }
 
@@ -213,13 +214,13 @@ class _VisualizationTabState extends State<VisualizationTab> {
           }
         }
       },
-      items: <String>['None', 'Max', 'Average'].map((method) {
+      items: ['Max', 'Average', 'None'].map((method) {
         return DropdownMenuItem<String>(
           value: method,
           child: Text(method, style: TextStyle(color: theme.textTheme.bodyLarge?.color)),
         );
       }).toList(),
-      dropdownColor: theme.dropdownMenuTheme.menuStyle?.backgroundColor?.resolve({}) ?? Colors.white, // Set background color
+      dropdownColor: theme.dropdownMenuTheme.menuStyle?.backgroundColor?.resolve({}) ?? Colors.white,
     );
   }
 
@@ -227,42 +228,30 @@ class _VisualizationTabState extends State<VisualizationTab> {
     return DropdownButton<String>(
       value: _chartType,
       onChanged: (newValue) {
-        if (newValue != null) {
+        if (newValue != null && newValue != _chartType) {
           setState(() {
             _chartType = newValue;
+            if (_chartType == 'Line' && _aggregationMethod == 'None') {
+              _aggregationMethod = 'Max';
+            }
           });
+          if (_selectedExercise != null) {
+            _fetchDataPoints(_selectedExercise!);
+          }
         }
       },
-      items: _aggregationMethod == 'None'
-          ? ['Scatter'].map((type) {
-              return DropdownMenuItem<String>(
-                value: type,
-                child: Text(type, style: TextStyle(color: theme.textTheme.bodyLarge?.color)),
-              );
-            }).toList()
-          : ['Line', 'Scatter'].map((type) {
-              return DropdownMenuItem<String>(
-                value: type,
-                child: Text(type, style: TextStyle(color: theme.textTheme.bodyLarge?.color)),
-              );
-            }).toList(),
-      dropdownColor: theme.dropdownMenuTheme.menuStyle?.backgroundColor?.resolve({}) ?? Colors.white, // Set background color
+      items: ['Line', 'Scatter'].map((type) {
+        return DropdownMenuItem<String>(
+          value: type,
+          child: Text(type, style: TextStyle(color: theme.textTheme.bodyLarge?.color)),
+        );
+      }).toList(),
+      dropdownColor: theme.dropdownMenuTheme.menuStyle?.backgroundColor?.resolve({}) ?? Colors.white,
     );
   }
 
   Widget _buildChart(ThemeData theme) {
-    final minY = _dataPoints.isNotEmpty
-        ? _dataPoints.map((spot) => spot.y).reduce((a, b) => a < b ? a : b)
-        : 0.0;
-    final maxY = _dataPoints.isNotEmpty
-        ? _dataPoints.map((spot) => spot.y).reduce((a, b) => a > b ? a : b)
-        : 0.0;
-    final padding = 2;
-    final paddedMinY = minY - padding;
-    final paddedMaxY = maxY + padding;
-
-    final plotColor = fixedColor;
-
+    final chartColor = theme.primaryChartColor; // Use the theme's primary chart color
     final gridColor = theme.colorScheme.onSurface.withOpacity(0.1);
     final textColor = theme.textTheme.bodyLarge?.color ?? Colors.black;
 
@@ -273,7 +262,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
                 LineChartBarData(
                   spots: _dataPoints,
                   isCurved: false,
-                  color: plotColor,
+                  color: chartColor,
                   dotData: FlDotData(show: false),
                   belowBarData: BarAreaData(show: false),
                 ),
@@ -286,8 +275,8 @@ class _VisualizationTabState extends State<VisualizationTab> {
                   getDrawingHorizontalLine: (value) {
                     return FlLine(color: gridColor, strokeWidth: 1);
                   }),
-              minY: paddedMinY,
-              maxY: paddedMaxY,
+              minY: 0.0,
+              maxY: 100.0,
             ),
           )
         : ScatterChart(
@@ -295,7 +284,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
               scatterSpots: _dataPoints,
               scatterTouchData: ScatterTouchData(
                 touchTooltipData: ScatterTouchTooltipData(
-                  getTooltipColor: (ScatterSpot touchedSpot) => plotColor,
+                  getTooltipColor: (ScatterSpot touchedSpot) => chartColor,
                 ),
                 enabled: true,
               ),
@@ -307,14 +296,14 @@ class _VisualizationTabState extends State<VisualizationTab> {
                   getDrawingHorizontalLine: (value) {
                     return FlLine(color: gridColor, strokeWidth: 1);
                   }),
-              minY: paddedMinY,
-              maxY: paddedMaxY,
+              minY: 0.0,
+              maxY: 100.0,
             ),
           );
   }
 
   Widget _buildLegend(ThemeData theme) {
-    final legendColor = fixedColor;
+    final legendColor = theme.primaryChartColor;
 
     return Container(
       padding: const EdgeInsets.all(4.0),
