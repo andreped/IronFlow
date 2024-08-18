@@ -4,24 +4,46 @@ class AppThemes {
   static ThemeData lightTheme = ThemeData(
     brightness: Brightness.light,
     primarySwatch: Colors.blue,
-    iconTheme: IconThemeData(color: Colors.blue), // Icon color for light theme
+    iconTheme: IconThemeData(color: Colors.blue),
     colorScheme: ColorScheme.fromSeed(
       seedColor: Colors.blue,
       primary: Colors.blue,
       secondary: Colors.blueAccent,
     ),
+    dropdownMenuTheme: DropdownMenuThemeData(
+      menuStyle: MenuStyle(
+        backgroundColor: MaterialStateProperty.all(Colors.white),
+        elevation: MaterialStateProperty.all(8.0),
+        shadowColor: MaterialStateProperty.all(Colors.black.withOpacity(0.2)),
+      ),
+    ),
   );
 
-  static ThemeData darkTheme = ThemeData.dark();
+  static ThemeData darkTheme = ThemeData.dark().copyWith(
+    dropdownMenuTheme: DropdownMenuThemeData(
+      menuStyle: MenuStyle(
+        backgroundColor: MaterialStateProperty.all(Colors.grey[850]),
+        elevation: MaterialStateProperty.all(8.0),
+        shadowColor: MaterialStateProperty.all(Colors.black.withOpacity(0.5)),
+      ),
+    ),
+  );
 
   static ThemeData pinkTheme = ThemeData(
     brightness: Brightness.light,
     primarySwatch: Colors.pink,
-    iconTheme: IconThemeData(color: Colors.pink), // Icon color for pink theme
+    iconTheme: IconThemeData(color: Colors.pink),
     colorScheme: ColorScheme.fromSeed(
       seedColor: Colors.pink,
       primary: Colors.pink,
       secondary: Colors.pinkAccent,
+    ),
+    dropdownMenuTheme: DropdownMenuThemeData(
+      menuStyle: MenuStyle(
+        backgroundColor: MaterialStateProperty.all(Colors.pink.shade50),
+        elevation: MaterialStateProperty.all(8.0),
+        shadowColor: MaterialStateProperty.all(Colors.pink.withOpacity(0.5)),
+      ),
     ),
   );
 

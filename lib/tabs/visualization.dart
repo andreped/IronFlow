@@ -117,19 +117,19 @@ class _VisualizationTabState extends State<VisualizationTab> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            _buildExerciseDropdown(),
+            _buildExerciseDropdown(theme),
             const SizedBox(height: 16.0),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 SizedBox(
                   width: 90, // Adjust the width as needed
-                  child: _buildAggregationDropdown(),
+                  child: _buildAggregationDropdown(theme),
                 ),
                 const SizedBox(width: 16.0),
                 SizedBox(
                   width: 85, // Adjust the width as needed
-                  child: _buildChartTypeToggle(),
+                  child: _buildChartTypeToggle(theme),
                 ),
               ],
             ),
@@ -175,9 +175,9 @@ class _VisualizationTabState extends State<VisualizationTab> {
     );
   }
 
-  Widget _buildExerciseDropdown() {
+  Widget _buildExerciseDropdown(ThemeData theme) {
     return DropdownButton<String>(
-      hint: const Text('Exercise'),
+      hint: Text('Exercise', style: TextStyle(color: theme.textTheme.bodyLarge?.color)),
       value: _selectedExercise,
       onChanged: (newValue) {
         if (newValue != null) {
@@ -190,13 +190,14 @@ class _VisualizationTabState extends State<VisualizationTab> {
       items: _exerciseNames.map((exerciseName) {
         return DropdownMenuItem<String>(
           value: exerciseName,
-          child: Text(exerciseName),
+          child: Text(exerciseName, style: TextStyle(color: theme.textTheme.bodyLarge?.color)),
         );
       }).toList(),
+      dropdownColor: theme.dropdownMenuTheme.menuStyle?.backgroundColor?.resolve({}) ?? Colors.white, // Set background color
     );
   }
 
-  Widget _buildAggregationDropdown() {
+  Widget _buildAggregationDropdown(ThemeData theme) {
     return DropdownButton<String>(
       value: _aggregationMethod,
       onChanged: (newValue) {
@@ -215,13 +216,14 @@ class _VisualizationTabState extends State<VisualizationTab> {
       items: <String>['None', 'Max', 'Average'].map((method) {
         return DropdownMenuItem<String>(
           value: method,
-          child: Text(method),
+          child: Text(method, style: TextStyle(color: theme.textTheme.bodyLarge?.color)),
         );
       }).toList(),
+      dropdownColor: theme.dropdownMenuTheme.menuStyle?.backgroundColor?.resolve({}) ?? Colors.white, // Set background color
     );
   }
 
-  Widget _buildChartTypeToggle() {
+  Widget _buildChartTypeToggle(ThemeData theme) {
     return DropdownButton<String>(
       value: _chartType,
       onChanged: (newValue) {
@@ -235,15 +237,16 @@ class _VisualizationTabState extends State<VisualizationTab> {
           ? ['Scatter'].map((type) {
               return DropdownMenuItem<String>(
                 value: type,
-                child: Text(type),
+                child: Text(type, style: TextStyle(color: theme.textTheme.bodyLarge?.color)),
               );
             }).toList()
           : ['Line', 'Scatter'].map((type) {
               return DropdownMenuItem<String>(
                 value: type,
-                child: Text(type),
+                child: Text(type, style: TextStyle(color: theme.textTheme.bodyLarge?.color)),
               );
             }).toList(),
+      dropdownColor: theme.dropdownMenuTheme.menuStyle?.backgroundColor?.resolve({}) ?? Colors.white, // Set background color
     );
   }
 
