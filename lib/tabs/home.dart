@@ -32,9 +32,7 @@ class ExerciseStoreApp extends StatelessWidget {
       darkTheme: AppThemes.darkTheme,
       themeMode: appTheme == AppTheme.system
           ? ThemeMode.system
-          : (appTheme == AppTheme.dark
-              ? ThemeMode.dark
-              : ThemeMode.light),
+          : (appTheme == AppTheme.dark ? ThemeMode.dark : ThemeMode.light),
       home: ExerciseStoreHomePage(
         appTheme: appTheme,
         updateTheme: updateTheme,

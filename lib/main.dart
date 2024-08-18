@@ -41,9 +41,7 @@ class _MyAppState extends State<MyApp> {
       darkTheme: AppThemes.darkTheme,
       themeMode: _appTheme == AppTheme.system
           ? ThemeMode.system
-          : (_appTheme == AppTheme.dark
-              ? ThemeMode.dark
-              : ThemeMode.light),
+          : (_appTheme == AppTheme.dark ? ThemeMode.dark : ThemeMode.light),
       home: ExerciseStoreHomePage(
         appTheme: _appTheme,
         updateTheme: _toggleTheme,

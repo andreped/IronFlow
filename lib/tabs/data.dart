@@ -32,7 +32,8 @@ class _DataTabState extends State<DataTab> {
           ),
           onPressed: _toggleView,
         ),
-        backgroundColor: theme.appBarTheme.backgroundColor, // Use theme app bar color
+        backgroundColor:
+            theme.appBarTheme.backgroundColor, // Use theme app bar color
       ),
       body: _showRecords ? RecordsTab() : TableTab(),
     );
