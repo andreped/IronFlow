@@ -20,7 +20,7 @@ class _DataTabState extends State<DataTab> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_showRecords ? 'Records' : 'Exercise Data'),
+        title: Text(_showRecords ? 'High Scores' : 'Exercise Data'),
         leading: IconButton(
           icon: Icon(_showRecords ? Icons.celebration : Icons.storage),
           onPressed: _toggleView,
