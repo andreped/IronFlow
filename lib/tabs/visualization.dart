@@ -116,9 +116,20 @@ class _VisualizationTabState extends State<VisualizationTab> {
         children: [
           _buildExerciseDropdown(),
           const SizedBox(height: 16.0),
-          _buildAggregationDropdown(),
-          const SizedBox(height: 16.0),
-          _buildChartTypeToggle(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              SizedBox(
+                width: 90, // Adjust the width as needed
+                child: _buildAggregationDropdown(),
+              ),
+              const SizedBox(width: 16.0),
+              SizedBox(
+                width: 85, // Adjust the width as needed
+                child: _buildChartTypeToggle(),
+              ),
+            ],
+          ),
           const SizedBox(height: 16.0),
           Expanded(
             child: _dataPoints.isEmpty
@@ -162,7 +173,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
 
   Widget _buildExerciseDropdown() {
     return DropdownButton<String>(
-      hint: const Text('Select an exercise'),
+      hint: const Text('Exercise'),
       value: _selectedExercise,
       onChanged: (newValue) {
         if (newValue != null) {
@@ -183,7 +194,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
 
   Widget _buildAggregationDropdown() {
     return DropdownButton<String>(
-      hint: const Text('Select aggregation method'),
+      //hint: const Text('Select aggregation method'),
       value: _aggregationMethod,
       onChanged: (newValue) {
         if (newValue != null) {
@@ -208,37 +219,28 @@ class _VisualizationTabState extends State<VisualizationTab> {
   }
 
   Widget _buildChartTypeToggle() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          'Chart Type:',
-          style: Theme.of(context).textTheme.titleMedium,
-        ),
-        DropdownButton<String>(
-          value: _chartType,
-          onChanged: (newValue) {
-            if (newValue != null) {
-              setState(() {
-                _chartType = newValue;
-              });
-            }
-          },
-          items: _aggregationMethod == 'None'
-              ? ['Scatter'].map((type) {
-                  return DropdownMenuItem<String>(
-                    value: type,
-                    child: Text(type),
-                  );
-                }).toList()
-              : ['Line', 'Scatter'].map((type) {
-                  return DropdownMenuItem<String>(
-                    value: type,
-                    child: Text(type),
-                  );
-                }).toList(),
-        ),
-      ],
+    return DropdownButton<String>(
+      value: _chartType,
+      onChanged: (newValue) {
+        if (newValue != null) {
+          setState(() {
+            _chartType = newValue;
+          });
+        }
+      },
+      items: _aggregationMethod == 'None'
+          ? ['Scatter'].map((type) {
+              return DropdownMenuItem<String>(
+                value: type,
+                child: Text(type),
+              );
+            }).toList()
+          : ['Line', 'Scatter'].map((type) {
+              return DropdownMenuItem<String>(
+                value: type,
+                child: Text(type),
+              );
+            }).toList(),
     );
   }
 
