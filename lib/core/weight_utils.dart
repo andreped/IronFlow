@@ -17,7 +17,8 @@ class WeightUtils {
     if (isKg) {
       return weightInKg.toStringAsFixed(1); // 1 decimal place for kg
     } else {
-      return kgToLbs(weightInKg).toStringAsFixed(1); // Convert to lbs with 1 decimal place
+      return kgToLbs(weightInKg)
+          .toStringAsFixed(1); // Convert to lbs with 1 decimal place
     }
   }
 }

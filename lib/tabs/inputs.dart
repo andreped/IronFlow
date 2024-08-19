@@ -82,7 +82,8 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
           : _selectedExercise!;
 
       final weight = _isLbs
-          ? _convertLbsToKg(double.tryParse(_weightController.text.replaceAll(',', '.')) ?? 0)
+          ? _convertLbsToKg(
+              double.tryParse(_weightController.text.replaceAll(',', '.')) ?? 0)
           : double.tryParse(_weightController.text.replaceAll(',', '.'));
 
       final reps = int.tryParse(_repsController.text);
@@ -394,64 +395,67 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
                 },
               ),
             ),
-            Row(
-              children: [
-                Expanded(
-                  flex: 4,
-                  child: GestureDetector(
-                    onTap: () {
-                      _showNumberInputSheet(
-                        controller: _weightController,
-                        label: 'Weight',
-                        initialValue: _weightController.text,
-                        isDouble: true,
-                      );
-                    },
-                    child: AbsorbPointer(
-                      child: TextFormField(
-                        controller: _weightController,
-                        decoration: const InputDecoration(labelText: 'Weight'),
-                        keyboardType: TextInputType.numberWithOptions(decimal: true),
-                        inputFormatters: [
-                          FilteringTextInputFormatter.allow(
-                            RegExp(r'^[\d,.]+$'),
-                          ),
-                        ],
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter the exercise weight';
-                          }
-                          if (double.tryParse(value.replaceAll(',', '.')) == null) {
-                            return 'Please enter a valid number';
-                          }
-                          return null;
-                        },
-                      ),
-                    ),
-                  ),
-                ),
-                TextButton(
-                  onPressed: () {
-                    setState(() {
-                      _isLbs = !_isLbs;
-                      final currentWeight = double.tryParse(_weightController.text.replaceAll(',', '.'));
-                      if (currentWeight != null) {
-                        _weightController.text = _isLbs
-                            ? _convertKgToLbs(currentWeight).toStringAsFixed(1)
-                            : _convertLbsToKg(currentWeight).toStringAsFixed(1);
-                      }
-                    });
+          Row(
+            children: [
+              Expanded(
+                flex: 4,
+                child: GestureDetector(
+                  onTap: () {
+                    _showNumberInputSheet(
+                      controller: _weightController,
+                      label: 'Weight',
+                      initialValue: _weightController.text,
+                      isDouble: true,
+                    );
                   },
-                  child: Text(
-                    _isLbs ? 'lbs' : 'kg',
-                    style: TextStyle(
-                      color: theme.primaryColor,
-                      fontSize: 16,
+                  child: AbsorbPointer(
+                    child: TextFormField(
+                      controller: _weightController,
+                      decoration: const InputDecoration(labelText: 'Weight'),
+                      keyboardType:
+                          TextInputType.numberWithOptions(decimal: true),
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(
+                          RegExp(r'^[\d,.]+$'),
+                        ),
+                      ],
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter the exercise weight';
+                        }
+                        if (double.tryParse(value.replaceAll(',', '.')) ==
+                            null) {
+                          return 'Please enter a valid number';
+                        }
+                        return null;
+                      },
                     ),
                   ),
                 ),
-              ],
-            ),
+              ),
+              TextButton(
+                onPressed: () {
+                  setState(() {
+                    _isLbs = !_isLbs;
+                    final currentWeight = double.tryParse(
+                        _weightController.text.replaceAll(',', '.'));
+                    if (currentWeight != null) {
+                      _weightController.text = _isLbs
+                          ? _convertKgToLbs(currentWeight).toStringAsFixed(1)
+                          : _convertLbsToKg(currentWeight).toStringAsFixed(1);
+                    }
+                  });
+                },
+                child: Text(
+                  _isLbs ? 'lbs' : 'kg',
+                  style: TextStyle(
+                    color: theme.primaryColor,
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+            ],
+          ),
           GestureDetector(
             onTap: () {
               _showNumberInputSheet(
