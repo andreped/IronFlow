@@ -118,6 +118,7 @@ class _SettingsModalState extends State<SettingsModal> {
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final textColor = Theme.of(context).textTheme.bodyMedium?.color ?? Colors.black;
 
     return AlertDialog(
       title: Row(
@@ -125,8 +126,7 @@ class _SettingsModalState extends State<SettingsModal> {
         children: [
           Text(
             'Settings',
-            style:
-                Theme.of(context).textTheme.titleMedium?.copyWith(fontSize: 16),
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(fontSize: 16),
           ),
           FutureBuilder<String>(
             future: _appVersion,
@@ -174,8 +174,8 @@ class _SettingsModalState extends State<SettingsModal> {
                 style: TextStyle(
                   fontSize: 14,
                   color: isDarkMode
-                      ? Colors.white
-                      : Colors.black, // Set text color based on theme
+                      ? Colors.purple // Use primary color for dark mode
+                      : Colors.black, // Set text color for light mode
                 ),
                 items: [
                   DropdownMenuItem(
@@ -214,7 +214,7 @@ class _SettingsModalState extends State<SettingsModal> {
                 child: Text(
                   _isKg ? 'kg' : 'lbs',
                   style: TextStyle(
-                    color: Theme.of(context).primaryColor,
+                    color: Theme.of(context).colorScheme.primary, // Use theme primary color
                     fontSize: 16,
                   ),
                 ),
@@ -247,8 +247,7 @@ class _SettingsModalState extends State<SettingsModal> {
           },
           child: Text(
             'Close',
-            style:
-                Theme.of(context).textTheme.labelLarge?.copyWith(fontSize: 14),
+            style: Theme.of(context).textTheme.labelLarge?.copyWith(fontSize: 14),
           ),
         ),
       ],
