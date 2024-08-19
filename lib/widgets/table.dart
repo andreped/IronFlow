@@ -106,7 +106,10 @@ class _TableTabState extends State<TableTab> {
     });
   }
 
-  TableCell _buildHeader(String title, String column) {
+  TableCell _buildHeader(String column) {
+    final weightLabel = widget.isKg ? 'Weight [kg]' : 'Weight [lbs]';
+    final title = column == 'weight' ? weightLabel : column;
+
     return TableCell(
       child: GestureDetector(
         onTap: () => _sortTable(column),
@@ -151,7 +154,7 @@ class _TableTabState extends State<TableTab> {
             return Table(
               columnWidths: {
                 0: FixedColumnWidth(150.0),
-                1: FixedColumnWidth(90.0),
+                1: FixedColumnWidth(110.0),
                 2: FixedColumnWidth(70.0),
                 3: FixedColumnWidth(70.0),
                 4: FixedColumnWidth(120.0),
@@ -169,11 +172,11 @@ class _TableTabState extends State<TableTab> {
               children: [
                 TableRow(
                   children: [
-                    _buildHeader('Exercise', 'exercise'),
-                    _buildHeader('Weight', 'weight'),
-                    _buildHeader('Reps', 'reps'),
-                    _buildHeader('Sets', 'sets'),
-                    _buildHeader('Timestamp', 'timestamp'),
+                    _buildHeader('exercise'),
+                    _buildHeader('weight'),
+                    _buildHeader('reps'),
+                    _buildHeader('sets'),
+                    _buildHeader('timestamp'),
                     TableCell(
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
