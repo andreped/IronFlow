@@ -201,20 +201,22 @@ class _SettingsModalState extends State<SettingsModal> {
             // Unit selection
             ListTile(
               title: Text(
-                'Use kg (or lbs)',
+                'Unit',
                 style: Theme.of(context)
                     .textTheme
                     .bodyMedium
                     ?.copyWith(fontSize: 14),
               ),
-              trailing: Transform.scale(
-                scale: 0.8, // Adjust the scale to resize the switch
-                child: Switch(
-                  value: _isKg,
-                  onChanged: _handleUnitChange,
-                  activeColor: Theme.of(context).colorScheme.primary,
-                  inactiveTrackColor:
-                      Theme.of(context).colorScheme.onSurface.withOpacity(0.38),
+              trailing: TextButton(
+                onPressed: () {
+                  _handleUnitChange(!_isKg);
+                },
+                child: Text(
+                  _isKg ? 'kg' : 'lbs',
+                  style: TextStyle(
+                    color: Theme.of(context).primaryColor,
+                    fontSize: 16,
+                  ),
                 ),
               ),
             ),
