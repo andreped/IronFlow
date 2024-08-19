@@ -1,10 +1,13 @@
-// table.dart
 import 'package:flutter/material.dart';
 import '../core/database.dart';
 import 'exercise_edit_dialog.dart';
 import 'package:intl/intl.dart';
 
 class TableTab extends StatefulWidget {
+  final bool isKg; // Add this parameter to manage unit selection
+
+  TableTab({required this.isKg});
+
   @override
   _TableTabState createState() => _TableTabState();
 }
@@ -54,14 +57,22 @@ class _TableTabState extends State<TableTab> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return ExerciseEditDialog(exerciseData: exercise);
+        return ExerciseEditDialog(
+          exerciseData: exercise,
+          isKg: widget.isKg, // Pass the unit selection
+        );
       },
     ).then((result) async {
       if (result != null) {
+        // Convert weight based on selected unit before saving
+        final weight = widget.isKg
+            ? result['weight']
+            : (double.parse(result['weight']) * 2.20462).toStringAsFixed(2);
+
         await _dbHelper.updateExercise(
           id: result['id'],
           exercise: result['exercise'],
-          weight: result['weight'],
+          weight: weight,
           reps: result['reps'],
           sets: result['sets'],
           timestamp: result['timestamp'],
@@ -77,6 +88,13 @@ class _TableTabState extends State<TableTab> {
     return dateFormat.format(dateTime);
   }
 
+  String _formatWeight(String weight) {
+    final double weightInKg = double.parse(weight);
+    return widget.isKg
+        ? weightInKg.toStringAsFixed(2)
+        : (weightInKg * 2.20462).toStringAsFixed(2);
+  }
+
   void _sortTable(String column) {
     setState(() {
       if (_sortColumn == column) {
@@ -88,7 +106,10 @@ class _TableTabState extends State<TableTab> {
     });
   }
 
-  TableCell _buildHeader(String title, String column) {
+  TableCell _buildHeader(String column) {
+    final weightLabel = widget.isKg ? 'Weight [kg]' : 'Weight [lbs]';
+    final title = column == 'weight' ? weightLabel : column;
+
     return TableCell(
       child: GestureDetector(
         onTap: () => _sortTable(column),
@@ -133,7 +154,7 @@ class _TableTabState extends State<TableTab> {
             return Table(
               columnWidths: {
                 0: FixedColumnWidth(150.0),
-                1: FixedColumnWidth(90.0),
+                1: FixedColumnWidth(110.0),
                 2: FixedColumnWidth(70.0),
                 3: FixedColumnWidth(70.0),
                 4: FixedColumnWidth(120.0),
@@ -151,11 +172,11 @@ class _TableTabState extends State<TableTab> {
               children: [
                 TableRow(
                   children: [
-                    _buildHeader('Exercise', 'exercise'),
-                    _buildHeader('Weight', 'weight'),
-                    _buildHeader('Reps', 'reps'),
-                    _buildHeader('Sets', 'sets'),
-                    _buildHeader('Timestamp', 'timestamp'),
+                    _buildHeader('exercise'),
+                    _buildHeader('weight'),
+                    _buildHeader('reps'),
+                    _buildHeader('sets'),
+                    _buildHeader('timestamp'),
                     TableCell(
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
@@ -177,7 +198,7 @@ class _TableTabState extends State<TableTab> {
                           child: Padding(
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 8, vertical: 14.0),
-                              child: Text(exercise['weight']))),
+                              child: Text(_formatWeight(exercise['weight'])))),
                       TableCell(
                           child: Padding(
                               padding: const EdgeInsets.symmetric(

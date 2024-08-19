@@ -3,8 +3,9 @@ import 'package:flutter/services.dart';
 
 class ExerciseEditDialog extends StatefulWidget {
   final Map<String, dynamic> exerciseData;
+  final bool isKg; // Add this parameter to manage unit selection
 
-  ExerciseEditDialog({required this.exerciseData});
+  ExerciseEditDialog({required this.exerciseData, required this.isKg});
 
   @override
   _ExerciseEditDialogState createState() => _ExerciseEditDialogState();
@@ -23,14 +24,21 @@ class _ExerciseEditDialogState extends State<ExerciseEditDialog> {
     super.initState();
     _exerciseController =
         TextEditingController(text: widget.exerciseData['exercise']);
-    _weightController =
-        TextEditingController(text: widget.exerciseData['weight']);
+    _weightController = TextEditingController(
+        text: _formatWeight(widget.exerciseData['weight']));
     _repsController =
         TextEditingController(text: widget.exerciseData['reps'].toString());
     _setsController =
         TextEditingController(text: widget.exerciseData['sets'].toString());
     _timestampController =
         TextEditingController(text: widget.exerciseData['timestamp']);
+  }
+
+  String _formatWeight(String weight) {
+    final double weightInKg = double.parse(weight);
+    return widget.isKg
+        ? weightInKg.toStringAsFixed(2)
+        : (weightInKg * 2.20462).toStringAsFixed(2);
   }
 
   @override
@@ -174,8 +182,10 @@ class _ExerciseEditDialogState extends State<ExerciseEditDialog> {
           ElevatedButton(
             onPressed: () {
               if (_formKey.currentState!.validate()) {
-                final weight = double.tryParse(
-                    _weightController.text.replaceAll(',', '.'));
+                final weight = widget.isKg
+                    ? _weightController.text
+                    : (double.parse(_weightController.text) / 2.20462)
+                        .toStringAsFixed(2);
                 final reps = int.tryParse(_repsController.text);
                 final sets = int.tryParse(_setsController.text);
 
@@ -191,7 +201,7 @@ class _ExerciseEditDialogState extends State<ExerciseEditDialog> {
                 Navigator.of(context).pop({
                   'id': widget.exerciseData['id'],
                   'exercise': _exerciseController.text,
-                  'weight': weight.toString(),
+                  'weight': weight,
                   'reps': reps,
                   'sets': sets,
                   'timestamp': _timestampController.text,

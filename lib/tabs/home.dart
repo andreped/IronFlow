@@ -137,10 +137,11 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage>
             _tabController.animateTo(index);
           },
           children: [
-            RecordsTab(),
+            RecordsTab(isKg: widget.isKg),
             SummaryTab(
               selectedDay: _selectedDay,
               onDateSelected: _onDateSelected,
+              isKg: widget.isKg,
             ),
             Padding(
               padding: const EdgeInsets.all(16.0),
@@ -152,9 +153,12 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage>
             ),
             Padding(
               padding: const EdgeInsets.all(16.0),
-              child: VisualizationTab(key: PageStorageKey('visualizationTab')),
+              child: VisualizationTab(
+                key: PageStorageKey('visualizationTab'),
+                isKg: widget.isKg,
+              ),
             ),
-            TableTab(),
+            TableTab(isKg: widget.isKg),
           ],
         ),
       ),

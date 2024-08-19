@@ -5,8 +5,14 @@ import '../core/database.dart';
 class SummaryTab extends StatefulWidget {
   final DateTime selectedDay;
   final Function(DateTime) onDateSelected;
+  final bool isKg;
 
-  SummaryTab({required this.selectedDay, required this.onDateSelected});
+  const SummaryTab({
+    Key? key,
+    required this.selectedDay,
+    required this.onDateSelected,
+    required this.isKg,
+  }) : super(key: key);
 
   @override
   _SummaryTabState createState() => _SummaryTabState();
@@ -123,6 +129,10 @@ class _SummaryTabState extends State<SummaryTab> {
     );
   }
 
+  double _convertWeight(double weightInKg) {
+    return widget.isKg ? weightInKg : weightInKg * 2.20462;
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -206,9 +216,13 @@ class _SummaryTabState extends State<SummaryTab> {
                                 ),
                               ),
                               children: records.map((record) {
+                                final weightStr = record['weight'] as String;
+                                final weight =
+                                    double.tryParse(weightStr) ?? 0.0;
+                                final convertedWeight = _convertWeight(weight);
                                 return ListTile(
                                   title: Text(
-                                      'Sets: ${record['sets']}, Reps: ${record['reps']}, Weight: ${record['weight']} kg'),
+                                      'Sets: ${record['sets']}, Reps: ${record['reps']}, Weight: ${convertedWeight.toStringAsFixed(1)} ${widget.isKg ? 'kg' : 'lbs'}'),
                                   subtitle:
                                       Text('Timestamp: ${record['timestamp']}'),
                                 );
@@ -250,6 +264,11 @@ class _SummaryTabState extends State<SummaryTab> {
                               final records = details['records']
                                   as List<Map<String, dynamic>>;
 
+                              final displayTotalWeight =
+                                  _convertWeight(totalWeight);
+                              final displayAvgWeight =
+                                  _convertWeight(avgWeight);
+
                               return Card(
                                 margin:
                                     const EdgeInsets.symmetric(vertical: 8.0),
@@ -266,12 +285,18 @@ class _SummaryTabState extends State<SummaryTab> {
                                   title: Text(exercise,
                                       style: TextStyle(color: textColor)),
                                   subtitle: Text(
-                                      'Total Weight: ${totalWeight.toStringAsFixed(1)} kg, Total Sets: $totalSets, Total Reps: $totalReps, Avg Weight: ${avgWeight.toStringAsFixed(1)} kg',
+                                      'Total Weight: ${displayTotalWeight.toStringAsFixed(1)} ${widget.isKg ? 'kg' : 'lbs'}, Total Sets: $totalSets, Total Reps: $totalReps, Avg Weight: ${displayAvgWeight.toStringAsFixed(1)} ${widget.isKg ? 'kg' : 'lbs'}',
                                       style: TextStyle(color: textColor)),
                                   children: records.map((record) {
+                                    final weightStr =
+                                        record['weight'] as String;
+                                    final weight =
+                                        double.tryParse(weightStr) ?? 0.0;
+                                    final convertedWeight =
+                                        _convertWeight(weight);
                                     return ListTile(
                                       title: Text(
-                                          'Sets: ${record['sets']}, Reps: ${record['reps']}, Weight: ${record['weight']} kg'),
+                                          'Sets: ${record['sets']}, Reps: ${record['reps']}, Weight: ${convertedWeight.toStringAsFixed(1)} ${widget.isKg ? 'kg' : 'lbs'}'),
                                       subtitle: Text(
                                           'Timestamp: ${record['timestamp']}'),
                                     );
