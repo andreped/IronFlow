@@ -4,7 +4,9 @@ import '../core/database.dart';
 import '../core/theme.dart'; // Import your theme with the ChartColors extension
 
 class VisualizationTab extends StatefulWidget {
-  const VisualizationTab({Key? key}) : super(key: key);
+  final bool isKg; // Add this parameter
+
+  const VisualizationTab({Key? key, required this.isKg}) : super(key: key);
 
   @override
   _VisualizationTabState createState() => _VisualizationTabState();
@@ -16,6 +18,8 @@ class _VisualizationTabState extends State<VisualizationTab> {
   String _chartType = 'Line'; // Default chart type
   List<String> _exerciseNames = [];
   List<ScatterSpot> _dataPoints = [];
+  double? _minY;
+  double? _maxY;
   final Color fixedColor = Colors.purple;
 
   final DatabaseHelper _dbHelper = DatabaseHelper();
@@ -42,6 +46,10 @@ class _VisualizationTabState extends State<VisualizationTab> {
     }
   }
 
+  double _convertWeight(double weightInKg) {
+    return widget.isKg ? weightInKg : weightInKg * 2.20462;
+  }
+
   Future<void> _fetchDataPoints(String exerciseName) async {
     print('Fetching data points for: $exerciseName');
     try {
@@ -54,7 +62,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
       for (var exercise in filteredExercises) {
         final dateTime =
             DateUtils.dateOnly(DateTime.parse(exercise['timestamp']));
-        final weight = double.parse(exercise['weight']);
+        final weight = double.tryParse(exercise['weight']) ?? 0.0;
         if (groupedByDate.containsKey(dateTime)) {
           groupedByDate[dateTime]!.add(weight);
         } else {
@@ -66,18 +74,27 @@ class _VisualizationTabState extends State<VisualizationTab> {
       final earliestDate = DateUtils.dateOnly(
           DateTime.parse(filteredExercises.last['timestamp']));
 
+      double? minWeight;
+      double? maxWeight;
+
       groupedByDate.forEach((date, weights) {
         if (_aggregationMethod == 'None') {
           // Plot all data points individually
           for (var weight in weights) {
             final dayDifference =
                 date.difference(earliestDate).inDays.toDouble();
+            final convertedWeight = _convertWeight(weight);
+
             aggregatedDataPoints.add(ScatterSpot(
               dayDifference,
-              weight,
+              convertedWeight,
               dotPainter: FlDotCirclePainter(
                   color: Theme.of(context).primaryChartColor, radius: 6),
             ));
+
+            // Update min and max weight
+            if (minWeight == null || convertedWeight < (minWeight as double)) minWeight = convertedWeight;
+            if (maxWeight == null || convertedWeight > (maxWeight as double)) maxWeight = convertedWeight;
           }
         } else {
           // Apply Max or Average aggregation
@@ -94,17 +111,26 @@ class _VisualizationTabState extends State<VisualizationTab> {
               break;
           }
           final dayDifference = date.difference(earliestDate).inDays.toDouble();
+          final convertedValue = _convertWeight(value);
           aggregatedDataPoints.add(ScatterSpot(
             dayDifference,
-            value,
+            convertedValue,
             dotPainter: FlDotCirclePainter(
                 color: Theme.of(context).primaryChartColor, radius: 6),
           ));
+
+          // Update min and max weight
+          if (minWeight == null || convertedValue < (minWeight as double)) minWeight = convertedValue;
+          if (maxWeight == null || convertedValue > (maxWeight as double)) maxWeight = convertedValue;
+
+          
         }
       });
 
       setState(() {
         _dataPoints = aggregatedDataPoints;
+        _minY = minWeight ?? 0.0;
+        _maxY = maxWeight ?? 100.0; // Set default if no data
       });
     } catch (e) {
       print('Error fetching data points: $e');
@@ -288,8 +314,8 @@ class _VisualizationTabState extends State<VisualizationTab> {
                   getDrawingHorizontalLine: (value) {
                     return FlLine(color: gridColor, strokeWidth: 1);
                   }),
-              minY: 0.0,
-              maxY: 100.0,
+              minY: _minY ?? 0.0,
+              maxY: _maxY ?? 100.0,
             ),
           )
         : ScatterChart(
@@ -309,8 +335,8 @@ class _VisualizationTabState extends State<VisualizationTab> {
                   getDrawingHorizontalLine: (value) {
                     return FlLine(color: gridColor, strokeWidth: 1);
                   }),
-              minY: 0.0,
-              maxY: 100.0,
+              minY: _minY ?? 0.0,
+              maxY: _maxY ?? 100.0,
             ),
           );
   }
@@ -365,7 +391,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
           },
         ),
         axisNameWidget: Text(
-          'Weights [kg]',
+          'Weights ${widget.isKg ? '[kg]' : '[lbs]'}', // Reflect unit here
           style: TextStyle(
             color: textColor,
             fontWeight: FontWeight.bold,
