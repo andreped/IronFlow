@@ -1,19 +1,24 @@
-import 'package:flutter/material.dart';
-
 class WeightUtils {
+  // Conversion constants
+  static const double kgToLbRatio = 2.20462;
+
+  // Converts kg to lbs
   static double kgToLbs(double kg) {
-    return kg * 2.20462;
+    return kg * kgToLbRatio;
   }
 
+  // Converts lbs to kg
   static double lbsToKg(double lbs) {
-    return lbs / 2.20462;
+    return lbs / kgToLbRatio;
   }
 
-  static String formatWeight(double weight, bool isKg) {
+  // Formats the weight according to the selected unit system (kg or lbs)
+  static String formatWeight(double weightInKg, bool isKg) {
     if (isKg) {
-      return '${weight.toStringAsFixed(2)} kg';
+      return weightInKg.toStringAsFixed(1); // 1 decimal place for kg
     } else {
-      return '${kgToLbs(weight).toStringAsFixed(2)} lbs';
+      return kgToLbs(weightInKg)
+          .toStringAsFixed(1); // Convert to lbs with 1 decimal place
     }
   }
 }
