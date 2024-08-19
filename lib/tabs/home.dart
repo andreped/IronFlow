@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import '../core/theme.dart'; // Import your AppThemes
-import '../core/database.dart';
+import '../core/theme.dart';
 import 'visualization.dart';
 import 'inputs.dart';
 import 'summary.dart';
-import 'data.dart';
 import '../widgets/settings.dart';
 import '../widgets/table.dart';
 import '../widgets/records.dart';
