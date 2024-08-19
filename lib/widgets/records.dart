@@ -80,15 +80,12 @@ class _RecordsTabState extends State<RecordsTab> {
         actions: [
           IconButton(
             icon: Icon(
-              _isSortedByWeight
-                  ? Icons.fitness_center
-                  : Icons.sort_by_alpha,
+              _isSortedByWeight ? Icons.fitness_center : Icons.sort_by_alpha,
               color: Theme.of(context).iconTheme.color,
             ),
             onPressed: _toggleSorting,
-            tooltip: _isSortedByWeight
-                ? 'Sort Alphabetically'
-                : 'Sort by Weight',
+            tooltip:
+                _isSortedByWeight ? 'Sort Alphabetically' : 'Sort by Weight',
           ),
         ],
       ),
