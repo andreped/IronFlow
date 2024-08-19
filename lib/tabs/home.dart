@@ -81,7 +81,7 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage>
           _refreshTable();
         }
       });
-    _pageController = PageController(initialPage: 1);
+    _pageController = PageController(initialPage: 2);
   }
 
   @override
