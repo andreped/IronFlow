@@ -40,14 +40,30 @@ class _RecordsTabState extends State<RecordsTab> {
     if (_isSortedByWeight) {
       _maxWeights = Map.fromEntries(
         _maxWeights.entries.toList()
-          ..sort((a, b) => (b.value['maxWeight'] as double)
-              .compareTo(a.value['maxWeight'] as double)),
+          ..sort((a, b) {
+            final maxWeightA = a.value['maxWeight'] as double;
+            final maxWeightB = b.value['maxWeight'] as double;
+            if (maxWeightA == maxWeightB) {
+              // If weights are equal, sort by number of sets (reps)
+              final repsA = a.value['reps'] as int;
+              final repsB = b.value['reps'] as int;
+              return repsB.compareTo(repsA); // Higher reps first
+            }
+            return maxWeightB.compareTo(maxWeightA);
+          }),
       );
     } else {
       _maxWeights = Map.fromEntries(
         _maxWeights.entries.toList()..sort((a, b) => a.key.compareTo(b.key)),
       );
     }
+  }
+
+  void _toggleSorting() {
+    setState(() {
+      _isSortedByWeight = !_isSortedByWeight;
+      _sortRecords();
+    });
   }
 
   @override
@@ -61,7 +77,17 @@ class _RecordsTabState extends State<RecordsTab> {
     return Scaffold(
       appBar: AppBar(
         title: Text('High Scores'),
-        // Optionally, you can add actions or other AppBar customizations here
+        actions: [
+          IconButton(
+            icon: Icon(
+              _isSortedByWeight ? Icons.fitness_center : Icons.sort_by_alpha,
+              color: Theme.of(context).iconTheme.color,
+            ),
+            onPressed: _toggleSorting,
+            tooltip:
+                _isSortedByWeight ? 'Sort Alphabetically' : 'Sort by Weight',
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
