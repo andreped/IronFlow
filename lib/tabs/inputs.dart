@@ -98,7 +98,7 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
         return;
       }
 
-      // Round weight to two decimal place before saving
+      // Round weight to two decimal places before saving
       final roundedWeight = double.parse(weight.toStringAsFixed(2));
 
       final isNewHighScore =
@@ -351,6 +351,11 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
+    // Set color for kg/lbs text based on theme
+    final kgLbsColor = theme.brightness == Brightness.dark
+        ? Colors.purple // Purple color for dark mode
+        : theme.primaryColor; // Primary color for light mode
+
     return Form(
       key: _formKey,
       child: Column(
@@ -411,7 +416,12 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
                   child: AbsorbPointer(
                     child: TextFormField(
                       controller: _weightController,
-                      decoration: const InputDecoration(labelText: 'Weight'),
+                      decoration: InputDecoration(
+                        labelText: 'Weight',
+                        labelStyle: TextStyle(
+                          color: theme.textTheme.bodyLarge?.color,
+                        ),
+                      ),
                       keyboardType:
                           TextInputType.numberWithOptions(decimal: true),
                       inputFormatters: [
@@ -449,7 +459,7 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
                 child: Text(
                   _isLbs ? 'lbs' : 'kg',
                   style: TextStyle(
-                    color: theme.primaryColor,
+                    color: kgLbsColor,
                     fontSize: 16,
                   ),
                 ),
@@ -468,7 +478,12 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
             child: AbsorbPointer(
               child: TextFormField(
                 controller: _repsController,
-                decoration: const InputDecoration(labelText: 'Reps'),
+                decoration: InputDecoration(
+                  labelText: 'Reps',
+                  labelStyle: TextStyle(
+                    color: theme.textTheme.bodyLarge?.color,
+                  ),
+                ),
                 keyboardType: TextInputType.number,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -494,7 +509,12 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
             child: AbsorbPointer(
               child: TextFormField(
                 controller: _setsController,
-                decoration: const InputDecoration(labelText: 'Sets'),
+                decoration: InputDecoration(
+                  labelText: 'Sets',
+                  labelStyle: TextStyle(
+                    color: theme.textTheme.bodyLarge?.color,
+                  ),
+                ),
                 keyboardType: TextInputType.number,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
