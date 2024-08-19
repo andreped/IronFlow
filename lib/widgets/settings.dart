@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import '../core/database.dart';
-import '../core/theme.dart'; // Make sure to import your AppThemes
+import '../core/theme.dart';
 
 class SettingsModal extends StatefulWidget {
   final AppTheme appTheme;
