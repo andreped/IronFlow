@@ -158,7 +158,7 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage>
                 isKg: widget.isKg,
               ),
             ),
-            TableTab(),
+            TableTab(isKg: widget.isKg),
           ],
         ),
       ),

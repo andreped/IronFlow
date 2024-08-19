@@ -1,10 +1,13 @@
-// table.dart
 import 'package:flutter/material.dart';
 import '../core/database.dart';
 import 'exercise_edit_dialog.dart';
 import 'package:intl/intl.dart';
 
 class TableTab extends StatefulWidget {
+  final bool isKg; // Add this parameter to manage unit selection
+
+  TableTab({required this.isKg});
+
   @override
   _TableTabState createState() => _TableTabState();
 }
@@ -54,14 +57,22 @@ class _TableTabState extends State<TableTab> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return ExerciseEditDialog(exerciseData: exercise);
+        return ExerciseEditDialog(
+          exerciseData: exercise,
+          isKg: widget.isKg, // Pass the unit selection
+        );
       },
     ).then((result) async {
       if (result != null) {
+        // Convert weight based on selected unit before saving
+        final weight = widget.isKg
+            ? result['weight']
+            : (double.parse(result['weight']) * 2.20462).toStringAsFixed(2);
+
         await _dbHelper.updateExercise(
           id: result['id'],
           exercise: result['exercise'],
-          weight: result['weight'],
+          weight: weight,
           reps: result['reps'],
           sets: result['sets'],
           timestamp: result['timestamp'],
@@ -75,6 +86,13 @@ class _TableTabState extends State<TableTab> {
     final DateTime dateTime = DateTime.parse(timestamp);
     final DateFormat dateFormat = DateFormat('yyyy-MM-dd');
     return dateFormat.format(dateTime);
+  }
+
+  String _formatWeight(String weight) {
+    final double weightInKg = double.parse(weight);
+    return widget.isKg
+        ? weightInKg.toStringAsFixed(2)
+        : (weightInKg * 2.20462).toStringAsFixed(2);
   }
 
   void _sortTable(String column) {
@@ -177,7 +195,7 @@ class _TableTabState extends State<TableTab> {
                           child: Padding(
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 8, vertical: 14.0),
-                              child: Text(exercise['weight']))),
+                              child: Text(_formatWeight(exercise['weight'])))),
                       TableCell(
                           child: Padding(
                               padding: const EdgeInsets.symmetric(
