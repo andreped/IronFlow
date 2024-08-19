@@ -24,8 +24,8 @@ class _ExerciseEditDialogState extends State<ExerciseEditDialog> {
     super.initState();
     _exerciseController =
         TextEditingController(text: widget.exerciseData['exercise']);
-    _weightController =
-        TextEditingController(text: _formatWeight(widget.exerciseData['weight']));
+    _weightController = TextEditingController(
+        text: _formatWeight(widget.exerciseData['weight']));
     _repsController =
         TextEditingController(text: widget.exerciseData['reps'].toString());
     _setsController =
@@ -184,7 +184,8 @@ class _ExerciseEditDialogState extends State<ExerciseEditDialog> {
               if (_formKey.currentState!.validate()) {
                 final weight = widget.isKg
                     ? _weightController.text
-                    : (double.parse(_weightController.text) / 2.20462).toStringAsFixed(2);
+                    : (double.parse(_weightController.text) / 2.20462)
+                        .toStringAsFixed(2);
                 final reps = int.tryParse(_repsController.text);
                 final sets = int.tryParse(_setsController.text);
 

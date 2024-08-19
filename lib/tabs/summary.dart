@@ -217,7 +217,8 @@ class _SummaryTabState extends State<SummaryTab> {
                               ),
                               children: records.map((record) {
                                 final weightStr = record['weight'] as String;
-                                final weight = double.tryParse(weightStr) ?? 0.0;
+                                final weight =
+                                    double.tryParse(weightStr) ?? 0.0;
                                 final convertedWeight = _convertWeight(weight);
                                 return ListTile(
                                   title: Text(
@@ -263,8 +264,10 @@ class _SummaryTabState extends State<SummaryTab> {
                               final records = details['records']
                                   as List<Map<String, dynamic>>;
 
-                              final displayTotalWeight = _convertWeight(totalWeight);
-                              final displayAvgWeight = _convertWeight(avgWeight);
+                              final displayTotalWeight =
+                                  _convertWeight(totalWeight);
+                              final displayAvgWeight =
+                                  _convertWeight(avgWeight);
 
                               return Card(
                                 margin:
@@ -285,9 +288,12 @@ class _SummaryTabState extends State<SummaryTab> {
                                       'Total Weight: ${displayTotalWeight.toStringAsFixed(1)} ${widget.isKg ? 'kg' : 'lbs'}, Total Sets: $totalSets, Total Reps: $totalReps, Avg Weight: ${displayAvgWeight.toStringAsFixed(1)} ${widget.isKg ? 'kg' : 'lbs'}',
                                       style: TextStyle(color: textColor)),
                                   children: records.map((record) {
-                                    final weightStr = record['weight'] as String;
-                                    final weight = double.tryParse(weightStr) ?? 0.0;
-                                    final convertedWeight = _convertWeight(weight);
+                                    final weightStr =
+                                        record['weight'] as String;
+                                    final weight =
+                                        double.tryParse(weightStr) ?? 0.0;
+                                    final convertedWeight =
+                                        _convertWeight(weight);
                                     return ListTile(
                                       title: Text(
                                           'Sets: ${record['sets']}, Reps: ${record['reps']}, Weight: ${convertedWeight.toStringAsFixed(1)} ${widget.isKg ? 'kg' : 'lbs'}'),

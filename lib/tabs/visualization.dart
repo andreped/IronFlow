@@ -93,8 +93,10 @@ class _VisualizationTabState extends State<VisualizationTab> {
             ));
 
             // Update min and max weight
-            if (minWeight == null || convertedWeight < (minWeight as double)) minWeight = convertedWeight;
-            if (maxWeight == null || convertedWeight > (maxWeight as double)) maxWeight = convertedWeight;
+            if (minWeight == null || convertedWeight < (minWeight as double))
+              minWeight = convertedWeight;
+            if (maxWeight == null || convertedWeight > (maxWeight as double))
+              maxWeight = convertedWeight;
           }
         } else {
           // Apply Max or Average aggregation
@@ -120,10 +122,10 @@ class _VisualizationTabState extends State<VisualizationTab> {
           ));
 
           // Update min and max weight
-          if (minWeight == null || convertedValue < (minWeight as double)) minWeight = convertedValue;
-          if (maxWeight == null || convertedValue > (maxWeight as double)) maxWeight = convertedValue;
-
-          
+          if (minWeight == null || convertedValue < (minWeight as double))
+            minWeight = convertedValue;
+          if (maxWeight == null || convertedValue > (maxWeight as double))
+            maxWeight = convertedValue;
         }
       });
 
