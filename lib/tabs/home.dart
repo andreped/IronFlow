@@ -141,6 +141,7 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage>
             SummaryTab(
               selectedDay: _selectedDay,
               onDateSelected: _onDateSelected,
+              isKg: widget.isKg,
             ),
             Padding(
               padding: const EdgeInsets.all(16.0),
