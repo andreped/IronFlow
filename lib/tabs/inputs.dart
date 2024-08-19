@@ -76,16 +76,15 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
   }
 
   Future<void> _addOrUpdateExercise() async {
-    // Manually trigger form validation
     if (_formKey.currentState!.validate()) {
       final exerciseName = _isAddingNewExercise
           ? _newExerciseController.text.trim()
           : _selectedExercise!;
 
-      // Convert values to appropriate types
       final weight = _isLbs
           ? _convertLbsToKg(double.tryParse(_weightController.text.replaceAll(',', '.')) ?? 0)
           : double.tryParse(_weightController.text.replaceAll(',', '.'));
+
       final reps = int.tryParse(_repsController.text);
       final sets = int.tryParse(_setsController.text);
 
@@ -98,12 +97,15 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
         return;
       }
 
+      // Round weight to two decimal place before saving
+      final roundedWeight = double.parse(weight.toStringAsFixed(2));
+
       final isNewHighScore =
-          await _dbHelper.isNewHighScore(exerciseName, weight, reps);
+          await _dbHelper.isNewHighScore(exerciseName, roundedWeight, reps);
 
       await _dbHelper.insertExercise(
         exercise: exerciseName,
-        weight: weight.toString(),
+        weight: roundedWeight.toString(),
         reps: reps,
         sets: sets,
       );
@@ -435,8 +437,8 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
                       final currentWeight = double.tryParse(_weightController.text.replaceAll(',', '.'));
                       if (currentWeight != null) {
                         _weightController.text = _isLbs
-                            ? _convertKgToLbs(currentWeight).toStringAsFixed(2)
-                            : currentWeight.toString();
+                            ? _convertKgToLbs(currentWeight).toStringAsFixed(1)
+                            : _convertLbsToKg(currentWeight).toStringAsFixed(1);
                       }
                     });
                   },
