@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import '../core/database.dart';
+import '../core/theme.dart'; // Import the theme for isKg
 
 class RecordsTab extends StatefulWidget {
+  final bool isKg;
+
+  const RecordsTab({Key? key, required this.isKg}) : super(key: key);
+
   @override
   _RecordsTabState createState() => _RecordsTabState();
 }
@@ -72,6 +77,10 @@ class _RecordsTabState extends State<RecordsTab> {
     _fetchAndSortRecords();
   }
 
+  double _convertWeight(double weightInKg) {
+    return widget.isKg ? weightInKg : weightInKg * 2.20462;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -105,15 +114,16 @@ class _RecordsTabState extends State<RecordsTab> {
                         itemBuilder: (context, index) {
                           final exercise = _maxWeights.keys.elementAt(index);
                           final weightData = _maxWeights[exercise]!;
-                          final weight = weightData['maxWeight'];
-                          final reps = weightData['reps'];
+                          final weight = weightData['maxWeight'] as double;
+                          final reps = weightData['reps'] as int;
+                          final displayWeight = _convertWeight(weight);
 
                           return Column(
                             children: [
                               ListTile(
                                 title: Text(exercise),
                                 trailing: Text(
-                                    '${weight!.toStringAsFixed(1)} kg x $reps reps'),
+                                    '${displayWeight.toStringAsFixed(1)} ${widget.isKg ? 'kg' : 'lbs'} x $reps reps'),
                               ),
                               if (index < _maxWeights.length - 1) Divider(),
                             ],

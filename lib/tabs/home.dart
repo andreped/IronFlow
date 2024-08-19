@@ -137,7 +137,7 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage>
             _tabController.animateTo(index);
           },
           children: [
-            RecordsTab(),
+            RecordsTab(isKg: widget.isKg),
             SummaryTab(
               selectedDay: _selectedDay,
               onDateSelected: _onDateSelected,
