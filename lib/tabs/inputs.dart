@@ -392,61 +392,64 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
                 },
               ),
             ),
-          Row(
-            children: [
-              Expanded(
-                flex: 4,
-                child: GestureDetector(
-                  onTap: () {
-                    _showNumberInputSheet(
-                      controller: _weightController,
-                      label: 'Weight',
-                      initialValue: _weightController.text,
-                      isDouble: true,
-                    );
-                  },
-                  child: AbsorbPointer(
-                    child: TextFormField(
-                      controller: _weightController,
-                      decoration: const InputDecoration(labelText: 'Weight'),
-                      keyboardType: TextInputType.numberWithOptions(decimal: true),
-                      inputFormatters: [
-                        FilteringTextInputFormatter.allow(
-                          RegExp(r'^[\d,.]+$'),
-                        ),
-                      ],
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter the exercise weight';
-                        }
-                        if (double.tryParse(value.replaceAll(',', '.')) == null) {
-                          return 'Please enter a valid number';
-                        }
-                        return null;
-                      },
+            Row(
+              children: [
+                Expanded(
+                  flex: 4,
+                  child: GestureDetector(
+                    onTap: () {
+                      _showNumberInputSheet(
+                        controller: _weightController,
+                        label: 'Weight',
+                        initialValue: _weightController.text,
+                        isDouble: true,
+                      );
+                    },
+                    child: AbsorbPointer(
+                      child: TextFormField(
+                        controller: _weightController,
+                        decoration: const InputDecoration(labelText: 'Weight'),
+                        keyboardType: TextInputType.numberWithOptions(decimal: true),
+                        inputFormatters: [
+                          FilteringTextInputFormatter.allow(
+                            RegExp(r'^[\d,.]+$'),
+                          ),
+                        ],
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter the exercise weight';
+                          }
+                          if (double.tryParse(value.replaceAll(',', '.')) == null) {
+                            return 'Please enter a valid number';
+                          }
+                          return null;
+                        },
+                      ),
                     ),
                   ),
                 ),
-              ),
-              IconButton(
-                icon: Icon(
-                  _isLbs ? Icons.swap_horiz : Icons.swap_vert,
-                  color: theme.primaryColor,
+                TextButton(
+                  onPressed: () {
+                    setState(() {
+                      _isLbs = !_isLbs;
+                      final currentWeight = double.tryParse(_weightController.text.replaceAll(',', '.'));
+                      if (currentWeight != null) {
+                        _weightController.text = _isLbs
+                            ? _convertKgToLbs(currentWeight).toStringAsFixed(2)
+                            : currentWeight.toString();
+                      }
+                    });
+                  },
+                  child: Text(
+                    _isLbs ? 'lbs' : 'kg',
+                    style: TextStyle(
+                      color: theme.primaryColor,
+                      fontSize: 16,
+                    ),
+                  ),
                 ),
-                onPressed: () {
-                  setState(() {
-                    _isLbs = !_isLbs;
-                    final currentWeight = double.tryParse(_weightController.text.replaceAll(',', '.'));
-                    if (currentWeight != null) {
-                      _weightController.text = _isLbs
-                          ? _convertKgToLbs(currentWeight).toStringAsFixed(2)
-                          : currentWeight.toString();
-                    }
-                  });
-                },
-              ),
-            ],
-          ),
+              ],
+            ),
           GestureDetector(
             onTap: () {
               _showNumberInputSheet(
