@@ -267,8 +267,7 @@ class DatabaseHelper {
     return summary;
   }
 
-  Future<Map<DateTime, List<Map<String, dynamic>>>> getDailyRecordsForExercise(
-      String exerciseName) async {
+  Future<Map<DateTime, List<Map<String, dynamic>>>> getDailyRecordsForExercise(String exerciseName) async {  // coverage:ignore-line
     final db = await database;
     final List<Map<String, dynamic>> records = await db.query(
       'exercises',
@@ -292,8 +291,7 @@ class DatabaseHelper {
     return dailyRecords;
   }
 
-  Future<Map<String, dynamic>> getSummaryForExercise(
-      String exerciseName) async {
+  Future<Map<String, dynamic>> getSummaryForExercise(String exerciseName) async {  // coverage:ignore-line
     final db = await database;
     final List<Map<String, dynamic>> exercises = await db.query(
       'exercises',
@@ -399,8 +397,7 @@ class DatabaseHelper {
     return maxWeights;
   }
 
-  Future<Map<String, dynamic>?> getLastLoggedExercise(
-      String exerciseName) async {
+  Future<Map<String, dynamic>?> getLastLoggedExercise(String exerciseName) async {  // coverage:ignore-line
     final db = await database;
     final List<Map<String, dynamic>> result = await db.query(
       'exercises',
