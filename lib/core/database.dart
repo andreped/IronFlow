@@ -8,7 +8,7 @@ class DatabaseHelper {
   DatabaseHelper._internal();
 
   static Database? _database;
-  static const int _databaseVersion = 1; // Keep the version fixed for now
+  static const int _databaseVersion = 2; // Incremented version
 
   Future<Database> get database async {
     if (_database != null) return _database!;
@@ -17,7 +17,7 @@ class DatabaseHelper {
   }
 
   Future<Database> _initDatabase() async {
-    String path = join(await getDatabasesPath(), 'exercises.db');
+    String path = join(await getDatabasesPath(), 'exercises.db'); // Updated database name
     print("Database is located at: $path");
     return await openDatabase(
       path,
@@ -38,17 +38,20 @@ class DatabaseHelper {
     await db.execute(
       'CREATE TABLE IF NOT EXISTS predefined_exercises(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT)',
     );
+    await db.execute(
+      'CREATE TABLE fitness(id INTEGER PRIMARY KEY AUTOINCREMENT, weight TEXT, height TEXT, age TEXT, timestamp TEXT)',
+    );
     await _initializePredefinedExercises(db);
   }
 
   Future<void> _upgradeDatabase(
       Database db, int oldVersion, int newVersion) async {
-    // Placeholder for future upgrade logic
     if (oldVersion < newVersion) {
-      // Example: if (oldVersion < 2) {
-      //   await db.execute('ALTER TABLE exercises ADD COLUMN notes TEXT');
-      // }
-      // Add more version checks and migration logic as needed
+      if (oldVersion < 2) {
+        await db.execute(
+          'CREATE TABLE IF NOT EXISTS fitness(id INTEGER PRIMARY KEY AUTOINCREMENT, variable_name TEXT, value REAL, timestamp TEXT)',
+        );
+      }
     }
   }
 
@@ -106,6 +109,18 @@ class DatabaseHelper {
       orderBy: orderBy,
     );
   }
+
+    Future<List<Map<String, dynamic>>> getFitnessData({
+      String sortColumn = 'timestamp',
+      bool ascending = false,
+    }) async {
+      final db = await database;
+      final orderBy = '$sortColumn ${ascending ? 'ASC' : 'DESC'}';
+      return await db.query(
+        'fitness',
+        orderBy: orderBy,
+      );
+    }
 
   Future<List<DateTime>> getExerciseDates() async {
     final db = await database;
@@ -267,7 +282,7 @@ class DatabaseHelper {
     return summary;
   }
 
-  Future<Map<DateTime, List<Map<String, dynamic>>>> getDailyRecordsForExercise(String exerciseName) async {  // coverage:ignore-line
+  Future<Map<DateTime, List<Map<String, dynamic>>>> getDailyRecordsForExercise(String exerciseName) async {
     final db = await database;
     final List<Map<String, dynamic>> records = await db.query(
       'exercises',
@@ -291,58 +306,44 @@ class DatabaseHelper {
     return dailyRecords;
   }
 
-  Future<Map<String, dynamic>> getSummaryForExercise(String exerciseName) async {  // coverage:ignore-line
+  Future<Map<String, dynamic>> getSummaryForExercise(String exerciseName) async {
     final db = await database;
-    final List<Map<String, dynamic>> exercises = await db.query(
+    final List<Map<String, dynamic>> records = await db.query(
       'exercises',
       where: 'exercise = ?',
       whereArgs: [exerciseName],
+      orderBy: 'timestamp DESC', // Optional: order by timestamp
     );
 
-    Map<String, dynamic> summary = {};
-    Map<String, List<Map<String, dynamic>>> recordsByDate = {};
+    double totalWeight = 0;
+    int totalSets = 0;
+    int totalReps = 0;
+    DateTime? lastLoggedDate;
+    int recordCount = records.length;
 
-    if (exercises.isNotEmpty) {
-      double totalWeight = 0;
-      int totalSets = 0;
-      int totalReps = 0;
-
-      for (var record in exercises) {
-        double weight = double.parse(record['weight']);
-        int reps = record['reps'];
-        int sets = record['sets'];
-        DateTime timestamp = DateTime.parse(record['timestamp']);
-        String dateKey =
-            '${timestamp.year}-${timestamp.month}-${timestamp.day}';
-
-        double weightPerSession = weight * reps * sets;
-        totalWeight += weightPerSession;
-        totalSets += sets;
-        totalReps += reps;
-
-        if (recordsByDate[dateKey] == null) {
-          recordsByDate[dateKey] = [];
-        }
-        recordsByDate[dateKey]!.add(record);
-      }
-
-      summary[exerciseName] = {
-        'totalWeight': totalWeight,
-        'totalSets': totalSets,
-        'totalReps': totalReps,
-        'avgWeight': totalWeight / totalSets,
-        'recordsByDate': recordsByDate,
-      };
+    for (var record in records) {
+      totalWeight += double.parse(record['weight']) * record['reps'] * record['sets'];
+      totalSets += record['sets'] as int;
+      totalReps += record['reps'] as int;
+      lastLoggedDate = DateTime.parse(record['timestamp']);
     }
 
-    return summary;
+    double avgWeight = totalSets > 0 ? totalWeight / totalSets : 0;
+
+    return {
+      'totalWeight': totalWeight,
+      'totalSets': totalSets,
+      'totalReps': totalReps,
+      'avgWeight': avgWeight,
+      'recordCount': recordCount,
+      'lastLoggedDate': lastLoggedDate,
+    };
   }
 
   Future<List<String>> getPredefinedExercises() async {
     final db = await database;
-    final List<Map<String, dynamic>> result =
-        await db.query('predefined_exercises');
-    return result.map((row) => row['name'] as String).toList();
+    final List<Map<String, dynamic>> exercises = await db.query('predefined_exercises');
+    return exercises.map((e) => e['name'] as String).toList();
   }
 
   Future<void> addPredefinedExercise(String exerciseName) async {
@@ -350,93 +351,118 @@ class DatabaseHelper {
     await db.insert(
       'predefined_exercises',
       {'name': exerciseName},
-      conflictAlgorithm:
-          ConflictAlgorithm.ignore, // Handle if exercise already exists
+      conflictAlgorithm: ConflictAlgorithm.ignore,
     );
   }
 
-  Future<Map<String, Map<String, dynamic>>> getMaxWeightsForExercises() async {
+  Future<void> deletePredefinedExercise(String exerciseName) async {
     final db = await database;
+    await db.delete(
+      'predefined_exercises',
+      where: 'name = ?',
+      whereArgs: [exerciseName],
+    );
+  }
 
-    // Query to get the maximum weight and corresponding highest reps for each exercise
-    final List<Map<String, dynamic>> results = await db.rawQuery('''
-      SELECT exercise, weight, reps
+  Future<void> deleteAllPredefinedExercises() async {
+    final db = await database;
+    await db.delete('predefined_exercises');
+  }
+
+  Future<List<Map<String, dynamic>>> getMaxWeightsForExercises() async {
+    final db = await database;
+    final List<Map<String, dynamic>> maxWeights = await db.rawQuery(
+      '''
+      SELECT exercise, MAX(CAST(weight AS REAL)) as max_weight
       FROM exercises
-      WHERE (exercise, CAST(weight AS REAL)) IN (
-        SELECT exercise, MAX(CAST(weight AS REAL))
-        FROM exercises
-        GROUP BY exercise
-      )
-      ORDER BY exercise, CAST(weight AS REAL) DESC, reps DESC
-      ''');
-
-    Map<String, Map<String, dynamic>> maxWeights = {};
-    for (var result in results) {
-      final exercise = result['exercise'] as String;
-      final weight = double.parse(result['weight']);
-      final reps = result['reps'] as int;
-
-      if (maxWeights.containsKey(exercise)) {
-        final existing = maxWeights[exercise]!;
-        if (weight == existing['maxWeight']) {
-          if (reps > existing['reps']) {
-            existing['reps'] = reps;
-          }
-        } else if (weight > existing['maxWeight']) {
-          existing['maxWeight'] = weight;
-          existing['reps'] = reps;
-        }
-      } else {
-        maxWeights[exercise] = {
-          'maxWeight': weight,
-          'reps': reps,
-        };
-      }
-    }
-
+      GROUP BY exercise
+      ''',
+    );
+    
     return maxWeights;
   }
 
-  Future<Map<String, dynamic>?> getLastLoggedExercise(String exerciseName) async {  // coverage:ignore-line
+  Future<Map<String, dynamic>> getLastLoggedExercise(String exerciseName) async {
     final db = await database;
-    final List<Map<String, dynamic>> result = await db.query(
-      'exercises',
-      where: 'exercise = ?',
-      whereArgs: [exerciseName],
-      orderBy: 'timestamp DESC',
-      limit: 1, // Fetch only the latest entry
+    final List<Map<String, dynamic>> results = await db.rawQuery(
+      '''
+      SELECT * FROM exercises
+      WHERE exercise = ?
+      ORDER BY timestamp DESC
+      LIMIT 1
+      ''',
+      [exerciseName],
     );
 
-    if (result.isNotEmpty) {
-      final row = result.first;
-      return {
-        'exercise': row['exercise'],
-        'weight':
-            double.tryParse(row['weight']) ?? 0.0, // Convert weight to double
-        'reps': row['reps'] as int,
-        'sets': row['sets'] as int,
-      };
-    }
-    return null;
+    return results.isNotEmpty ? results.first : {};
   }
 
   Future<String?> getLastLoggedExerciseName() async {
     final db = await database;
-
-    // Query to get the most recent exercise entry based on the timestamp
-    final List<Map<String, dynamic>> result = await db.query(
-      'exercises',
-      orderBy: 'timestamp DESC',
-      limit: 1, // Fetch only the latest entry
+    final List<Map<String, dynamic>> results = await db.rawQuery(
+      '''
+      SELECT exercise FROM exercises
+      ORDER BY timestamp DESC
+      LIMIT 1
+      ''',
     );
 
-    // Check if we have any results
-    if (result.isNotEmpty) {
-      final row = result.first;
-      return row['exercise'] as String?;
-    }
+    return results.isNotEmpty ? results.first['exercise'] as String : null;
+  }
 
-    // Return null if no result found
-    return null;
+  // Methods for fitness table
+  Future<void> insertFitness({
+    required double weight,
+    required double height,
+    required double age,
+  }) async {
+    final db = await database;
+    await db.insert(
+      'fitness',
+      {
+        'weight': weight,
+        'height': height,
+        'age': age,
+        'timestamp': DateTime.now().toString(),
+      },
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  Future<void> insertFitnessVariable({
+    required String variableName,
+    required double value,
+  }) async {
+    final db = await database;
+    await db.insert(
+      'fitness',
+      {
+        'variable_name': variableName,
+        'value': value,
+        'timestamp': DateTime.now().toString(),
+      },
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  Future<void> deleteFitnessVariable(int id) async {
+    final db = await database;
+    await db.delete(
+      'fitness',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+
+  Future<List<Map<String, dynamic>>> getFitnessVariables({
+    String sortColumn = 'timestamp',
+    bool ascending = false,
+  }) async {
+    final db = await database;
+    final orderBy = '$sortColumn ${ascending ? 'ASC' : 'DESC'}';
+    return await db.query(
+      'fitness',
+      orderBy: orderBy,
+    );
   }
 }

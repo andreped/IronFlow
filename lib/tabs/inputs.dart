@@ -57,12 +57,11 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
 
   Future<void> _loadLastLoggedExercise() async {
     if (_selectedExercise != null) {
-      final lastLogged =
-          await _dbHelper.getLastLoggedExercise(_selectedExercise!);
+      final lastLogged = await _dbHelper.getLastLoggedExercise(_selectedExercise!);
       if (lastLogged != null) {
         setState(() {
           _lastExerciseName = lastLogged['exercise'];
-          _lastWeight = lastLogged['weight'];
+          _lastWeight = double.tryParse(lastLogged['weight']);
           _lastReps = lastLogged['reps'];
           _lastSets = lastLogged['sets'];
           _weightController.text = _isLbs
@@ -93,8 +92,7 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
 
         final weight = _isLbs
             ? _convertLbsToKg(
-                double.tryParse(_weightController.text.replaceAll(',', '.')) ??
-                    0)
+                double.tryParse(_weightController.text.replaceAll(',', '.')) ?? 0)
             : double.tryParse(_weightController.text.replaceAll(',', '.'));
 
         final reps = int.tryParse(_repsController.text);
@@ -170,7 +168,12 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
         }
 
         // Save the weight, height, and age to the database
-        // TODO: Implement saving logic
+        await _dbHelper.insertFitness(
+          weight: userWeight.toDouble(),
+          height: height.toDouble(),
+          age: age.toDouble(),
+        );
+
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text('🎯 Fitness data added successfully'),
           duration: Duration(seconds: 2),
