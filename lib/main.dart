@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'tabs/home.dart';
-import 'core/theme.dart';
+import 'core/theme.dart'; // Import your AppThemes
 
 void main() {
   runApp(const MyApp());
