@@ -17,6 +17,12 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
   final _weightController = TextEditingController();
   final _repsController = TextEditingController();
   final _setsController = TextEditingController(text: '1'); // Default sets to 1
+
+  // Controllers for "Fitness" logging
+  final _userWeightController = TextEditingController();
+  final _heightController = TextEditingController();
+  final _ageController = TextEditingController();
+
   final DatabaseHelper _dbHelper = DatabaseHelper();
 
   String? _selectedExercise;
@@ -25,7 +31,9 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
   double? _lastWeight;
   int? _lastReps;
   int? _lastSets;
-  bool _isLbs = false; // New state variable to track weight unit
+  bool _isLbs = false; // State variable to track weight unit
+
+  String _selectedLoggingType = 'Exercise'; // Default to 'Exercise'
 
   List<String> _predefinedExercises = [];
 
@@ -77,70 +85,101 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
 
   Future<void> _addOrUpdateExercise() async {
     if (_formKey.currentState!.validate()) {
-      final exerciseName = _isAddingNewExercise
-          ? _newExerciseController.text.trim()
-          : _selectedExercise!;
+      if (_selectedLoggingType == 'Exercise') {
+        // Handle Exercise logging
+        final exerciseName = _isAddingNewExercise
+            ? _newExerciseController.text.trim()
+            : _selectedExercise!;
 
-      final weight = _isLbs
-          ? _convertLbsToKg(
-              double.tryParse(_weightController.text.replaceAll(',', '.')) ?? 0)
-          : double.tryParse(_weightController.text.replaceAll(',', '.'));
+        final weight = _isLbs
+            ? _convertLbsToKg(
+                double.tryParse(_weightController.text.replaceAll(',', '.')) ??
+                    0)
+            : double.tryParse(_weightController.text.replaceAll(',', '.'));
 
-      final reps = int.tryParse(_repsController.text);
-      final sets = int.tryParse(_setsController.text);
+        final reps = int.tryParse(_repsController.text);
+        final sets = int.tryParse(_setsController.text);
 
-      if (weight == null || reps == null || sets == null) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Please enter valid values'),
-          duration: Duration(seconds: 2),
-          backgroundColor: Colors.red,
-        ));
-        return;
-      }
+        if (weight == null || reps == null || sets == null) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text('Please enter valid values'),
+            duration: Duration(seconds: 2),
+            backgroundColor: Colors.red,
+          ));
+          return;
+        }
 
-      // Round weight to two decimal places before saving
-      final roundedWeight = double.parse(weight.toStringAsFixed(2));
+        // Round weight to two decimal places before saving
+        final roundedWeight = double.parse(weight.toStringAsFixed(2));
 
-      final isNewHighScore =
-          await _dbHelper.isNewHighScore(exerciseName, roundedWeight, reps);
+        final isNewHighScore =
+            await _dbHelper.isNewHighScore(exerciseName, roundedWeight, reps);
 
-      await _dbHelper.insertExercise(
-        exercise: exerciseName,
-        weight: roundedWeight.toString(),
-        reps: reps,
-        sets: sets,
-      );
+        await _dbHelper.insertExercise(
+          exercise: exerciseName,
+          weight: roundedWeight.toString(),
+          reps: reps,
+          sets: sets,
+        );
 
-      if (isNewHighScore) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('🚀🎉 New high score for $exerciseName!'),
-          duration: Duration(seconds: 2),
-          backgroundColor: Colors.green,
-        ));
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text('🎯 Exercise added successfully'),
-          duration: Duration(seconds: 2),
-        ));
-      }
+        if (isNewHighScore) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text('🚀🎉 New high score for $exerciseName!'),
+            duration: Duration(seconds: 2),
+            backgroundColor: Colors.green,
+          ));
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text('🎯 Exercise added successfully'),
+            duration: Duration(seconds: 2),
+          ));
+        }
 
-      if (_isAddingNewExercise) {
-        await _dbHelper.addPredefinedExercise(exerciseName);
+        if (_isAddingNewExercise) {
+          await _dbHelper.addPredefinedExercise(exerciseName);
+          setState(() {
+            _predefinedExercises.add(exerciseName);
+            _predefinedExercises.sort(); // Keep the list sorted
+            _selectedExercise = exerciseName;
+          });
+        } else {
+          _loadLastLoggedExercise();
+        }
+
+        _newExerciseController.clear();
         setState(() {
-          _predefinedExercises.add(exerciseName);
-          _predefinedExercises.sort(); // Keep the list sorted
-          _selectedExercise = exerciseName;
+          _isAddingNewExercise = false;
         });
+
+        widget.onExerciseAdded();
       } else {
-        _loadLastLoggedExercise();
+        // Handle Fitness logging
+        final userWeight = double.tryParse(
+            _userWeightController.text.replaceAll(',', '.'));
+        final height =
+            double.tryParse(_heightController.text.replaceAll(',', '.'));
+        final age = int.tryParse(_ageController.text);
+
+        if (userWeight == null || height == null || age == null) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text('Please enter valid values'),
+            duration: Duration(seconds: 2),
+            backgroundColor: Colors.red,
+          ));
+          return;
+        }
+
+        // Save the weight, height, and age to the database
+        // TODO: Implement saving logic
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('🎯 Fitness data added successfully'),
+          duration: Duration(seconds: 2),
+        ));
+
+        _userWeightController.clear();
+        _heightController.clear();
+        _ageController.clear();
       }
-
-      _newExerciseController.clear();
-      setState(() {
-        _isAddingNewExercise = false;
-      });
-
-      widget.onExerciseAdded();
     }
   }
 
@@ -177,8 +216,7 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
             return true;
           },
           child: GestureDetector(
-            behavior: HitTestBehavior
-                .opaque, // Ensures the gesture detector covers the whole screen
+            behavior: HitTestBehavior.opaque,
             onTap: () {
               _updateValueAndClose(
                   context, localController, controller, isDouble);
@@ -188,8 +226,7 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
                 bottom: MediaQuery.of(context).viewInsets.bottom,
               ),
               child: GestureDetector(
-                onTap:
-                    () {}, // Prevents triggering the parent GestureDetector when tapping on modal content
+                onTap: () {},
                 child: Container(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
@@ -240,301 +277,284 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
     final value = isDouble
         ? double.tryParse(localController.text.replaceAll(',', '.'))
         : int.tryParse(localController.text);
-
     if (value != null) {
-      setState(() {
-        controller.text = value.toString();
-      });
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Please enter a valid number'),
-        duration: Duration(seconds: 2),
-        backgroundColor: Colors.red,
-      ));
+      controller.text = value.toString();
     }
-  }
-
-  void _openExerciseSelectionSheet() {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              title: Text('Add New Exercise'),
-              onTap: () {
-                Navigator.pop(context);
-                setState(() {
-                  _isAddingNewExercise = true;
-                  _selectedExercise = null;
-                });
-              },
-            ),
-            Expanded(
-              child: ListView.builder(
-                itemCount: _predefinedExercises.length,
-                itemBuilder: (context, index) {
-                  final exercise = _predefinedExercises[index];
-                  return ListTile(
-                    title: Text(exercise),
-                    trailing: IconButton(
-                      icon: Icon(Icons.edit),
-                      onPressed: () {
-                        Navigator.pop(context);
-                        _showEditExerciseDialog(exercise);
-                      },
-                    ),
-                    onTap: () {
-                      setState(() {
-                        _selectedExercise = exercise;
-                        _isAddingNewExercise = false;
-                      });
-                      Navigator.pop(context);
-                      _loadLastLoggedExercise();
-                    },
-                  );
-                },
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void _showEditExerciseDialog(String oldName) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Edit Exercise Name'),
-          content: TextField(
-            controller: _newExerciseController..text = oldName,
-            decoration: InputDecoration(labelText: 'New Exercise Name'),
-          ),
-          actions: [
-            TextButton(
-              child: Text('Cancel'),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-            TextButton(
-              child: Text('Save'),
-              onPressed: () async {
-                final newName = _newExerciseController.text.trim();
-                if (newName.isNotEmpty && newName != oldName) {
-                  await _dbHelper.updatePredefinedExercise(oldName, newName);
-                  await _dbHelper.updateExerciseName(oldName, newName);
-                  setState(() {
-                    final index = _predefinedExercises.indexOf(oldName);
-                    if (index != -1) {
-                      _predefinedExercises[index] = newName;
-                      _predefinedExercises.sort(); // Keep the list sorted
-                      if (_selectedExercise == oldName) {
-                        _selectedExercise = newName;
-                      }
-                    }
-                  });
-                }
-                Navigator.pop(context);
-              },
-            ),
-          ],
-        );
-      },
-    );
   }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    // Set color for kg/lbs text based on theme
-    final kgLbsColor = theme.brightness == Brightness.dark
-        ? Colors.purple // Purple color for dark mode
-        : theme.primaryColor; // Primary color for light mode
-
-    return Form(
-      key: _formKey,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Row(
-            children: [
-              Expanded(
-                flex: 2,
-                child: GestureDetector(
-                  onTap: _openExerciseSelectionSheet,
-                  child: InputDecorator(
-                    decoration:
-                        const InputDecoration(labelText: 'Select Exercise'),
-                    child: Text(
-                      _isAddingNewExercise
-                          ? 'Add New Exercise'
-                          : _selectedExercise ?? 'Select Exercise',
-                      style: TextStyle(
-                        color: _selectedExercise == null
-                            ? theme.hintColor
-                            : theme.textTheme.bodyLarge?.color,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          if (_isAddingNewExercise)
-            Padding(
-              padding: const EdgeInsets.only(top: 16.0),
-              child: TextFormField(
-                controller: _newExerciseController,
-                decoration:
-                    const InputDecoration(labelText: 'New Exercise Name'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a new exercise name';
-                  }
-                  return null;
-                },
-              ),
-            ),
-          Row(
-            children: [
-              Expanded(
-                flex: 4,
-                child: GestureDetector(
-                  onTap: () {
-                    _showNumberInputSheet(
-                      controller: _weightController,
-                      label: 'Weight',
-                      initialValue: _weightController.text,
-                      isDouble: true,
-                    );
-                  },
-                  child: AbsorbPointer(
-                    child: TextFormField(
-                      controller: _weightController,
-                      decoration: InputDecoration(
-                        labelText: 'Weight',
-                        labelStyle: TextStyle(
-                          color: theme.textTheme.bodyLarge?.color,
-                        ),
-                      ),
-                      keyboardType:
-                          TextInputType.numberWithOptions(decimal: true),
-                      inputFormatters: [
-                        FilteringTextInputFormatter.allow(
-                          RegExp(r'^[\d,.]+$'),
-                        ),
-                      ],
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter the exercise weight';
-                        }
-                        if (double.tryParse(value.replaceAll(',', '.')) ==
-                            null) {
-                          return 'Please enter a valid number';
-                        }
-                        return null;
-                      },
-                    ),
-                  ),
-                ),
-              ),
-              TextButton(
-                onPressed: () {
-                  setState(() {
-                    _isLbs = !_isLbs;
-                    final currentWeight = double.tryParse(
-                        _weightController.text.replaceAll(',', '.'));
-                    if (currentWeight != null) {
-                      _weightController.text = _isLbs
-                          ? _convertKgToLbs(currentWeight).toStringAsFixed(1)
-                          : _convertLbsToKg(currentWeight).toStringAsFixed(1);
-                    }
-                  });
-                },
-                child: Text(
-                  _isLbs ? 'lbs' : 'kg',
-                  style: TextStyle(
-                    color: kgLbsColor,
-                    fontSize: 16,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          GestureDetector(
-            onTap: () {
-              _showNumberInputSheet(
-                controller: _repsController,
-                label: 'Reps',
-                initialValue: _repsController.text,
-                isDouble: false,
-              );
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Log Exercise'),
+        actions: [
+          // Dropdown to select "Exercise" or "Fitness" logging
+          DropdownButton<String>(
+            value: _selectedLoggingType,
+            onChanged: (String? newValue) {
+              setState(() {
+                _selectedLoggingType = newValue!;
+              });
             },
-            child: AbsorbPointer(
-              child: TextFormField(
-                controller: _repsController,
-                decoration: InputDecoration(
-                  labelText: 'Reps',
-                  labelStyle: TextStyle(
-                    color: theme.textTheme.bodyLarge?.color,
-                  ),
-                ),
-                keyboardType: TextInputType.number,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter the number of reps';
-                  }
-                  if (int.tryParse(value) == null) {
-                    return 'Please enter a valid integer';
-                  }
-                  return null;
-                },
-              ),
-            ),
-          ),
-          GestureDetector(
-            onTap: () {
-              _showNumberInputSheet(
-                controller: _setsController,
-                label: 'Sets',
-                initialValue: _setsController.text,
-                isDouble: false,
+            items: <String>['Exercise', 'Fitness']
+                .map<DropdownMenuItem<String>>((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(value),
               );
-            },
-            child: AbsorbPointer(
-              child: TextFormField(
-                controller: _setsController,
-                decoration: InputDecoration(
-                  labelText: 'Sets',
-                  labelStyle: TextStyle(
-                    color: theme.textTheme.bodyLarge?.color,
-                  ),
-                ),
-                keyboardType: TextInputType.number,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter the number of sets';
-                  }
-                  if (int.tryParse(value) == null) {
-                    return 'Please enter a valid integer';
-                  }
-                  return null;
-                },
-              ),
-            ),
-          ),
-          const SizedBox(height: 16),
-          ElevatedButton(
-            onPressed: _addOrUpdateExercise,
-            child: Text(_isAddingNewExercise ? 'Add Exercise' : 'Save Changes'),
+            }).toList(),
           ),
         ],
       ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (_selectedLoggingType == 'Exercise') ...[
+                _buildExerciseForm(),
+              ] else if (_selectedLoggingType == 'Fitness') ...[
+                _buildFitnessForm(),
+              ],
+              SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: _addOrUpdateExercise,
+                child: Text('Save'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildExerciseForm() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Exercise Selection and Input
+        Row(
+          children: [
+            if (!_isAddingNewExercise)
+              Expanded(
+                child: DropdownButtonFormField<String>(
+                  value: _selectedExercise,
+                  hint: Text('Select an exercise'),
+                  items: _predefinedExercises.map((exercise) {
+                    return DropdownMenuItem<String>(
+                      value: exercise,
+                      child: Text(exercise),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      _selectedExercise = value;
+                      _isAddingNewExercise = false;
+                      _loadLastLoggedExercise();
+                    });
+                  },
+                  decoration: InputDecoration(
+                    labelText: 'Exercise',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+              ),
+            if (!_isAddingNewExercise) ...[
+              IconButton(
+                icon: Icon(Icons.add),
+                onPressed: () {
+                  setState(() {
+                    _isAddingNewExercise = true;
+                  });
+                },
+              ),
+            ] else ...[
+              Expanded(
+                child: TextFormField(
+                  controller: _newExerciseController,
+                  decoration: InputDecoration(
+                    labelText: 'New Exercise Name',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter a name';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+              IconButton(
+                icon: Icon(Icons.cancel),
+                onPressed: () {
+                  setState(() {
+                    _isAddingNewExercise = false;
+                  });
+                },
+              ),
+            ],
+          ],
+        ),
+        SizedBox(height: 20),
+        // Weight Input
+        GestureDetector(
+          onTap: () => _showNumberInputSheet(
+            controller: _weightController,
+            label: 'Weight (${_isLbs ? 'lbs' : 'kg'})',
+            initialValue: _weightController.text,
+            isDouble: true,
+          ),
+          child: AbsorbPointer(
+            child: TextFormField(
+              controller: _weightController,
+              decoration: InputDecoration(
+                labelText: 'Weight (${_isLbs ? 'lbs' : 'kg'})',
+                border: OutlineInputBorder(),
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter a weight';
+                }
+                return null;
+              },
+            ),
+          ),
+        ),
+        SizedBox(height: 20),
+        // Reps Input
+        GestureDetector(
+          onTap: () => _showNumberInputSheet(
+            controller: _repsController,
+            label: 'Reps',
+            initialValue: _repsController.text,
+            isDouble: false,
+          ),
+          child: AbsorbPointer(
+            child: TextFormField(
+              controller: _repsController,
+              decoration: InputDecoration(
+                labelText: 'Reps',
+                border: OutlineInputBorder(),
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter the number of reps';
+                }
+                return null;
+              },
+            ),
+          ),
+        ),
+        SizedBox(height: 20),
+        // Sets Input
+        GestureDetector(
+          onTap: () => _showNumberInputSheet(
+            controller: _setsController,
+            label: 'Sets',
+            initialValue: _setsController.text,
+            isDouble: false,
+          ),
+          child: AbsorbPointer(
+            child: TextFormField(
+              controller: _setsController,
+              decoration: InputDecoration(
+                labelText: 'Sets',
+                border: OutlineInputBorder(),
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter the number of sets';
+                }
+                return null;
+              },
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFitnessForm() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // User Weight Input
+        GestureDetector(
+          onTap: () => _showNumberInputSheet(
+            controller: _userWeightController,
+            label: 'Weight (${_isLbs ? 'lbs' : 'kg'})',
+            initialValue: _userWeightController.text,
+            isDouble: true,
+          ),
+          child: AbsorbPointer(
+            child: TextFormField(
+              controller: _userWeightController,
+              decoration: InputDecoration(
+                labelText: 'Weight (${_isLbs ? 'lbs' : 'kg'})',
+                border: OutlineInputBorder(),
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter your weight';
+                }
+                return null;
+              },
+            ),
+          ),
+        ),
+        SizedBox(height: 20),
+        // Height Input
+        GestureDetector(
+          onTap: () => _showNumberInputSheet(
+            controller: _heightController,
+            label: 'Height (cm)',
+            initialValue: _heightController.text,
+            isDouble: true,
+          ),
+          child: AbsorbPointer(
+            child: TextFormField(
+              controller: _heightController,
+              decoration: InputDecoration(
+                labelText: 'Height (cm)',
+                border: OutlineInputBorder(),
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter your height';
+                }
+                return null;
+              },
+            ),
+          ),
+        ),
+        SizedBox(height: 20),
+        // Age Input
+        GestureDetector(
+          onTap: () => _showNumberInputSheet(
+            controller: _ageController,
+            label: 'Age',
+            initialValue: _ageController.text,
+            isDouble: false,
+          ),
+          child: AbsorbPointer(
+            child: TextFormField(
+              controller: _ageController,
+              decoration: InputDecoration(
+                labelText: 'Age',
+                border: OutlineInputBorder(),
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter your age';
+                }
+                return null;
+              },
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
