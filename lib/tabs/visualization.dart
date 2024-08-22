@@ -262,35 +262,27 @@ class _VisualizationTabState extends State<VisualizationTab> {
               child: _dataPoints.isEmpty
                   ? Center(
                       child: Text(
-                        'No data available',
-                        style: TextStyle(
-                          color: theme.textTheme.bodyLarge?.color,
-                        ),
+                        'No Data Available',
+                        style: theme.textTheme.bodyMedium,
                       ),
                     )
-                  : LayoutBuilder(
-                      builder: (context, constraints) {
-                        final chartHeight = constraints.maxHeight;
-
-                        return ConstrainedBox(
-                          constraints: BoxConstraints(
-                            maxHeight: chartHeight,
+                  : ConstrainedBox(
+                      constraints: BoxConstraints(
+                        maxHeight: 300,
+                      ),
+                      child: Stack(
+                        children: [
+                          Positioned.fill(
+                            child: _buildChart(theme),
                           ),
-                          child: Stack(
-                            children: [
-                              Positioned.fill(
-                                child: _buildChart(theme),
-                              ),
-                              if (_selectedExercise != null)
-                                Positioned(
-                                  bottom: 44,
-                                  right: 8,
-                                  child: _buildLegend(theme),
-                                ),
-                            ],
-                          ),
-                        );
-                      },
+                          if (_selectedExercise != null)
+                            Positioned(
+                              bottom: 44,
+                              right: 8,
+                              child: _buildLegend(theme),
+                            ),
+                        ],
+                      ),
                     ),
             ),
           ],
@@ -462,10 +454,17 @@ class _VisualizationTabState extends State<VisualizationTab> {
               showTitles: true,
               reservedSize: 40,
               getTitlesWidget: (value, meta) {
-                return Text(
-                  value.toStringAsFixed(0),
-                  style: theme.textTheme.bodySmall,
-                );
+                final values = _dataPoints.map((e) => e.y).toSet();
+                final sortedValues = values.toList()..sort();
+                final uniqueValues = _getUniqueValues(sortedValues);
+
+                if (uniqueValues.contains(value)) {
+                  return Text(
+                    value.toStringAsFixed(0),
+                    style: theme.textTheme.bodySmall,
+                  );
+                }
+                return SizedBox.shrink(); // Return empty widget if value is not unique
               },
             ),
           ),
@@ -474,10 +473,17 @@ class _VisualizationTabState extends State<VisualizationTab> {
               showTitles: true,
               reservedSize: 40,
               getTitlesWidget: (value, meta) {
-                return Text(
-                  value.toStringAsFixed(0),
-                  style: theme.textTheme.bodySmall,
-                );
+                final values = _dataPoints.map((e) => e.x).toSet();
+                final sortedValues = values.toList()..sort();
+                final uniqueValues = _getUniqueValues(sortedValues);
+
+                if (uniqueValues.contains(value)) {
+                  return Text(
+                    value.toStringAsFixed(0),
+                    style: theme.textTheme.bodySmall,
+                  );
+                }
+                return SizedBox.shrink(); // Return empty widget if value is not unique
               },
             ),
           ),
@@ -510,10 +516,17 @@ class _VisualizationTabState extends State<VisualizationTab> {
               showTitles: true,
               reservedSize: 40,
               getTitlesWidget: (value, meta) {
-                return Text(
-                  value.toStringAsFixed(0),
-                  style: Theme.of(context).textTheme.bodySmall,
-                );
+                final values = _dataPoints.map((e) => e.y).toSet();
+                final sortedValues = values.toList()..sort();
+                final uniqueValues = _getUniqueValues(sortedValues);
+
+                if (uniqueValues.contains(value)) {
+                  return Text(
+                    value.toStringAsFixed(0),
+                    style: Theme.of(context).textTheme.bodySmall,
+                  );
+                }
+                return SizedBox.shrink(); // Return empty widget if value is not unique
               },
             ),
           ),
@@ -522,10 +535,17 @@ class _VisualizationTabState extends State<VisualizationTab> {
               showTitles: true,
               reservedSize: 40,
               getTitlesWidget: (value, meta) {
-                return Text(
-                  value.toStringAsFixed(0),
-                  style: Theme.of(context).textTheme.bodySmall,
-                );
+                final values = _dataPoints.map((e) => e.x).toSet();
+                final sortedValues = values.toList()..sort();
+                final uniqueValues = _getUniqueValues(sortedValues);
+
+                if (uniqueValues.contains(value)) {
+                  return Text(
+                    value.toStringAsFixed(0),
+                    style: Theme.of(context).textTheme.bodySmall,
+                  );
+                }
+                return SizedBox.shrink(); // Return empty widget if value is not unique
               },
             ),
           ),
@@ -544,18 +564,39 @@ class _VisualizationTabState extends State<VisualizationTab> {
     );
   }
 
+  List<double> _getUniqueValues(List<double> sortedValues) {
+    if (sortedValues.isEmpty) return [];
+
+    final uniqueValues = <double>[];
+    double? previousValue;
+
+    for (var value in sortedValues) {
+      if (previousValue == null || value != previousValue) {
+        uniqueValues.add(value);
+        previousValue = value;
+      }
+    }
+
+    return uniqueValues;
+  }
+
   Widget _buildLegend(ThemeData theme) {
     return Container(
+      color: Colors.white.withOpacity(0.8),
       padding: const EdgeInsets.all(8.0),
-      decoration: BoxDecoration(
-        color: theme.primaryChartColor, // Use the themed color
-        borderRadius: BorderRadius.circular(8.0),
-      ),
-      child: Text(
-        _selectedExercise ?? '',
-        style: theme.textTheme.bodyLarge?.copyWith(
-          color: theme.primaryChartColor, // Use the themed color
-        ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Selected Exercise:',
+            style: theme.textTheme.bodyMedium,
+          ),
+          Text(
+            _selectedExercise ?? 'None',
+            style: theme.textTheme.bodyLarge?.copyWith(
+                color: theme.primaryColor, fontWeight: FontWeight.bold),
+          ),
+        ],
       ),
     );
   }
