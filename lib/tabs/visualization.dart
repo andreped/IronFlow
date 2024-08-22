@@ -281,6 +281,12 @@ class _VisualizationTabState extends State<VisualizationTab> {
                               Positioned.fill(
                                 child: _buildChart(theme),
                               ),
+                              if (_selectedExercise != null)
+                                Positioned(
+                                  bottom: 44,
+                                  right: 8,
+                                  child: _buildLegend(theme),
+                                ),
                             ],
                           ),
                         );
@@ -475,6 +481,16 @@ class _VisualizationTabState extends State<VisualizationTab> {
               },
             ),
           ),
+          topTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: false, // Hide top titles
+            ),
+          ),
+          rightTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: false, // Hide right titles
+            ),
+          ),
         ),
       ),
     );
@@ -490,11 +506,55 @@ class _VisualizationTabState extends State<VisualizationTab> {
         gridData: FlGridData(show: false),
         titlesData: FlTitlesData(
           leftTitles: AxisTitles(
-            sideTitles: SideTitles(showTitles: true),
+            sideTitles: SideTitles(
+              showTitles: true,
+              reservedSize: 40,
+              getTitlesWidget: (value, meta) {
+                return Text(
+                  value.toStringAsFixed(0),
+                  style: Theme.of(context).textTheme.bodySmall,
+                );
+              },
+            ),
           ),
           bottomTitles: AxisTitles(
-            sideTitles: SideTitles(showTitles: true),
+            sideTitles: SideTitles(
+              showTitles: true,
+              reservedSize: 40,
+              getTitlesWidget: (value, meta) {
+                return Text(
+                  value.toStringAsFixed(0),
+                  style: Theme.of(context).textTheme.bodySmall,
+                );
+              },
+            ),
           ),
+          topTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: false, // Hide top titles
+            ),
+          ),
+          rightTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: false, // Hide right titles
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLegend(ThemeData theme) {
+    return Container(
+      padding: const EdgeInsets.all(8.0),
+      decoration: BoxDecoration(
+        color: theme.primaryChartColor, // Use the themed color
+        borderRadius: BorderRadius.circular(8.0),
+      ),
+      child: Text(
+        _selectedExercise ?? '',
+        style: theme.textTheme.bodyLarge?.copyWith(
+          color: theme.primaryChartColor, // Use the themed color
         ),
       ),
     );
