@@ -230,22 +230,26 @@ class _TableTabState extends State<TableTab> {
                               child: Padding(
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 8, vertical: 14.0),
-                                  child: Text(_formatWeight(exercise['weight'] ?? '')))),
+                                  child: Text(_formatWeight(
+                                      exercise['weight'] ?? '')))),
                           TableCell(
                               child: Padding(
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 8, vertical: 14.0),
-                                  child: Text((exercise['reps'] ?? 0).toString()))),
+                                  child: Text(
+                                      (exercise['reps'] ?? 0).toString()))),
                           TableCell(
                               child: Padding(
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 8, vertical: 14.0),
-                                  child: Text((exercise['sets'] ?? 0).toString()))),
+                                  child: Text(
+                                      (exercise['sets'] ?? 0).toString()))),
                           TableCell(
                               child: Padding(
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 8, vertical: 14.0),
-                                  child: Text(_formatDate(exercise['timestamp'] ?? '')))),
+                                  child: Text(_formatDate(
+                                      exercise['timestamp'] ?? '')))),
                           TableCell(
                             child: Padding(
                               padding: const EdgeInsets.symmetric(
@@ -262,7 +266,8 @@ class _TableTabState extends State<TableTab> {
                                   IconButton(
                                     icon: Icon(Icons.delete, size: 18.0),
                                     onPressed: () async {
-                                      await _deleteExercise(exercise['id'] ?? 0);
+                                      await _deleteExercise(
+                                          exercise['id'] ?? 0);
                                     },
                                   ),
                                 ],
@@ -321,23 +326,27 @@ class _TableTabState extends State<TableTab> {
                               child: Padding(
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 8, vertical: 14.0),
-                                  child: Text((record['weight'] ?? 0).toString()))),
+                                  child: Text(
+                                      (record['weight'] ?? 0).toString()))),
                           TableCell(
                               child: Padding(
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 8, vertical: 14.0),
-                                  child: Text((record['height'] ?? 0).toString()))),
+                                  child: Text(
+                                      (record['height'] ?? 0).toString()))),
                           TableCell(
                               child: Padding(
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 8, vertical: 14.0),
-                                  child: Text((record['age'] ?? 0).toString()))),
+                                  child:
+                                      Text((record['age'] ?? 0).toString()))),
                           TableCell(
                               child: Padding(
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 8, vertical: 14.0),
-                                  child: Text((record['timestamp'] ?? 0).toString()))),
-                                                    TableCell(
+                                  child: Text(
+                                      (record['timestamp'] ?? 0).toString()))),
+                          TableCell(
                             child: Padding(
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 8, vertical: 0.0),

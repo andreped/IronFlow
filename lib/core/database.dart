@@ -17,7 +17,8 @@ class DatabaseHelper {
   }
 
   Future<Database> _initDatabase() async {
-    String path = join(await getDatabasesPath(), 'exercises.db'); // Updated database name
+    String path =
+        join(await getDatabasesPath(), 'exercises.db'); // Updated database name
     print("Database is located at: $path");
     return await openDatabase(
       path,
@@ -110,17 +111,17 @@ class DatabaseHelper {
     );
   }
 
-    Future<List<Map<String, dynamic>>> getFitnessData({
-      String sortColumn = 'timestamp',
-      bool ascending = false,
-    }) async {
-      final db = await database;
-      final orderBy = '$sortColumn ${ascending ? 'ASC' : 'DESC'}';
-      return await db.query(
-        'fitness',
-        orderBy: orderBy,
-      );
-    }
+  Future<List<Map<String, dynamic>>> getFitnessData({
+    String sortColumn = 'timestamp',
+    bool ascending = false,
+  }) async {
+    final db = await database;
+    final orderBy = '$sortColumn ${ascending ? 'ASC' : 'DESC'}';
+    return await db.query(
+      'fitness',
+      orderBy: orderBy,
+    );
+  }
 
   Future<List<DateTime>> getExerciseDates() async {
     final db = await database;
@@ -282,7 +283,8 @@ class DatabaseHelper {
     return summary;
   }
 
-  Future<Map<DateTime, List<Map<String, dynamic>>>> getDailyRecordsForExercise(String exerciseName) async {
+  Future<Map<DateTime, List<Map<String, dynamic>>>> getDailyRecordsForExercise(
+      String exerciseName) async {
     final db = await database;
     final List<Map<String, dynamic>> records = await db.query(
       'exercises',
@@ -306,7 +308,8 @@ class DatabaseHelper {
     return dailyRecords;
   }
 
-  Future<Map<String, dynamic>> getSummaryForExercise(String exerciseName) async {
+  Future<Map<String, dynamic>> getSummaryForExercise(
+      String exerciseName) async {
     final db = await database;
     final List<Map<String, dynamic>> records = await db.query(
       'exercises',
@@ -322,7 +325,8 @@ class DatabaseHelper {
     int recordCount = records.length;
 
     for (var record in records) {
-      totalWeight += double.parse(record['weight']) * record['reps'] * record['sets'];
+      totalWeight +=
+          double.parse(record['weight']) * record['reps'] * record['sets'];
       totalSets += record['sets'] as int;
       totalReps += record['reps'] as int;
       lastLoggedDate = DateTime.parse(record['timestamp']);
@@ -342,7 +346,8 @@ class DatabaseHelper {
 
   Future<List<String>> getPredefinedExercises() async {
     final db = await database;
-    final List<Map<String, dynamic>> exercises = await db.query('predefined_exercises');
+    final List<Map<String, dynamic>> exercises =
+        await db.query('predefined_exercises');
     return exercises.map((e) => e['name'] as String).toList();
   }
 
@@ -378,11 +383,12 @@ class DatabaseHelper {
       GROUP BY exercise
       ''',
     );
-    
+
     return maxWeights;
   }
 
-  Future<Map<String, dynamic>> getLastLoggedExercise(String exerciseName) async {
+  Future<Map<String, dynamic>> getLastLoggedExercise(
+      String exerciseName) async {
     final db = await database;
     final List<Map<String, dynamic>> results = await db.rawQuery(
       '''

@@ -57,7 +57,8 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
 
   Future<void> _loadLastLoggedExercise() async {
     if (_selectedExercise != null) {
-      final lastLogged = await _dbHelper.getLastLoggedExercise(_selectedExercise!);
+      final lastLogged =
+          await _dbHelper.getLastLoggedExercise(_selectedExercise!);
       if (lastLogged != null) {
         setState(() {
           _lastExerciseName = lastLogged['exercise'];
@@ -92,7 +93,8 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
 
         final weight = _isLbs
             ? _convertLbsToKg(
-                double.tryParse(_weightController.text.replaceAll(',', '.')) ?? 0)
+                double.tryParse(_weightController.text.replaceAll(',', '.')) ??
+                    0)
             : double.tryParse(_weightController.text.replaceAll(',', '.'));
 
         final reps = int.tryParse(_repsController.text);
@@ -152,8 +154,8 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
         widget.onExerciseAdded();
       } else {
         // Handle Fitness logging
-        final userWeight = double.tryParse(
-            _userWeightController.text.replaceAll(',', '.'));
+        final userWeight =
+            double.tryParse(_userWeightController.text.replaceAll(',', '.'));
         final height =
             double.tryParse(_heightController.text.replaceAll(',', '.'));
         final age = int.tryParse(_ageController.text);
