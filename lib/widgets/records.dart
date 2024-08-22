@@ -13,7 +13,7 @@ class RecordsTab extends StatefulWidget {
 
 class _RecordsTabState extends State<RecordsTab> {
   final DatabaseHelper _dbHelper = DatabaseHelper();
-  Map<String, Map<String, dynamic>> _maxWeights = {};
+  List<Map<String, dynamic>> _maxWeights = [];
   bool _isSortedByWeight = false;
   bool _isLoading = true; // Track loading state
   String? _errorMessage; // Track error message
@@ -43,24 +43,17 @@ class _RecordsTabState extends State<RecordsTab> {
 
   void _sortRecords() {
     if (_isSortedByWeight) {
-      _maxWeights = Map.fromEntries(
-        _maxWeights.entries.toList()
-          ..sort((a, b) {
-            final maxWeightA = a.value['maxWeight'] as double;
-            final maxWeightB = b.value['maxWeight'] as double;
-            if (maxWeightA == maxWeightB) {
-              // If weights are equal, sort by number of sets (reps)
-              final repsA = a.value['reps'] as int;
-              final repsB = b.value['reps'] as int;
-              return repsB.compareTo(repsA); // Higher reps first
-            }
-            return maxWeightB.compareTo(maxWeightA);
-          }),
-      );
+      _maxWeights.sort((a, b) {
+        final maxWeightA = a['max_weight'] as double;
+        final maxWeightB = b['max_weight'] as double;
+        if (maxWeightA == maxWeightB) {
+          // If weights are equal, sort alphabetically by exercise name
+          return a['exercise'].compareTo(b['exercise']);
+        }
+        return maxWeightB.compareTo(maxWeightA);
+      });
     } else {
-      _maxWeights = Map.fromEntries(
-        _maxWeights.entries.toList()..sort((a, b) => a.key.compareTo(b.key)),
-      );
+      _maxWeights.sort((a, b) => a['exercise'].compareTo(b['exercise']));
     }
   }
 
@@ -112,10 +105,9 @@ class _RecordsTabState extends State<RecordsTab> {
                     : ListView.builder(
                         itemCount: _maxWeights.length,
                         itemBuilder: (context, index) {
-                          final exercise = _maxWeights.keys.elementAt(index);
-                          final weightData = _maxWeights[exercise]!;
-                          final weight = weightData['maxWeight'] as double;
-                          final reps = weightData['reps'] as int;
+                          final record = _maxWeights[index];
+                          final exercise = record['exercise'] as String;
+                          final weight = record['max_weight'] as double;
                           final displayWeight = _convertWeight(weight);
 
                           return Column(
@@ -123,7 +115,7 @@ class _RecordsTabState extends State<RecordsTab> {
                               ListTile(
                                 title: Text(exercise),
                                 trailing: Text(
-                                    '${displayWeight.toStringAsFixed(1)} ${widget.isKg ? 'kg' : 'lbs'} x $reps reps'),
+                                    '${displayWeight.toStringAsFixed(1)} ${widget.isKg ? 'kg' : 'lbs'}'),
                               ),
                               if (index < _maxWeights.length - 1) Divider(),
                             ],
