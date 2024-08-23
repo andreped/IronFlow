@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../core/database.dart';
-import '../core/theme.dart'; // Import your theme with the ChartColors extension
+import '../core/theme.dart'; // Import the theme.dart
 
 class VisualizationTab extends StatefulWidget {
   final bool isKg;
@@ -21,7 +21,6 @@ class _VisualizationTabState extends State<VisualizationTab> {
   List<String> _exerciseNames = [];
   List<ScatterSpot> _dataPoints = [];
   double? _minX, _maxX, _minY, _maxY;
-  final Color fixedColor = Colors.purple;
 
   final DatabaseHelper _dbHelper = DatabaseHelper();
 
@@ -105,11 +104,13 @@ class _VisualizationTabState extends State<VisualizationTab> {
         final convertedValue = _convertWeight(value);
 
         aggregatedDataPoints.add(ScatterSpot(
-            dayDifference,
-            convertedValue,
-            dotPainter: FlDotCirclePainter(
-                color: Theme.of(context).primaryChartColor, radius: 6),
-          ));
+          dayDifference,
+          convertedValue,
+          dotPainter: FlDotCirclePainter(
+            color: Theme.of(context).primaryChartColor, // Use theme color
+            radius: 6,
+          ),
+        ));
 
         // Update min and max values
         if (minValue == null || convertedValue < (minValue as double)) minValue = convertedValue;
@@ -131,6 +132,9 @@ class _VisualizationTabState extends State<VisualizationTab> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final scatterColor = theme.primaryChartColor; // Use primaryChartColor for scatter points
+    final lineColor = theme.primaryChartColor; // Use primaryChartColor for lines
+    final axisTextColor = theme.textTheme.bodyMedium?.color ?? Colors.black;
 
     return Scaffold(
       body: Padding(
@@ -172,7 +176,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
                       child: Stack(
                         children: [
                           Positioned.fill(
-                            child: _buildChart(theme),
+                            child: _buildChart(theme, scatterColor, lineColor, axisTextColor),
                           ),
                         ],
                       ),
@@ -245,15 +249,14 @@ class _VisualizationTabState extends State<VisualizationTab> {
         if (newValue != null) {
           setState(() {
             _dataType = newValue;
-            _dataPoints = []; // Clear existing data points
-            _fetchDataPoints(null); // Fetch data points for the new type
+            _fetchDataPoints(_selectedExercise); // Refetch data with new data type
           });
         }
       },
-      items: ['Weight', 'Age', 'Height'].map((type) {
+      items: ['Weight', 'Reps'].map((dataType) {
         return DropdownMenuItem<String>(
-          value: type,
-          child: Text(type,
+          value: dataType,
+          child: Text(dataType,
               style: TextStyle(color: theme.textTheme.bodyLarge?.color)),
         );
       }).toList(),
@@ -304,7 +307,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
     );
   }
 
-  Widget _buildChart(ThemeData theme) {
+  Widget _buildChart(ThemeData theme, Color scatterColor, Color lineColor, Color axisTextColor) {
     return _chartType == 'Line'
         ? LineChart(
             LineChartData(
@@ -317,13 +320,13 @@ class _VisualizationTabState extends State<VisualizationTab> {
                 bottomTitles: AxisTitles(
                   sideTitles: SideTitles(
                     showTitles: true,
-                    getTitlesWidget: _bottomTitleWidgets,
+                    getTitlesWidget: (value, meta) => _bottomTitleWidgets(value, meta, axisTextColor),
                   ),
                 ),
                 leftTitles: AxisTitles(
                   sideTitles: SideTitles(
                     showTitles: true,
-                    getTitlesWidget: _leftTitleWidgets,
+                    getTitlesWidget: (value, meta) => _leftTitleWidgets(value, meta, axisTextColor),
                     reservedSize: 50, // Ensure enough space for the Y-axis labels
                   ),
                 ),
@@ -345,7 +348,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
                       .map((e) => FlSpot(e.x, e.y))
                       .toList(),
                   isCurved: false,
-                  color: theme.colorScheme.secondary,
+                  color: lineColor,
                   belowBarData: BarAreaData(show: false),
                 ),
               ],
@@ -362,13 +365,13 @@ class _VisualizationTabState extends State<VisualizationTab> {
                 bottomTitles: AxisTitles(
                   sideTitles: SideTitles(
                     showTitles: true,
-                    getTitlesWidget: _bottomTitleWidgets,
+                    getTitlesWidget: (value, meta) => _bottomTitleWidgets(value, meta, axisTextColor),
                   ),
                 ),
                 leftTitles: AxisTitles(
                   sideTitles: SideTitles(
                     showTitles: true,
-                    getTitlesWidget: _leftTitleWidgets,
+                    getTitlesWidget: (value, meta) => _leftTitleWidgets(value, meta, axisTextColor),
                     reservedSize: 50, // Ensure enough space for the Y-axis labels
                   ),
                 ),
@@ -388,7 +391,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
           );
   }
 
-  Widget _bottomTitleWidgets(double value, TitleMeta meta) {
+  Widget _bottomTitleWidgets(double value, TitleMeta meta, Color textColor) {
     const double reservedSize = 20.0;
 
     return SideTitleWidget(
@@ -398,16 +401,16 @@ class _VisualizationTabState extends State<VisualizationTab> {
         child: Text(
           value.toStringAsFixed(1),
           style: TextStyle(
-            color: Colors.purple,
+            color: textColor,
             fontSize: 12,
           ),
           textAlign: TextAlign.right,
         ),
-      )
+      ),
     );
   }
 
-  Widget _leftTitleWidgets(double value, TitleMeta meta) {
+  Widget _leftTitleWidgets(double value, TitleMeta meta, Color textColor) {
     const double reservedSize = 50.0;
 
     return SideTitleWidget(
@@ -419,7 +422,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
           child: Text(
             value.toStringAsFixed(1),
             style: TextStyle(
-              color: Colors.purple,
+              color: textColor,
               fontSize: 12,
             ),
             textAlign: TextAlign.right,
