@@ -384,7 +384,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
     return SideTitleWidget(
       axisSide: meta.axisSide,
       child: Text(
-        value.toStringAsFixed(0),
+        value.toStringAsFixed(1),
         style: TextStyle(color: Colors.purple),
       ),
     );
@@ -394,7 +394,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
     return SideTitleWidget(
       axisSide: meta.axisSide,
       child: Text(
-        value.toStringAsFixed(0),
+        value.toStringAsFixed(1),
         style: TextStyle(color: Colors.purple),
       ),
     );
