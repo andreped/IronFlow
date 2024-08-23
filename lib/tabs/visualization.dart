@@ -318,6 +318,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
                   sideTitles: SideTitles(
                     showTitles: true,
                     getTitlesWidget: _leftTitleWidgets,
+                    reservedSize: 50, // Ensure enough space for the Y-axis labels
                   ),
                 ),
                 topTitles: AxisTitles(
@@ -362,6 +363,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
                   sideTitles: SideTitles(
                     showTitles: true,
                     getTitlesWidget: _leftTitleWidgets,
+                    reservedSize: 50, // Ensure enough space for the Y-axis labels
                   ),
                 ),
                 topTitles: AxisTitles(
@@ -381,21 +383,42 @@ class _VisualizationTabState extends State<VisualizationTab> {
   }
 
   Widget _bottomTitleWidgets(double value, TitleMeta meta) {
+    const double reservedSize = 20.0;
+
     return SideTitleWidget(
       axisSide: meta.axisSide,
-      child: Text(
-        value.toStringAsFixed(1),
-        style: TextStyle(color: Colors.purple),
-      ),
+      child: SizedBox(
+        width: reservedSize,
+        child: Text(
+          value.toStringAsFixed(1),
+          style: TextStyle(
+            color: Colors.purple,
+            fontSize: 12,
+          ),
+          textAlign: TextAlign.right,
+        ),
+      )
     );
   }
 
   Widget _leftTitleWidgets(double value, TitleMeta meta) {
+    const double reservedSize = 50.0;
+
     return SideTitleWidget(
       axisSide: meta.axisSide,
-      child: Text(
-        value.toStringAsFixed(1),
-        style: TextStyle(color: Colors.purple),
+      child: RotatedBox(
+        quarterTurns: 0,
+        child: SizedBox(
+          width: reservedSize,
+          child: Text(
+            value.toStringAsFixed(1),
+            style: TextStyle(
+              color: Colors.purple,
+              fontSize: 12,
+            ),
+            textAlign: TextAlign.right,
+          ),
+        ),
       ),
     );
   }
