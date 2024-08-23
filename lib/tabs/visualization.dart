@@ -103,7 +103,13 @@ class _VisualizationTabState extends State<VisualizationTab> {
         }
         final dayDifference = date.difference(earliestDate).inDays.toDouble();
         final convertedValue = _convertWeight(value);
-        aggregatedDataPoints.add(ScatterSpot(dayDifference, convertedValue));
+
+        aggregatedDataPoints.add(ScatterSpot(
+            dayDifference,
+            convertedValue,
+            dotPainter: FlDotCirclePainter(
+                color: Theme.of(context).primaryChartColor, radius: 6),
+          ));
 
         // Update min and max values
         if (minValue == null || convertedValue < (minValue as double)) minValue = convertedValue;
