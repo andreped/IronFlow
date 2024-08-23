@@ -68,11 +68,14 @@ class _VisualizationTabState extends State<VisualizationTab> {
 
       final filteredRecords = exerciseName == null
           ? records
-          : records.where((record) => record['exercise'] == exerciseName).toList();
+          : records
+              .where((record) => record['exercise'] == exerciseName)
+              .toList();
 
       final groupedByDate = <DateTime, List<double>>{};
       for (var record in filteredRecords) {
-        final dateTime = DateUtils.dateOnly(DateTime.parse(record['timestamp']));
+        final dateTime =
+            DateUtils.dateOnly(DateTime.parse(record['timestamp']));
         final value = double.tryParse(record[_dataType.toLowerCase()]) ?? 0.0;
         if (groupedByDate.containsKey(dateTime)) {
           groupedByDate[dateTime]!.add(value);
@@ -82,7 +85,8 @@ class _VisualizationTabState extends State<VisualizationTab> {
       }
 
       final aggregatedDataPoints = <ScatterSpot>[];
-      final earliestDate = DateUtils.dateOnly(DateTime.parse(filteredRecords.last['timestamp']));
+      final earliestDate =
+          DateUtils.dateOnly(DateTime.parse(filteredRecords.last['timestamp']));
 
       double? minValue;
       double? maxValue;
@@ -113,14 +117,18 @@ class _VisualizationTabState extends State<VisualizationTab> {
         ));
 
         // Update min and max values
-        if (minValue == null || convertedValue < (minValue as double)) minValue = convertedValue;
-        if (maxValue == null || convertedValue > (maxValue as double)) maxValue = convertedValue;
+        if (minValue == null || convertedValue < (minValue as double))
+          minValue = convertedValue;
+        if (maxValue == null || convertedValue > (maxValue as double))
+          maxValue = convertedValue;
       });
 
       setState(() {
         _dataPoints = aggregatedDataPoints;
-        _minX = _dataPoints.map((point) => point.x).reduce((a, b) => a < b ? a : b);
-        _maxX = _dataPoints.map((point) => point.x).reduce((a, b) => a > b ? a : b);
+        _minX =
+            _dataPoints.map((point) => point.x).reduce((a, b) => a < b ? a : b);
+        _maxX =
+            _dataPoints.map((point) => point.x).reduce((a, b) => a > b ? a : b);
         _minY = minValue ?? 0.0;
         _maxY = maxValue ?? 100.0; // Set default if no data
       });
@@ -132,8 +140,10 @@ class _VisualizationTabState extends State<VisualizationTab> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final scatterColor = theme.primaryChartColor; // Use primaryChartColor for scatter points
-    final lineColor = theme.primaryChartColor; // Use primaryChartColor for lines
+    final scatterColor =
+        theme.primaryChartColor; // Use primaryChartColor for scatter points
+    final lineColor =
+        theme.primaryChartColor; // Use primaryChartColor for lines
     final axisTextColor = theme.textTheme.bodyMedium?.color ?? Colors.black;
 
     return Scaffold(
@@ -176,7 +186,8 @@ class _VisualizationTabState extends State<VisualizationTab> {
                       child: Stack(
                         children: [
                           Positioned.fill(
-                            child: _buildChart(theme, scatterColor, lineColor, axisTextColor),
+                            child: _buildChart(
+                                theme, scatterColor, lineColor, axisTextColor),
                           ),
                         ],
                       ),
@@ -249,7 +260,8 @@ class _VisualizationTabState extends State<VisualizationTab> {
         if (newValue != null) {
           setState(() {
             _dataType = newValue;
-            _fetchDataPoints(_selectedExercise); // Refetch data with new data type
+            _fetchDataPoints(
+                _selectedExercise); // Refetch data with new data type
           });
         }
       },
@@ -305,7 +317,8 @@ class _VisualizationTabState extends State<VisualizationTab> {
     );
   }
 
-  Widget _buildChart(ThemeData theme, Color scatterColor, Color lineColor, Color axisTextColor) {
+  Widget _buildChart(ThemeData theme, Color scatterColor, Color lineColor,
+      Color axisTextColor) {
     return _chartType == 'Line'
         ? LineChart(
             LineChartData(
@@ -318,14 +331,17 @@ class _VisualizationTabState extends State<VisualizationTab> {
                 bottomTitles: AxisTitles(
                   sideTitles: SideTitles(
                     showTitles: true,
-                    getTitlesWidget: (value, meta) => _bottomTitleWidgets(value, meta, axisTextColor),
+                    getTitlesWidget: (value, meta) =>
+                        _bottomTitleWidgets(value, meta, axisTextColor),
                   ),
                 ),
                 leftTitles: AxisTitles(
                   sideTitles: SideTitles(
                     showTitles: true,
-                    getTitlesWidget: (value, meta) => _leftTitleWidgets(value, meta, axisTextColor),
-                    reservedSize: 50, // Ensure enough space for the Y-axis labels
+                    getTitlesWidget: (value, meta) =>
+                        _leftTitleWidgets(value, meta, axisTextColor),
+                    reservedSize:
+                        50, // Ensure enough space for the Y-axis labels
                   ),
                 ),
                 topTitles: AxisTitles(
@@ -342,9 +358,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
               gridData: FlGridData(show: true),
               lineBarsData: [
                 LineChartBarData(
-                  spots: _dataPoints
-                      .map((e) => FlSpot(e.x, e.y))
-                      .toList(),
+                  spots: _dataPoints.map((e) => FlSpot(e.x, e.y)).toList(),
                   isCurved: false,
                   color: lineColor,
                   belowBarData: BarAreaData(show: false),
@@ -363,14 +377,17 @@ class _VisualizationTabState extends State<VisualizationTab> {
                 bottomTitles: AxisTitles(
                   sideTitles: SideTitles(
                     showTitles: true,
-                    getTitlesWidget: (value, meta) => _bottomTitleWidgets(value, meta, axisTextColor),
+                    getTitlesWidget: (value, meta) =>
+                        _bottomTitleWidgets(value, meta, axisTextColor),
                   ),
                 ),
                 leftTitles: AxisTitles(
                   sideTitles: SideTitles(
                     showTitles: true,
-                    getTitlesWidget: (value, meta) => _leftTitleWidgets(value, meta, axisTextColor),
-                    reservedSize: 50, // Ensure enough space for the Y-axis labels
+                    getTitlesWidget: (value, meta) =>
+                        _leftTitleWidgets(value, meta, axisTextColor),
+                    reservedSize:
+                        50, // Ensure enough space for the Y-axis labels
                   ),
                 ),
                 topTitles: AxisTitles(
