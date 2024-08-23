@@ -299,10 +299,8 @@ class _VisualizationTabState extends State<VisualizationTab> {
         });
       },
       children: [
-        Icon(Icons.show_chart,
-            color: theme.iconTheme.color),
-        Icon(Icons.scatter_plot,
-            color: theme.iconTheme.color),
+        Icon(Icons.show_chart, color: theme.iconTheme.color),
+        Icon(Icons.scatter_plot, color: theme.iconTheme.color),
       ],
     );
   }
