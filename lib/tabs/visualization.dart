@@ -20,8 +20,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
   String _dataType = 'Weight'; // Default data type for Fitness table
   List<String> _exerciseNames = [];
   List<ScatterSpot> _dataPoints = [];
-  double? _minY;
-  double? _maxY;
+  double? _minX, _maxX, _minY, _maxY;
   final Color fixedColor = Colors.purple;
 
   final DatabaseHelper _dbHelper = DatabaseHelper();
@@ -38,19 +37,17 @@ class _VisualizationTabState extends State<VisualizationTab> {
       List<Map<String, dynamic>> variables;
       if (_selectedTable == 'Exercise') {
         variables = await _dbHelper.getExercises();
-        final names = variables
-            .map((entry) => entry['exercise'] as String)
-            .toSet()
-            .toList();
-        setState(() {
-          _exerciseNames = names;
-        });
       } else {
-        // For Fitness table, no exercise names needed
-        setState(() {
-          _exerciseNames = [];
-        });
+        variables = await _dbHelper.getFitnessData();
       }
+
+      final names = variables
+          .map((entry) => entry['exercise'] as String)
+          .toSet()
+          .toList();
+      setState(() {
+        _exerciseNames = names;
+      });
     } catch (e) {
       print('Error fetching names: $e');
     }
@@ -60,170 +57,66 @@ class _VisualizationTabState extends State<VisualizationTab> {
     return widget.isKg ? weightInKg : weightInKg * 2.20462;
   }
 
-  Future<void> _fetchDataPoints(String? selectedExercise) async {
-    print('Fetching data points for: $selectedExercise');
+  Future<void> _fetchDataPoints(String? exerciseName) async {
+    print('Fetching data points for: $exerciseName');
     try {
       List<Map<String, dynamic>> records;
       if (_selectedTable == 'Exercise') {
         records = await _dbHelper.getExercises();
-        final filteredRecords = records
-            .where((record) => record['exercise'] == selectedExercise)
-            .toList();
-
-        final groupedByDate = <DateTime, List<double>>{};
-        for (var record in filteredRecords) {
-          final dateTime =
-              DateUtils.dateOnly(DateTime.parse(record['timestamp']));
-          final weight = double.tryParse(record['weight']) ?? 0.0;
-          if (groupedByDate.containsKey(dateTime)) {
-            groupedByDate[dateTime]!.add(weight);
-          } else {
-            groupedByDate[dateTime] = [weight];
-          }
-        }
-
-        final aggregatedDataPoints = <ScatterSpot>[];
-        final earliestDate = DateUtils.dateOnly(
-            DateTime.parse(filteredRecords.last['timestamp']));
-
-        double? minWeight;
-        double? maxWeight;
-
-        groupedByDate.forEach((date, weights) {
-          if (_aggregationMethod == 'None') {
-            // Plot all data points individually
-            for (var weight in weights) {
-              final dayDifference =
-                  date.difference(earliestDate).inDays.toDouble();
-              final convertedWeight = _convertWeight(weight);
-
-              aggregatedDataPoints.add(ScatterSpot(
-                dayDifference,
-                convertedWeight,
-                dotPainter: FlDotCirclePainter(
-                    color: Theme.of(context).primaryChartColor, radius: 6),
-              ));
-
-              // Update min and max weight
-              if (minWeight == null || convertedWeight < (minWeight as double))
-                minWeight = convertedWeight;
-              if (maxWeight == null || convertedWeight > (maxWeight as double))
-                maxWeight = convertedWeight;
-            }
-          } else {
-            // Apply Max or Average aggregation
-            double value;
-            switch (_aggregationMethod) {
-              case 'Max':
-                value = weights.reduce((a, b) => a > b ? a : b);
-                break;
-              case 'Average':
-                value = weights.reduce((a, b) => a + b) / weights.length;
-                break;
-              default:
-                value = weights.last;
-                break;
-            }
-            final dayDifference = date.difference(earliestDate).inDays.toDouble();
-            final convertedValue = _convertWeight(value);
-            aggregatedDataPoints.add(ScatterSpot(
-              dayDifference,
-              convertedValue,
-              dotPainter: FlDotCirclePainter(
-                  color: Theme.of(context).primaryChartColor, radius: 6),
-            ));
-
-            // Update min and max weight
-            if (minWeight == null || convertedValue < (minWeight as double))
-              minWeight = convertedValue;
-            if (maxWeight == null || convertedValue > (maxWeight as double))
-              maxWeight = convertedValue;
-          }
-        });
-
-        setState(() {
-          _dataPoints = aggregatedDataPoints;
-          _minY = minWeight ?? 0.0;
-          _maxY = maxWeight ?? 100.0; // Set default if no data
-        });
       } else {
         records = await _dbHelper.getFitnessData();
-
-        final groupedByDate = <DateTime, List<double>>{};
-        for (var record in records) {
-          final dateTime =
-              DateUtils.dateOnly(DateTime.parse(record['timestamp']));
-          final value = double.tryParse(record[_dataType.toLowerCase()]) ?? 0.0;
-          if (groupedByDate.containsKey(dateTime)) {
-            groupedByDate[dateTime]!.add(value);
-          } else {
-            groupedByDate[dateTime] = [value];
-          }
-        }
-
-        final aggregatedDataPoints = <ScatterSpot>[];
-        final earliestDate = DateUtils.dateOnly(
-            DateTime.parse(records.last['timestamp']));
-
-        double? minValue;
-        double? maxValue;
-
-        groupedByDate.forEach((date, values) {
-          if (_aggregationMethod == 'None') {
-            // Plot all data points individually
-            for (var value in values) {
-              final dayDifference =
-                  date.difference(earliestDate).inDays.toDouble();
-
-              aggregatedDataPoints.add(ScatterSpot(
-                dayDifference,
-                value,
-                dotPainter: FlDotCirclePainter(
-                    color: Theme.of(context).primaryChartColor, radius: 6),
-              ));
-
-              // Update min and max value
-              if (minValue == null || value < (minValue as double))
-                minValue = value;
-              if (maxValue == null || value > (maxValue as double))
-                maxValue = value;
-            }
-          } else {
-            // Apply Max or Average aggregation
-            double value;
-            switch (_aggregationMethod) {
-              case 'Max':
-                value = values.reduce((a, b) => a > b ? a : b);
-                break;
-              case 'Average':
-                value = values.reduce((a, b) => a + b) / values.length;
-                break;
-              default:
-                value = values.last;
-                break;
-            }
-            final dayDifference = date.difference(earliestDate).inDays.toDouble();
-            aggregatedDataPoints.add(ScatterSpot(
-              dayDifference,
-              value,
-              dotPainter: FlDotCirclePainter(
-                  color: Theme.of(context).primaryChartColor, radius: 6),
-            ));
-
-            // Update min and max value
-            if (minValue == null || value < (minValue as double))
-              minValue = value;
-            if (maxValue == null || value > (maxValue as double))
-              maxValue = value;
-          }
-        });
-
-        setState(() {
-          _dataPoints = aggregatedDataPoints;
-          _minY = minValue ?? 0.0;
-          _maxY = maxValue ?? 100.0; // Set default if no data
-        });
       }
+
+      final filteredRecords = exerciseName == null
+          ? records
+          : records.where((record) => record['exercise'] == exerciseName).toList();
+
+      final groupedByDate = <DateTime, List<double>>{};
+      for (var record in filteredRecords) {
+        final dateTime = DateUtils.dateOnly(DateTime.parse(record['timestamp']));
+        final value = double.tryParse(record[_dataType.toLowerCase()]) ?? 0.0;
+        if (groupedByDate.containsKey(dateTime)) {
+          groupedByDate[dateTime]!.add(value);
+        } else {
+          groupedByDate[dateTime] = [value];
+        }
+      }
+
+      final aggregatedDataPoints = <ScatterSpot>[];
+      final earliestDate = DateUtils.dateOnly(DateTime.parse(filteredRecords.last['timestamp']));
+
+      double? minValue;
+      double? maxValue;
+
+      groupedByDate.forEach((date, values) {
+        double value;
+        switch (_aggregationMethod) {
+          case 'Max':
+            value = values.reduce((a, b) => a > b ? a : b);
+            break;
+          case 'Average':
+            value = values.reduce((a, b) => a + b) / values.length;
+            break;
+          default:
+            value = values.last;
+            break;
+        }
+        final dayDifference = date.difference(earliestDate).inDays.toDouble();
+        final convertedValue = _convertWeight(value);
+        aggregatedDataPoints.add(ScatterSpot(dayDifference, convertedValue));
+
+        // Update min and max values
+        if (minValue == null || convertedValue < (minValue as double)) minValue = convertedValue;
+        if (maxValue == null || convertedValue > (maxValue as double)) maxValue = convertedValue;
+      });
+
+      setState(() {
+        _dataPoints = aggregatedDataPoints;
+        _minX = _dataPoints.map((point) => point.x).reduce((a, b) => a < b ? a : b);
+        _maxX = _dataPoints.map((point) => point.x).reduce((a, b) => a > b ? a : b);
+        _minY = minValue ?? 0.0;
+        _maxY = maxValue ?? 100.0; // Set default if no data
+      });
     } catch (e) {
       print('Error fetching data points: $e');
     }
@@ -247,12 +140,12 @@ class _VisualizationTabState extends State<VisualizationTab> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 SizedBox(
-                  width: 90, // Adjust the width as needed
+                  width: 90,
                   child: _buildAggregationDropdown(theme),
                 ),
                 const SizedBox(width: 16.0),
                 SizedBox(
-                  width: 85, // Adjust the width as needed
+                  width: 85,
                   child: _buildChartTypeToggle(theme),
                 ),
               ],
@@ -275,12 +168,6 @@ class _VisualizationTabState extends State<VisualizationTab> {
                           Positioned.fill(
                             child: _buildChart(theme),
                           ),
-                          if (_selectedExercise != null)
-                            Positioned(
-                              bottom: 44,
-                              right: 8,
-                              child: _buildLegend(theme),
-                            ),
                         ],
                       ),
                     ),
@@ -377,16 +264,11 @@ class _VisualizationTabState extends State<VisualizationTab> {
         if (newValue != null) {
           setState(() {
             _aggregationMethod = newValue;
-            if (_aggregationMethod == 'None' && _chartType == 'Line') {
-              _chartType = 'Scatter';
-            }
+            _fetchDataPoints(_selectedExercise); // Refetch data with new method
           });
-          if (_selectedExercise != null || _selectedTable == 'Fitness') {
-            _fetchDataPoints(_selectedExercise);
-          }
         }
       },
-      items: ['Max', 'Average', 'None'].map((method) {
+      items: ['Max', 'Average'].map((method) {
         return DropdownMenuItem<String>(
           value: method,
           child: Text(method,
@@ -400,203 +282,120 @@ class _VisualizationTabState extends State<VisualizationTab> {
   }
 
   Widget _buildChartTypeToggle(ThemeData theme) {
-    return DropdownButton<String>(
-      value: _chartType,
-      onChanged: (newValue) {
-        if (newValue != null) {
-          setState(() {
-            _chartType = newValue;
-          });
-        }
+    return ToggleButtons(
+      isSelected: [_chartType == 'Line', _chartType == 'Scatter'],
+      onPressed: (int index) {
+        setState(() {
+          _chartType = index == 0 ? 'Line' : 'Scatter';
+        });
       },
-      items: ['Line', 'Scatter'].map((type) {
-        return DropdownMenuItem<String>(
-          value: type,
-          child: Text(type,
-              style: TextStyle(color: theme.textTheme.bodyLarge?.color)),
-        );
-      }).toList(),
-      dropdownColor:
-          theme.dropdownMenuTheme.menuStyle?.backgroundColor?.resolve({}) ??
-              Colors.white,
+      children: [
+        Icon(Icons.show_chart,
+            color: theme.iconTheme.color),
+        Icon(Icons.scatter_plot,
+            color: theme.iconTheme.color),
+      ],
     );
   }
 
   Widget _buildChart(ThemeData theme) {
-    return _chartType == 'Line' ? _buildLineChart(theme) : _buildScatterChart();
+    return _chartType == 'Line'
+        ? LineChart(
+            LineChartData(
+              minX: _minX,
+              maxX: _maxX,
+              minY: _minY,
+              maxY: _maxY,
+              titlesData: FlTitlesData(
+                show: true,
+                bottomTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: true,
+                    getTitlesWidget: _bottomTitleWidgets,
+                  ),
+                ),
+                leftTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: true,
+                    getTitlesWidget: _leftTitleWidgets,
+                  ),
+                ),
+                topTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: false, // Hide top axis titles
+                  ),
+                ),
+                rightTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: false, // Hide right axis titles
+                  ),
+                ),
+              ),
+              gridData: FlGridData(show: true),
+              lineBarsData: [
+                LineChartBarData(
+                  spots: _dataPoints
+                      .map((e) => FlSpot(e.x, e.y))
+                      .toList(),
+                  isCurved: false,
+                  color: theme.colorScheme.secondary,
+                  belowBarData: BarAreaData(show: false),
+                ),
+              ],
+            ),
+          )
+        : ScatterChart(
+            ScatterChartData(
+              minX: _minX,
+              maxX: _maxX,
+              minY: _minY,
+              maxY: _maxY,
+              titlesData: FlTitlesData(
+                show: true,
+                bottomTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: true,
+                    getTitlesWidget: _bottomTitleWidgets,
+                  ),
+                ),
+                leftTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: true,
+                    getTitlesWidget: _leftTitleWidgets,
+                  ),
+                ),
+                topTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: false, // Hide top axis titles
+                  ),
+                ),
+                rightTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: false, // Hide right axis titles
+                  ),
+                ),
+              ),
+              scatterSpots: _dataPoints,
+            ),
+          );
   }
 
-  Widget _buildLineChart(ThemeData theme) {
-    return LineChart(
-      LineChartData(
-        lineBarsData: [
-          LineChartBarData(
-            spots: _dataPoints.map((data) {
-              return FlSpot(data.x, data.y);
-            }).toList(),
-            isCurved: false,
-            color: fixedColor,
-            barWidth: 2,
-            dotData: FlDotData(show: true),
-          ),
-        ],
-        minY: _minY,
-        maxY: _maxY,
-        borderData: FlBorderData(
-          show: true,
-          border: Border.all(
-              color: theme.primaryChartColor, width: 1), // Use theme color
-        ),
-        gridData: FlGridData(show: false),
-        titlesData: FlTitlesData(
-          leftTitles: AxisTitles(
-            sideTitles: SideTitles(
-              showTitles: true,
-              reservedSize: 40,
-              getTitlesWidget: (value, meta) {
-                final values = _dataPoints.map((e) => e.y).toSet();
-                final sortedValues = values.toList()..sort();
-                final uniqueValues = _getUniqueValues(sortedValues);
-
-                if (uniqueValues.contains(value)) {
-                  return Text(
-                    value.toStringAsFixed(0),
-                    style: theme.textTheme.bodySmall,
-                  );
-                }
-                return SizedBox.shrink(); // Return empty widget if value is not unique
-              },
-            ),
-          ),
-          bottomTitles: AxisTitles(
-            sideTitles: SideTitles(
-              showTitles: true,
-              reservedSize: 40,
-              getTitlesWidget: (value, meta) {
-                final values = _dataPoints.map((e) => e.x).toSet();
-                final sortedValues = values.toList()..sort();
-                final uniqueValues = _getUniqueValues(sortedValues);
-
-                if (uniqueValues.contains(value)) {
-                  return Text(
-                    value.toStringAsFixed(0),
-                    style: theme.textTheme.bodySmall,
-                  );
-                }
-                return SizedBox.shrink(); // Return empty widget if value is not unique
-              },
-            ),
-          ),
-          topTitles: AxisTitles(
-            sideTitles: SideTitles(
-              showTitles: false, // Hide top titles
-            ),
-          ),
-          rightTitles: AxisTitles(
-            sideTitles: SideTitles(
-              showTitles: false, // Hide right titles
-            ),
-          ),
-        ),
+  Widget _bottomTitleWidgets(double value, TitleMeta meta) {
+    return SideTitleWidget(
+      axisSide: meta.axisSide,
+      child: Text(
+        value.toStringAsFixed(0),
+        style: TextStyle(color: Colors.purple),
       ),
     );
   }
 
-  Widget _buildScatterChart() {
-    return ScatterChart(
-      ScatterChartData(
-        scatterSpots: _dataPoints,
-        minY: _minY,
-        maxY: _maxY,
-        borderData: FlBorderData(show: true),
-        gridData: FlGridData(show: false),
-        titlesData: FlTitlesData(
-          leftTitles: AxisTitles(
-            sideTitles: SideTitles(
-              showTitles: true,
-              reservedSize: 40,
-              getTitlesWidget: (value, meta) {
-                final values = _dataPoints.map((e) => e.y).toSet();
-                final sortedValues = values.toList()..sort();
-                final uniqueValues = _getUniqueValues(sortedValues);
-
-                if (uniqueValues.contains(value)) {
-                  return Text(
-                    value.toStringAsFixed(0),
-                    style: Theme.of(context).textTheme.bodySmall,
-                  );
-                }
-                return SizedBox.shrink(); // Return empty widget if value is not unique
-              },
-            ),
-          ),
-          bottomTitles: AxisTitles(
-            sideTitles: SideTitles(
-              showTitles: true,
-              reservedSize: 40,
-              getTitlesWidget: (value, meta) {
-                final values = _dataPoints.map((e) => e.x).toSet();
-                final sortedValues = values.toList()..sort();
-                final uniqueValues = _getUniqueValues(sortedValues);
-
-                if (uniqueValues.contains(value)) {
-                  return Text(
-                    value.toStringAsFixed(0),
-                    style: Theme.of(context).textTheme.bodySmall,
-                  );
-                }
-                return SizedBox.shrink(); // Return empty widget if value is not unique
-              },
-            ),
-          ),
-          topTitles: AxisTitles(
-            sideTitles: SideTitles(
-              showTitles: false, // Hide top titles
-            ),
-          ),
-          rightTitles: AxisTitles(
-            sideTitles: SideTitles(
-              showTitles: false, // Hide right titles
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  List<double> _getUniqueValues(List<double> sortedValues) {
-    if (sortedValues.isEmpty) return [];
-
-    final uniqueValues = <double>[];
-    double? previousValue;
-
-    for (var value in sortedValues) {
-      if (previousValue == null || value != previousValue) {
-        uniqueValues.add(value);
-        previousValue = value;
-      }
-    }
-
-    return uniqueValues;
-  }
-
-  Widget _buildLegend(ThemeData theme) {
-    return Container(
-      color: Colors.white.withOpacity(0.8),
-      padding: const EdgeInsets.all(8.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Selected Exercise:',
-            style: theme.textTheme.bodyMedium,
-          ),
-          Text(
-            _selectedExercise ?? 'None',
-            style: theme.textTheme.bodyLarge?.copyWith(
-                color: theme.primaryColor, fontWeight: FontWeight.bold),
-          ),
-        ],
+  Widget _leftTitleWidgets(double value, TitleMeta meta) {
+    return SideTitleWidget(
+      axisSide: meta.axisSide,
+      child: Text(
+        value.toStringAsFixed(0),
+        style: TextStyle(color: Colors.purple),
       ),
     );
   }
