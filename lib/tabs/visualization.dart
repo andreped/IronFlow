@@ -155,7 +155,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
                 ),
                 const SizedBox(width: 16.0),
                 SizedBox(
-                  width: 85,
+                  width: 100,
                   child: _buildChartTypeToggle(theme),
                 ),
               ],
