@@ -61,11 +61,11 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
           await _dbHelper.getLastLoggedExercise(_selectedExercise!);
       if (lastLogged != null && lastLogged.isNotEmpty) {
         setState(() {
-          _lastExerciseName = lastLogged['exercise'] ?? ''; // Ensure non-null
+          _lastExerciseName = lastLogged['exercise'] ?? '';
           _lastWeight = double.tryParse(
-              lastLogged['weight']?.toString() ?? '0'); // Handle possible null
-          _lastReps = lastLogged['reps'] ?? 0; // Default to 0 if null
-          _lastSets = lastLogged['sets'] ?? 1; // Default to 1 if null
+              lastLogged['weight']?.toString() ?? '0');
+          _lastReps = lastLogged['reps'] ?? 0;
+          _lastSets = lastLogged['sets'] ?? 1;
 
           _weightController.text = _isLbs
               ? _convertKgToLbs(_lastWeight ?? 0).toStringAsFixed(2)
