@@ -27,7 +27,16 @@ class _VisualizationTabState extends State<VisualizationTab> {
   @override
   void initState() {
     super.initState();
-    _fetchExerciseNames();
+    _fetchExerciseNames(); // Fetch exercise names initially
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Refresh data when the tab becomes active
+    if (_selectedExercise != null && _selectedTable.isNotEmpty) {
+      _fetchDataPoints(_selectedExercise);
+    }
   }
 
   Future<void> _fetchExerciseNames() async {
@@ -46,9 +55,18 @@ class _VisualizationTabState extends State<VisualizationTab> {
           .toList();
       setState(() {
         _exerciseNames = names;
+        if (_selectedExercise != null) {
+          _fetchDataPoints(_selectedExercise);
+        }
       });
     } catch (e) {
       print('Error fetching names: $e');
+    }
+
+    // render first exercise by default
+    if (!_exerciseNames.isEmpty) {
+      _selectedExercise = _exerciseNames.first;
+      _fetchDataPoints(_selectedExercise);
     }
   }
 
@@ -140,11 +158,14 @@ class _VisualizationTabState extends State<VisualizationTab> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final scatterColor =
-        theme.primaryChartColor; // Use primaryChartColor for scatter points
-    final lineColor =
-        theme.primaryChartColor; // Use primaryChartColor for lines
+    final scatterColor = theme.primaryChartColor; // Use primaryChartColor for scatter points
+    final lineColor = theme.primaryChartColor; // Use primaryChartColor for lines
     final axisTextColor = theme.textTheme.bodyMedium?.color ?? Colors.black;
+
+    // Get the height of the screen
+    final screenHeight = MediaQuery.of(context).size.height;
+    // Define the maximum height for the chart as 45% of the screen height
+    final chartMaxHeight = screenHeight * 0.45;
 
     return Scaffold(
       body: Padding(
@@ -156,7 +177,10 @@ class _VisualizationTabState extends State<VisualizationTab> {
             if (_selectedTable == 'Exercise') _buildExerciseDropdown(theme),
             if (_selectedTable == 'Fitness') _buildDataTypeDropdown(theme),
             const SizedBox(height: 16.0),
-            Expanded(
+            ConstrainedBox(
+              constraints: BoxConstraints(
+                maxHeight: chartMaxHeight,
+              ),
               child: _dataPoints.isEmpty
                   ? Center(
                       child: Text(
@@ -164,19 +188,8 @@ class _VisualizationTabState extends State<VisualizationTab> {
                         style: theme.textTheme.bodyMedium,
                       ),
                     )
-                  : ConstrainedBox(
-                      constraints: BoxConstraints(
-                        maxHeight: 200,
-                      ),
-                      child: Stack(
-                        children: [
-                          Positioned.fill(
-                            child: _buildChart(
-                                theme, scatterColor, lineColor, axisTextColor),
-                          ),
-                        ],
-                      ),
-                    ),
+                  : _buildChart(
+                      theme, scatterColor, lineColor, axisTextColor),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -239,7 +252,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
           setState(() {
             _selectedExercise = newValue;
           });
-          _fetchDataPoints(newValue);
+          _fetchDataPoints(newValue); // Fetch data points for the selected exercise
         }
       },
       items: _exerciseNames.map((exerciseName) {
@@ -262,12 +275,11 @@ class _VisualizationTabState extends State<VisualizationTab> {
         if (newValue != null) {
           setState(() {
             _dataType = newValue;
-            _fetchDataPoints(
-                _selectedExercise); // Refetch data with new data type
+            _fetchDataPoints(_selectedExercise); // Refetch data with new data type
           });
         }
       },
-      items: ['Weight'].map((dataType) {
+      items: ['Weight', 'Reps'].map((dataType) {
         return DropdownMenuItem<String>(
           value: dataType,
           child: Text(dataType,
