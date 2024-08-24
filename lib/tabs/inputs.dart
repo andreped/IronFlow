@@ -243,7 +243,7 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
     });
 
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text('🎉 New exercise name saved successfully'),
+      content: Text('🎉 New exercise saved successfully'),
       duration: Duration(seconds: 2),
       backgroundColor: Colors.blue,
     ));
@@ -395,16 +395,11 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
                 _buildFitnessForm(),
               ],
               SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _addOrUpdateExercise,
-                child: Text('Save'),
-              ),
-              if (_isAddingNewExercise) ...[
+              if (!_isAddingNewExercise)
                 ElevatedButton(
-                  onPressed: _saveNewExerciseName,
-                  child: Text('Save New Exercise Name'),
+                  onPressed: _addOrUpdateExercise,
+                  child: Text('Save'),
                 ),
-              ],
             ],
           ),
         ),
@@ -412,7 +407,7 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
     );
   }
 
-  Widget _buildExerciseForm() {
+Widget _buildExerciseForm() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -554,6 +549,13 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
                 },
               ),
             ),
+          ),
+          SizedBox(height: 20),
+        ] else ...[
+          // Save New Exercise Name Button (Only when adding a new exercise)
+          ElevatedButton(
+            onPressed: _saveNewExerciseName,
+            child: Text('Save New Exercise'),
           ),
         ],
       ],
