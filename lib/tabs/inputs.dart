@@ -56,20 +56,40 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
   }
 
   Future<void> _loadLastLoggedExercise() async {
-    if (_selectedExercise != null) {
+    if (_selectedLoggingType == 'Exercise' && _selectedExercise != null) {
       final lastLogged =
           await _dbHelper.getLastLoggedExercise(_selectedExercise!);
-      if (lastLogged != null) {
+      if (lastLogged != null && lastLogged.isNotEmpty) {
         setState(() {
-          _lastExerciseName = lastLogged['exercise'];
-          _lastWeight = double.tryParse(lastLogged['weight']);
-          _lastReps = lastLogged['reps'];
-          _lastSets = lastLogged['sets'];
+          _lastExerciseName = lastLogged['exercise'] ?? ''; // Ensure non-null
+          _lastWeight = double.tryParse(
+              lastLogged['weight']?.toString() ?? '0'); // Handle possible null
+          _lastReps = lastLogged['reps'] ?? 0; // Default to 0 if null
+          _lastSets = lastLogged['sets'] ?? 1; // Default to 1 if null
+
           _weightController.text = _isLbs
               ? _convertKgToLbs(_lastWeight ?? 0).toStringAsFixed(2)
               : _lastWeight?.toString() ?? '';
           _repsController.text = _lastReps?.toString() ?? '';
           _setsController.text = _lastSets?.toString() ?? '1';
+        });
+      } else {
+        // Clear the fields if no previous exercise was logged
+        setState(() {
+          _weightController.clear();
+          _repsController.clear();
+          _setsController.text = '1';
+        });
+      }
+    } else if (_selectedLoggingType == 'Fitness') {
+      final lastLoggedFitness = await _dbHelper.getLastLoggedFitness();
+      if (lastLoggedFitness != null && lastLoggedFitness.isNotEmpty) {
+        setState(() {
+          _userWeightController.text =
+              lastLoggedFitness['weight']?.toString() ?? '';
+          _heightController.text =
+              lastLoggedFitness['height']?.toString() ?? '';
+          _ageController.text = lastLoggedFitness['age']?.toString() ?? '';
         });
       }
     }
@@ -296,10 +316,13 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
           // Dropdown to select "Exercise" or "Fitness" logging
           DropdownButton<String>(
             value: _selectedLoggingType,
-            onChanged: (String? newValue) {
+            onChanged: (String? newValue) async {
               setState(() {
                 _selectedLoggingType = newValue!;
               });
+
+              // Load the last logged data for the selected type
+              await _loadLastLoggedExercise();
             },
             items: <String>['Exercise', 'Fitness']
                 .map<DropdownMenuItem<String>>((String value) {
