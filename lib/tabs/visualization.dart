@@ -158,8 +158,10 @@ class _VisualizationTabState extends State<VisualizationTab> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final scatterColor = theme.primaryChartColor; // Use primaryChartColor for scatter points
-    final lineColor = theme.primaryChartColor; // Use primaryChartColor for lines
+    final scatterColor =
+        theme.primaryChartColor; // Use primaryChartColor for scatter points
+    final lineColor =
+        theme.primaryChartColor; // Use primaryChartColor for lines
     final axisTextColor = theme.textTheme.bodyMedium?.color ?? Colors.black;
 
     // Get the height of the screen
@@ -188,8 +190,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
                         style: theme.textTheme.bodyMedium,
                       ),
                     )
-                  : _buildChart(
-                      theme, scatterColor, lineColor, axisTextColor),
+                  : _buildChart(theme, scatterColor, lineColor, axisTextColor),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -252,7 +253,8 @@ class _VisualizationTabState extends State<VisualizationTab> {
           setState(() {
             _selectedExercise = newValue;
           });
-          _fetchDataPoints(newValue); // Fetch data points for the selected exercise
+          _fetchDataPoints(
+              newValue); // Fetch data points for the selected exercise
         }
       },
       items: _exerciseNames.map((exerciseName) {
@@ -275,7 +277,8 @@ class _VisualizationTabState extends State<VisualizationTab> {
         if (newValue != null) {
           setState(() {
             _dataType = newValue;
-            _fetchDataPoints(_selectedExercise); // Refetch data with new data type
+            _fetchDataPoints(
+                _selectedExercise); // Refetch data with new data type
           });
         }
       },
