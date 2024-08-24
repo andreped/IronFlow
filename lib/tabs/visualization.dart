@@ -28,7 +28,6 @@ class _VisualizationTabState extends State<VisualizationTab> {
   void initState() {
     super.initState();
     _fetchExerciseNames();
-    _fetchDataPoints(); // Fetch data points with default values
   }
 
   Future<void> _fetchExerciseNames() async {
@@ -57,7 +56,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
     return widget.isKg ? weightInKg : weightInKg * 2.20462;
   }
 
-  Future<void> _fetchDataPoints([String? exerciseName]) async {
+  Future<void> _fetchDataPoints(String? exerciseName) async {
     print('Fetching data points for: $exerciseName');
     try {
       List<Map<String, dynamic>> records;
@@ -157,21 +156,6 @@ class _VisualizationTabState extends State<VisualizationTab> {
             if (_selectedTable == 'Exercise') _buildExerciseDropdown(theme),
             if (_selectedTable == 'Fitness') _buildDataTypeDropdown(theme),
             const SizedBox(height: 16.0),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                SizedBox(
-                  width: 90,
-                  child: _buildAggregationDropdown(theme),
-                ),
-                const SizedBox(width: 16.0),
-                SizedBox(
-                  width: 100,
-                  child: _buildChartTypeToggle(theme),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16.0),
             Expanded(
               child: _dataPoints.isEmpty
                   ? Center(
@@ -194,6 +178,21 @@ class _VisualizationTabState extends State<VisualizationTab> {
                       ),
                     ),
             ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                SizedBox(
+                  width: 90,
+                  child: _buildAggregationDropdown(theme),
+                ),
+                const SizedBox(width: 16.0),
+                SizedBox(
+                  width: 100,
+                  child: _buildChartTypeToggle(theme),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16.0),
           ],
         ),
       ),
@@ -213,7 +212,6 @@ class _VisualizationTabState extends State<VisualizationTab> {
             _dataType = 'Weight'; // Reset data type to default
           });
           _fetchExerciseNames(); // Fetch the new exercise names if needed
-          _fetchDataPoints(); // Fetch data points with updated table
         }
       },
       items: ['Exercise', 'Fitness'].map((table) {
@@ -310,7 +308,6 @@ class _VisualizationTabState extends State<VisualizationTab> {
       onPressed: (int index) {
         setState(() {
           _chartType = index == 0 ? 'Line' : 'Scatter';
-          _fetchDataPoints(_selectedExercise); // Refetch data with new chart type
         });
       },
       children: [
