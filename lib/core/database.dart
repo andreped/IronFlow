@@ -416,6 +416,32 @@ class DatabaseHelper {
     return results.isNotEmpty ? results.first['exercise'] as String : null;
   }
 
+  Future<Map<String, dynamic>?> getLastLoggedFitness() async {
+    final db = await database;
+    final List<Map<String, dynamic>> results = await db.rawQuery(
+      '''
+      SELECT weight, height, age FROM fitness
+      ORDER BY timestamp DESC
+      LIMIT 1
+      ''',
+    );
+
+    return results.isNotEmpty ? results.first : null;
+  }
+
+  Future<Map<String, dynamic>> getLastLoggedFitnessName() async {
+    final db = await database;
+    final List<Map<String, dynamic>> results = await db.rawQuery(
+      '''
+      SELECT * FROM fitness
+      ORDER BY timestamp DESC
+      LIMIT 1
+      ''',
+    );
+
+    return results.isNotEmpty ? results.first : {};
+  }
+
   // Methods for fitness table
   Future<void> insertFitness({
     required double weight,
