@@ -54,12 +54,12 @@ class _VisualizationTabState extends State<VisualizationTab> {
           .map((entry) => entry['exercise'] as String)
           .toSet()
           .toList();
-        
+
       // sort names if not empty
       if (!names.isEmpty) {
         names.sort();
       }
-      
+
       // update states
       setState(() {
         _exerciseNames = names;
