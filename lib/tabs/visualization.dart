@@ -279,7 +279,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
           });
         }
       },
-      items: ['Weight', 'Reps'].map((dataType) {
+      items: ['Weight', 'Height', 'Age'].map((dataType) {
         return DropdownMenuItem<String>(
           value: dataType,
           child: Text(dataType,
