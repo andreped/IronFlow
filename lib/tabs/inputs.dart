@@ -57,13 +57,15 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
 
   Future<void> _loadLastLoggedExercise() async {
     if (_selectedLoggingType == 'Exercise' && _selectedExercise != null) {
-      final lastLogged = await _dbHelper.getLastLoggedExercise(_selectedExercise!);
+      final lastLogged =
+          await _dbHelper.getLastLoggedExercise(_selectedExercise!);
       if (lastLogged != null && lastLogged.isNotEmpty) {
         setState(() {
-          _lastExerciseName = lastLogged['exercise'] ?? '';  // Ensure non-null
-          _lastWeight = double.tryParse(lastLogged['weight']?.toString() ?? '0');  // Handle possible null
-          _lastReps = lastLogged['reps'] ?? 0;  // Default to 0 if null
-          _lastSets = lastLogged['sets'] ?? 1;  // Default to 1 if null
+          _lastExerciseName = lastLogged['exercise'] ?? ''; // Ensure non-null
+          _lastWeight = double.tryParse(
+              lastLogged['weight']?.toString() ?? '0'); // Handle possible null
+          _lastReps = lastLogged['reps'] ?? 0; // Default to 0 if null
+          _lastSets = lastLogged['sets'] ?? 1; // Default to 1 if null
 
           _weightController.text = _isLbs
               ? _convertKgToLbs(_lastWeight ?? 0).toStringAsFixed(2)
@@ -83,8 +85,10 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
       final lastLoggedFitness = await _dbHelper.getLastLoggedFitness();
       if (lastLoggedFitness != null && lastLoggedFitness.isNotEmpty) {
         setState(() {
-          _userWeightController.text = lastLoggedFitness['weight']?.toString() ?? '';
-          _heightController.text = lastLoggedFitness['height']?.toString() ?? '';
+          _userWeightController.text =
+              lastLoggedFitness['weight']?.toString() ?? '';
+          _heightController.text =
+              lastLoggedFitness['height']?.toString() ?? '';
           _ageController.text = lastLoggedFitness['age']?.toString() ?? '';
         });
       }
@@ -320,7 +324,8 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
               // Load the last logged data for the selected type
               await _loadLastLoggedExercise();
             },
-            items: <String>['Exercise', 'Fitness'].map<DropdownMenuItem<String>>((String value) {
+            items: <String>['Exercise', 'Fitness']
+                .map<DropdownMenuItem<String>>((String value) {
               return DropdownMenuItem<String>(
                 value: value,
                 child: Text(value),
