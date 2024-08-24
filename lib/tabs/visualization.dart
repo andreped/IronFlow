@@ -27,7 +27,16 @@ class _VisualizationTabState extends State<VisualizationTab> {
   @override
   void initState() {
     super.initState();
-    _fetchExerciseNames();
+    _fetchExerciseNames(); // Fetch exercise names initially
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Refresh data when the tab becomes active
+    if (_selectedExercise != null && _selectedTable.isNotEmpty) {
+      _fetchDataPoints(_selectedExercise);
+    }
   }
 
   Future<void> _fetchExerciseNames() async {
@@ -46,9 +55,18 @@ class _VisualizationTabState extends State<VisualizationTab> {
           .toList();
       setState(() {
         _exerciseNames = names;
+        if (_selectedExercise != null) {
+          _fetchDataPoints(_selectedExercise);
+        }
       });
     } catch (e) {
       print('Error fetching names: $e');
+    }
+
+    // render first exercise by default
+    if (!_exerciseNames.isEmpty) {
+      _selectedExercise = _exerciseNames.first;
+      _fetchDataPoints(_selectedExercise);
     }
   }
 
@@ -146,6 +164,11 @@ class _VisualizationTabState extends State<VisualizationTab> {
         theme.primaryChartColor; // Use primaryChartColor for lines
     final axisTextColor = theme.textTheme.bodyMedium?.color ?? Colors.black;
 
+    // Get the height of the screen
+    final screenHeight = MediaQuery.of(context).size.height;
+    // Define the maximum height for the chart as 45% of the screen height
+    final chartMaxHeight = screenHeight * 0.45;
+
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -156,6 +179,19 @@ class _VisualizationTabState extends State<VisualizationTab> {
             if (_selectedTable == 'Exercise') _buildExerciseDropdown(theme),
             if (_selectedTable == 'Fitness') _buildDataTypeDropdown(theme),
             const SizedBox(height: 16.0),
+            ConstrainedBox(
+              constraints: BoxConstraints(
+                maxHeight: chartMaxHeight,
+              ),
+              child: _dataPoints.isEmpty
+                  ? Center(
+                      child: Text(
+                        'No Data Available',
+                        style: theme.textTheme.bodyMedium,
+                      ),
+                    )
+                  : _buildChart(theme, scatterColor, lineColor, axisTextColor),
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -171,28 +207,6 @@ class _VisualizationTabState extends State<VisualizationTab> {
               ],
             ),
             const SizedBox(height: 16.0),
-            Expanded(
-              child: _dataPoints.isEmpty
-                  ? Center(
-                      child: Text(
-                        'No Data Available',
-                        style: theme.textTheme.bodyMedium,
-                      ),
-                    )
-                  : ConstrainedBox(
-                      constraints: BoxConstraints(
-                        maxHeight: 300,
-                      ),
-                      child: Stack(
-                        children: [
-                          Positioned.fill(
-                            child: _buildChart(
-                                theme, scatterColor, lineColor, axisTextColor),
-                          ),
-                        ],
-                      ),
-                    ),
-            ),
           ],
         ),
       ),
@@ -201,6 +215,8 @@ class _VisualizationTabState extends State<VisualizationTab> {
 
   Widget _buildTableDropdown(ThemeData theme) {
     return DropdownButton<String>(
+      hint: Text('Select Table',
+          style: TextStyle(color: theme.textTheme.bodyLarge?.color)),
       value: _selectedTable,
       onChanged: (newValue) {
         if (newValue != null && newValue != _selectedTable) {
@@ -229,7 +245,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
 
   Widget _buildExerciseDropdown(ThemeData theme) {
     return DropdownButton<String>(
-      hint: Text('Exercise',
+      hint: Text('Select Exercise',
           style: TextStyle(color: theme.textTheme.bodyLarge?.color)),
       value: _selectedExercise,
       onChanged: (newValue) {
@@ -237,7 +253,8 @@ class _VisualizationTabState extends State<VisualizationTab> {
           setState(() {
             _selectedExercise = newValue;
           });
-          _fetchDataPoints(newValue);
+          _fetchDataPoints(
+              newValue); // Fetch data points for the selected exercise
         }
       },
       items: _exerciseNames.map((exerciseName) {
@@ -265,7 +282,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
           });
         }
       },
-      items: ['Weight', 'Reps'].map((dataType) {
+      items: ['Weight', 'Height', 'Age'].map((dataType) {
         return DropdownMenuItem<String>(
           value: dataType,
           child: Text(dataType,
