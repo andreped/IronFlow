@@ -62,8 +62,8 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
       if (lastLogged != null && lastLogged.isNotEmpty) {
         setState(() {
           _lastExerciseName = lastLogged['exercise'] ?? '';
-          _lastWeight = double.tryParse(
-              lastLogged['weight']?.toString() ?? '0');
+          _lastWeight =
+              double.tryParse(lastLogged['weight']?.toString() ?? '0');
           _lastReps = lastLogged['reps'] ?? 0;
           _lastSets = lastLogged['sets'] ?? 1;
 
@@ -128,9 +128,9 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
         if (hasFullData) {
           // Parse and validate the input fields
           final weight = _isLbs
-              ? _convertLbsToKg(
-                  double.tryParse(_weightController.text.replaceAll(',', '.')) ??
-                      0)
+              ? _convertLbsToKg(double.tryParse(
+                      _weightController.text.replaceAll(',', '.')) ??
+                  0)
               : double.tryParse(_weightController.text.replaceAll(',', '.'));
 
           final reps = int.tryParse(_repsController.text);
@@ -138,7 +138,8 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
 
           if (weight == null || reps == null || sets == null) {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text('Please enter valid values for weight, reps, and sets'),
+              content:
+                  Text('Please enter valid values for weight, reps, and sets'),
               duration: Duration(seconds: 2),
               backgroundColor: Colors.red,
             ));
@@ -149,8 +150,8 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
           final roundedWeight = double.parse(weight.toStringAsFixed(2));
 
           // Check for a new high score
-          final isNewHighScore = await _dbHelper.isNewHighScore(
-              exerciseName, roundedWeight, reps);
+          final isNewHighScore =
+              await _dbHelper.isNewHighScore(exerciseName, roundedWeight, reps);
 
           // Insert the exercise into the database
           await _dbHelper.insertExercise(
@@ -183,15 +184,18 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
           widget.onExerciseAdded();
         } else {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text('Please fill in weight, reps, and sets or save the exercise name separately'),
+            content: Text(
+                'Please fill in weight, reps, and sets or save the exercise name separately'),
             duration: Duration(seconds: 2),
             backgroundColor: Colors.red,
           ));
         }
       } else {
         // Handle Fitness logging
-        final userWeight = double.tryParse(_userWeightController.text.replaceAll(',', '.'));
-        final height = double.tryParse(_heightController.text.replaceAll(',', '.'));
+        final userWeight =
+            double.tryParse(_userWeightController.text.replaceAll(',', '.'));
+        final height =
+            double.tryParse(_heightController.text.replaceAll(',', '.'));
         final age = int.tryParse(_ageController.text);
 
         if (userWeight == null || height == null || age == null) {
@@ -407,7 +411,7 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
     );
   }
 
-Widget _buildExerciseForm() {
+  Widget _buildExerciseForm() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
