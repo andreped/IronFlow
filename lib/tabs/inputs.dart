@@ -56,9 +56,8 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
   }
 
   Future<void> _loadLastLoggedExercise() async {
-    if (_selectedExercise != null) {
-      final lastLogged =
-          await _dbHelper.getLastLoggedExercise(_selectedExercise!);
+    if (_selectedLoggingType == 'Exercise' && _selectedExercise != null) {
+      final lastLogged = await _dbHelper.getLastLoggedExercise(_selectedExercise!);
       if (lastLogged != null) {
         setState(() {
           _lastExerciseName = lastLogged['exercise'];
@@ -70,6 +69,15 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
               : _lastWeight?.toString() ?? '';
           _repsController.text = _lastReps?.toString() ?? '';
           _setsController.text = _lastSets?.toString() ?? '1';
+        });
+      }
+    } else if (_selectedLoggingType == 'Fitness') {
+      final lastLoggedFitness = await _dbHelper.getLastLoggedFitness();
+      if (lastLoggedFitness != null) {
+        setState(() {
+          _userWeightController.text = lastLoggedFitness['weight'].toString();
+          _heightController.text = lastLoggedFitness['height'].toString();
+          _ageController.text = lastLoggedFitness['age'].toString();
         });
       }
     }
@@ -296,13 +304,15 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
           // Dropdown to select "Exercise" or "Fitness" logging
           DropdownButton<String>(
             value: _selectedLoggingType,
-            onChanged: (String? newValue) {
+            onChanged: (String? newValue) async {
               setState(() {
                 _selectedLoggingType = newValue!;
               });
+
+              // Load the last logged data for the selected type
+              await _loadLastLoggedExercise();
             },
-            items: <String>['Exercise', 'Fitness']
-                .map<DropdownMenuItem<String>>((String value) {
+            items: <String>['Exercise', 'Fitness'].map<DropdownMenuItem<String>>((String value) {
               return DropdownMenuItem<String>(
                 value: value,
                 child: Text(value),
