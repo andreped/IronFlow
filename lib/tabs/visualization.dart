@@ -166,7 +166,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
                     )
                   : ConstrainedBox(
                       constraints: BoxConstraints(
-                        maxHeight: 300,
+                        maxHeight: 200,
                       ),
                       child: Stack(
                         children: [
@@ -201,6 +201,8 @@ class _VisualizationTabState extends State<VisualizationTab> {
 
   Widget _buildTableDropdown(ThemeData theme) {
     return DropdownButton<String>(
+      hint: Text('Select Table',
+          style: TextStyle(color: theme.textTheme.bodyLarge?.color)),
       value: _selectedTable,
       onChanged: (newValue) {
         if (newValue != null && newValue != _selectedTable) {
@@ -229,7 +231,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
 
   Widget _buildExerciseDropdown(ThemeData theme) {
     return DropdownButton<String>(
-      hint: Text('Exercise',
+      hint: Text('Select Exercise',
           style: TextStyle(color: theme.textTheme.bodyLarge?.color)),
       value: _selectedExercise,
       onChanged: (newValue) {
