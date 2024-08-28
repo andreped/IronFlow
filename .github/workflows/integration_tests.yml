@@ -14,8 +14,9 @@ env:
   MAESTRO_VERSION: 1.37.9
 
 jobs:
-  ios_e2e:
-    runs-on: macos-12
+  iOS-tests:
+    #runs-on: macos-12
+    runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4
       - name: Setup Java
