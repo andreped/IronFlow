@@ -17,6 +17,24 @@ class AppThemes {
         shadowColor: MaterialStateProperty.all(Colors.black.withOpacity(0.2)),
       ),
     ),
+    // Add button themes for light mode
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ButtonStyle(
+        backgroundColor: MaterialStateProperty.all(Colors.blue), // Background color
+        foregroundColor: MaterialStateProperty.all(Colors.white), // Text color
+      ),
+    ),
+    textButtonTheme: TextButtonThemeData(
+      style: ButtonStyle(
+        foregroundColor: MaterialStateProperty.all(Colors.blue), // Text color
+      ),
+    ),
+    outlinedButtonTheme: OutlinedButtonThemeData(
+      style: ButtonStyle(
+        foregroundColor: MaterialStateProperty.all(Colors.blue), // Text color
+        side: MaterialStateProperty.all(BorderSide(color: Colors.blue)), // Border color
+      ),
+    ),
   );
 
   static ThemeData darkTheme = ThemeData.dark().copyWith(
@@ -29,6 +47,24 @@ class AppThemes {
         backgroundColor: MaterialStateProperty.all(Colors.grey[850]),
         elevation: MaterialStateProperty.all(8.0),
         shadowColor: MaterialStateProperty.all(Colors.black.withOpacity(0.5)),
+      ),
+    ),
+    // Add button themes for dark mode
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ButtonStyle(
+        backgroundColor: MaterialStateProperty.all(Colors.purple), // Background color
+        foregroundColor: MaterialStateProperty.all(Colors.white), // Text color
+      ),
+    ),
+    textButtonTheme: TextButtonThemeData(
+      style: ButtonStyle(
+        foregroundColor: MaterialStateProperty.all(Colors.purple), // Text color
+      ),
+    ),
+    outlinedButtonTheme: OutlinedButtonThemeData(
+      style: ButtonStyle(
+        foregroundColor: MaterialStateProperty.all(Colors.purple), // Text color
+        side: MaterialStateProperty.all(BorderSide(color: Colors.purple)), // Border color
       ),
     ),
   );
@@ -47,6 +83,24 @@ class AppThemes {
         backgroundColor: MaterialStateProperty.all(Colors.pink.shade50),
         elevation: MaterialStateProperty.all(8.0),
         shadowColor: MaterialStateProperty.all(Colors.pink.withOpacity(0.5)),
+      ),
+    ),
+    // Add button themes for pink mode
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ButtonStyle(
+        backgroundColor: MaterialStateProperty.all(Colors.pink), // Background color
+        foregroundColor: MaterialStateProperty.all(Colors.white), // Text color
+      ),
+    ),
+    textButtonTheme: TextButtonThemeData(
+      style: ButtonStyle(
+        foregroundColor: MaterialStateProperty.all(Colors.pink), // Text color
+      ),
+    ),
+    outlinedButtonTheme: OutlinedButtonThemeData(
+      style: ButtonStyle(
+        foregroundColor: MaterialStateProperty.all(Colors.pink), // Text color
+        side: MaterialStateProperty.all(BorderSide(color: Colors.pink)), // Border color
       ),
     ),
   );
