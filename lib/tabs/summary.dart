@@ -103,6 +103,7 @@ class _SummaryTabState extends State<SummaryTab> {
 
   Future<void> _showExerciseSelectionModal(BuildContext context) async {
     List<String> exercises = await _dbHelper.getPredefinedExercises();
+    exercises.sort();
     await showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
