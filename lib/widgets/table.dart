@@ -345,7 +345,7 @@ class _TableTabState extends State<TableTab> {
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 8, vertical: 14.0),
                                   child: Text(
-                                      (record['timestamp'] ?? 0).toString()))),
+                                      _formatDate((record['timestamp']) ?? 0).toString()))),
                           TableCell(
                             child: Padding(
                               padding: const EdgeInsets.symmetric(
