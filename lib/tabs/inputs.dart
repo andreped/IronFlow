@@ -195,7 +195,7 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
         final userWeight =
             double.tryParse(_userWeightController.text.replaceAll(',', '.'));
         final height =
-            double.tryParse(_heightController.text.replaceAll(',', '.'));
+            int.tryParse(_heightController.text);
         final age = int.tryParse(_ageController.text);
 
         if (userWeight == null || height == null || age == null) {
@@ -210,8 +210,8 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
         // Save the weight, height, and age to the database
         await _dbHelper.insertFitness(
           weight: userWeight.toDouble(),
-          height: height.toDouble(),
-          age: age.toDouble(),
+          height: height.toInt(),
+          age: age.toInt(),
         );
 
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -601,7 +601,7 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
             controller: _heightController,
             label: 'Height (cm)',
             initialValue: _heightController.text,
-            isDouble: true,
+            isDouble: false,
           ),
           child: AbsorbPointer(
             child: TextFormField(
