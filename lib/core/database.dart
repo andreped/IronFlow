@@ -8,7 +8,7 @@ class DatabaseHelper {
   DatabaseHelper._internal();
 
   static Database? _database;
-  static const int _databaseVersion = 1; // Incremented version
+  static const int _databaseVersion = 3; // Incremented version
 
   Future<Database> get database async {
     if (_database != null) return _database!;
@@ -49,9 +49,9 @@ class DatabaseHelper {
   Future<void> _upgradeDatabase(
       Database db, int oldVersion, int newVersion) async {
     if (oldVersion < newVersion) {
-      if (oldVersion < 2) {
+      if (oldVersion < 3) {
         await db.execute(
-          'CREATE TABLE IF NOT EXISTS fitness(id INTEGER PRIMARY KEY AUTOINCREMENT, variable_name TEXT, value REAL, timestamp TEXT)',
+          'CREATE TABLE IF NOT EXISTS fitness(id INTEGER PRIMARY KEY AUTOINCREMENT, weight TEXT, height REAL, age TEXT, timestamp TEXT)',
         );
       }
     }
