@@ -373,7 +373,8 @@ class _TableTabState extends State<TableTab> {
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 8, vertical: 14.0),
                                   child: Text(
-                                      _formatDate((record['timestamp']) ?? 0).toString()))),
+                                      _formatDate((record['timestamp']) ?? 0)
+                                          .toString()))),
                           TableCell(
                             child: Padding(
                               padding: const EdgeInsets.symmetric(
@@ -389,8 +390,7 @@ class _TableTabState extends State<TableTab> {
                                     icon: Icon(Icons.delete, size: 18.0),
                                     onPressed: () async {
                                       await _deleteFitnessRow(
-                                        record['id'] ?? 0
-                                      );
+                                          record['id'] ?? 0);
                                     },
                                   ),
                                 ],

@@ -194,8 +194,7 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
         // Handle Fitness logging
         final userWeight =
             double.tryParse(_userWeightController.text.replaceAll(',', '.'));
-        final height =
-            int.tryParse(_heightController.text);
+        final height = int.tryParse(_heightController.text);
         final age = int.tryParse(_ageController.text);
 
         if (userWeight == null || height == null || age == null) {
