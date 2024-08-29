@@ -20,7 +20,8 @@ class AppThemes {
     // Add button themes for light mode
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ButtonStyle(
-        backgroundColor: MaterialStateProperty.all(Colors.blue), // Background color
+        backgroundColor:
+            MaterialStateProperty.all(Colors.blue), // Background color
         foregroundColor: MaterialStateProperty.all(Colors.white), // Text color
       ),
     ),
@@ -32,7 +33,8 @@ class AppThemes {
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: ButtonStyle(
         foregroundColor: MaterialStateProperty.all(Colors.blue), // Text color
-        side: MaterialStateProperty.all(BorderSide(color: Colors.blue)), // Border color
+        side: MaterialStateProperty.all(
+            BorderSide(color: Colors.blue)), // Border color
       ),
     ),
   );
@@ -52,7 +54,8 @@ class AppThemes {
     // Add button themes for dark mode
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ButtonStyle(
-        backgroundColor: MaterialStateProperty.all(Colors.purple), // Background color
+        backgroundColor:
+            MaterialStateProperty.all(Colors.purple), // Background color
         foregroundColor: MaterialStateProperty.all(Colors.white), // Text color
       ),
     ),
@@ -64,7 +67,8 @@ class AppThemes {
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: ButtonStyle(
         foregroundColor: MaterialStateProperty.all(Colors.purple), // Text color
-        side: MaterialStateProperty.all(BorderSide(color: Colors.purple)), // Border color
+        side: MaterialStateProperty.all(
+            BorderSide(color: Colors.purple)), // Border color
       ),
     ),
   );
@@ -88,7 +92,8 @@ class AppThemes {
     // Add button themes for pink mode
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ButtonStyle(
-        backgroundColor: MaterialStateProperty.all(Colors.pink), // Background color
+        backgroundColor:
+            MaterialStateProperty.all(Colors.pink), // Background color
         foregroundColor: MaterialStateProperty.all(Colors.white), // Text color
       ),
     ),
@@ -100,7 +105,8 @@ class AppThemes {
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: ButtonStyle(
         foregroundColor: MaterialStateProperty.all(Colors.pink), // Text color
-        side: MaterialStateProperty.all(BorderSide(color: Colors.pink)), // Border color
+        side: MaterialStateProperty.all(
+            BorderSide(color: Colors.pink)), // Border color
       ),
     ),
   );
