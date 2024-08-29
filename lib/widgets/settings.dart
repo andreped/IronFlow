@@ -56,7 +56,7 @@ class _SettingsModalState extends State<SettingsModal> {
     widget.onUnitChanged(newValue);
   }
 
-  Future<void> _showConfirmationDialogs() async {
+  Future<void> _showConfirmationDialogs(String tableName) async {
     final bool? firstDialogConfirmed = await showDialog<bool>(
       context: context,
       builder: (BuildContext context) {
@@ -101,7 +101,7 @@ class _SettingsModalState extends State<SettingsModal> {
       );
 
       if (secondDialogConfirmed == true) {
-        await _dbHelper.clearDatabase();
+        await _dbHelper.clearDatabase(tableName);
 
         // Show success SnackBar
         ScaffoldMessenger.of(context).showSnackBar(
@@ -224,11 +224,11 @@ class _SettingsModalState extends State<SettingsModal> {
                 ),
               ),
             ),
-            const SizedBox(height: 16),
-            // Clear database
+            Divider(),
+            // Clear exercises database
             ListTile(
               title: Text(
-                'Clear Database',
+                'Clear Exercise database',
                 style: Theme.of(context)
                     .textTheme
                     .bodyMedium
@@ -237,7 +237,23 @@ class _SettingsModalState extends State<SettingsModal> {
               trailing: IconButton(
                 icon: Icon(Icons.delete_sweep, color: Colors.redAccent),
                 onPressed: () async {
-                  await _showConfirmationDialogs();
+                  await _showConfirmationDialogs("exercises");
+                },
+              ),
+            ),
+            // Clear fitness database
+            ListTile(
+              title: Text(
+                'Clear Fitness database',
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyMedium
+                    ?.copyWith(fontSize: 14),
+              ),
+              trailing: IconButton(
+                icon: Icon(Icons.delete_sweep, color: Colors.redAccent),
+                onPressed: () async {
+                  await _showConfirmationDialogs("fitness");
                 },
               ),
             ),
