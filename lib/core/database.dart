@@ -48,13 +48,13 @@ class DatabaseHelper {
 
   Future<void> _upgradeDatabase(
       Database db, int oldVersion, int newVersion) async {
-    if (oldVersion < newVersion) {
-      if (oldVersion < 1) {
-        //await db.execute("DROP TABLE IF EXISTS fitness");
+    if (true) {//(oldVersion < newVersion) {
+      if (true) {//(oldVersion < 1) {
+        await db.execute("DROP TABLE IF EXISTS fitness");
 
-        //await db.execute(
-        //  'CREATE TABLE fitness(id INTEGER PRIMARY KEY AUTOINCREMENT, weight TEXT, height INTEGER, age INTEGER, timestamp TEXT)',
-        //);
+        await db.execute(
+          'CREATE TABLE fitness(id INTEGER PRIMARY KEY AUTOINCREMENT, weight TEXT, height INTEGER, age INTEGER, timestamp TEXT)',
+        );
       }
     }
   }
