@@ -41,7 +41,7 @@ class DatabaseHelper {
       'CREATE TABLE IF NOT EXISTS predefined_exercises(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT)',
     );
     await db.execute(
-      'CREATE TABLE fitness(id INTEGER PRIMARY KEY AUTOINCREMENT, weight TEXT, height TEXT, age TEXT, timestamp TEXT)',
+      'CREATE TABLE fitness(id INTEGER PRIMARY KEY AUTOINCREMENT, weight TEXT, height INTEGER, age INTEGER, timestamp TEXT)',
     );
     await _initializePredefinedExercises(db);
   }
@@ -50,11 +50,11 @@ class DatabaseHelper {
       Database db, int oldVersion, int newVersion) async {
     if (oldVersion < newVersion) {
       if (oldVersion < 1) {
-        await db.execute("DROP TABLE IF EXISTS fitness");
+        //await db.execute("DROP TABLE IF EXISTS fitness");
         
-        await db.execute(
-          'CREATE TABLE fitness(id INTEGER PRIMARY KEY AUTOINCREMENT, weight TEXT, height TEXT, age TEXT, timestamp TEXT)',
-        );
+        //await db.execute(
+        //  'CREATE TABLE fitness(id INTEGER PRIMARY KEY AUTOINCREMENT, weight TEXT, height INTEGER, age INTEGER, timestamp TEXT)',
+        //);
       }
     }
   }
@@ -97,9 +97,9 @@ class DatabaseHelper {
     );
   }
 
-  Future<void> clearDatabase() async {
+  Future<void> clearDatabase(String table) async {
     final db = await database;
-    await db.delete('exercises');
+    await db.delete(table);
   }
 
   Future<List<Map<String, dynamic>>> getExercises({
@@ -448,8 +448,8 @@ class DatabaseHelper {
   // Methods for fitness table
   Future<void> insertFitness({
     required double weight,
-    required double height,
-    required double age,
+    required int height,
+    required int age,
   }) async {
     final db = await database;
     await db.insert(
