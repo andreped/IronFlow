@@ -42,10 +42,13 @@ class _RecordsTabState extends State<RecordsTab> {
   }
 
   void _sortRecords() {
+    // Ensure that _maxWeights is a modifiable list
+    _maxWeights = List<Map<String, dynamic>>.from(_maxWeights);
+
     if (_isSortedByWeight) {
       _maxWeights.sort((a, b) {
-        final maxWeightA = a['max_weight'] as double;
-        final maxWeightB = b['max_weight'] as double;
+        final maxWeightA = double.parse(a['max_weight']);
+        final maxWeightB = double.parse(b['max_weight']);
         if (maxWeightA == maxWeightB) {
           // If weights are equal, sort alphabetically by exercise name
           return a['exercise'].compareTo(b['exercise']);
@@ -107,7 +110,7 @@ class _RecordsTabState extends State<RecordsTab> {
                         itemBuilder: (context, index) {
                           final record = _maxWeights[index];
                           final exercise = record['exercise'] as String;
-                          final weight = record['max_weight'] as double;
+                          final weight = double.parse(record['max_weight']);
                           final displayWeight = _convertWeight(weight);
 
                           return Column(

@@ -8,7 +8,7 @@ class DatabaseHelper {
   DatabaseHelper._internal();
 
   static Database? _database;
-  static const int _databaseVersion = 2; // Incremented version
+  static const int _databaseVersion = 1; // Incremented version
 
   Future<Database> get database async {
     if (_database != null) return _database!;
@@ -29,6 +29,7 @@ class DatabaseHelper {
       onUpgrade: (db, oldVersion, newVersion) async {
         await _upgradeDatabase(db, oldVersion, newVersion);
       },
+      readOnly: false, // Ensure the database is not opened in read-only mode
     );
   }
 
@@ -378,7 +379,7 @@ class DatabaseHelper {
     final db = await database;
     final List<Map<String, dynamic>> maxWeights = await db.rawQuery(
       '''
-      SELECT exercise, MAX(CAST(weight AS REAL)) as max_weight
+      SELECT exercise, MAX(weight) as max_weight
       FROM exercises
       GROUP BY exercise
       ''',
