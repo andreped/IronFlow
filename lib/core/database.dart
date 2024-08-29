@@ -8,7 +8,7 @@ class DatabaseHelper {
   DatabaseHelper._internal();
 
   static Database? _database;
-  static const int _databaseVersion = 3; // Incremented version
+  static const int _databaseVersion = 4; // Incremented version
 
   Future<Database> get database async {
     if (_database != null) return _database!;
