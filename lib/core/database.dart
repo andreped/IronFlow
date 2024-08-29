@@ -463,41 +463,4 @@ class DatabaseHelper {
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
-
-  Future<void> insertFitnessVariable({
-    required String variableName,
-    required double value,
-  }) async {
-    final db = await database;
-    await db.insert(
-      'fitness',
-      {
-        'variable_name': variableName,
-        'value': value,
-        'timestamp': DateTime.now().toString(),
-      },
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
-  }
-
-  Future<void> deleteFitnessVariable(int id) async {
-    final db = await database;
-    await db.delete(
-      'fitness',
-      where: 'id = ?',
-      whereArgs: [id],
-    );
-  }
-
-  Future<List<Map<String, dynamic>>> getFitnessVariables({
-    String sortColumn = 'timestamp',
-    bool ascending = false,
-  }) async {
-    final db = await database;
-    final orderBy = '$sortColumn ${ascending ? 'ASC' : 'DESC'}';
-    return await db.query(
-      'fitness',
-      orderBy: orderBy,
-    );
-  }
 }
