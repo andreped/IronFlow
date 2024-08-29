@@ -8,7 +8,7 @@ class DatabaseHelper {
   DatabaseHelper._internal();
 
   static Database? _database;
-  static const int _databaseVersion = 1; // Incremented version
+  static const int _databaseVersion = 1; // Increment version if schema changes
 
   Future<Database> get database async {
     if (_database != null) return _database!;
@@ -41,7 +41,7 @@ class DatabaseHelper {
       'CREATE TABLE IF NOT EXISTS predefined_exercises(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT)',
     );
     await db.execute(
-      'CREATE TABLE fitness(id INTEGER PRIMARY KEY AUTOINCREMENT, weight TEXT, height TEXT, age TEXT, timestamp TEXT)',
+      'CREATE TABLE fitness(id INTEGER PRIMARY KEY AUTOINCREMENT, weight TEXT, height INTEGER, age INTEGER, timestamp TEXT)',
     );
     await _initializePredefinedExercises(db);
   }
@@ -49,10 +49,12 @@ class DatabaseHelper {
   Future<void> _upgradeDatabase(
       Database db, int oldVersion, int newVersion) async {
     if (oldVersion < newVersion) {
-      if (oldVersion < 2) {
-        await db.execute(
-          'CREATE TABLE IF NOT EXISTS fitness(id INTEGER PRIMARY KEY AUTOINCREMENT, variable_name TEXT, value REAL, timestamp TEXT)',
-        );
+      if (oldVersion < 1) {
+        //await db.execute("DROP TABLE IF EXISTS fitness");
+
+        //await db.execute(
+        //  'CREATE TABLE fitness(id INTEGER PRIMARY KEY AUTOINCREMENT, weight TEXT, height INTEGER, age INTEGER, timestamp TEXT)',
+        //);
       }
     }
   }
@@ -95,9 +97,18 @@ class DatabaseHelper {
     );
   }
 
-  Future<void> clearDatabase() async {
+  Future<void> deleteFitnessItem(int id) async {
     final db = await database;
-    await db.delete('exercises');
+    await db.delete(
+      'fitness',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+
+  Future<void> clearDatabase(String table) async {
+    final db = await database;
+    await db.delete(table);
   }
 
   Future<List<Map<String, dynamic>>> getExercises({
@@ -446,8 +457,8 @@ class DatabaseHelper {
   // Methods for fitness table
   Future<void> insertFitness({
     required double weight,
-    required double height,
-    required double age,
+    required int height,
+    required int age,
   }) async {
     final db = await database;
     await db.insert(
@@ -459,43 +470,6 @@ class DatabaseHelper {
         'timestamp': DateTime.now().toString(),
       },
       conflictAlgorithm: ConflictAlgorithm.replace,
-    );
-  }
-
-  Future<void> insertFitnessVariable({
-    required String variableName,
-    required double value,
-  }) async {
-    final db = await database;
-    await db.insert(
-      'fitness',
-      {
-        'variable_name': variableName,
-        'value': value,
-        'timestamp': DateTime.now().toString(),
-      },
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
-  }
-
-  Future<void> deleteFitnessVariable(int id) async {
-    final db = await database;
-    await db.delete(
-      'fitness',
-      where: 'id = ?',
-      whereArgs: [id],
-    );
-  }
-
-  Future<List<Map<String, dynamic>>> getFitnessVariables({
-    String sortColumn = 'timestamp',
-    bool ascending = false,
-  }) async {
-    final db = await database;
-    final orderBy = '$sortColumn ${ascending ? 'ASC' : 'DESC'}';
-    return await db.query(
-      'fitness',
-      orderBy: orderBy,
     );
   }
 }
