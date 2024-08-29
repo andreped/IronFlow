@@ -97,6 +97,15 @@ class DatabaseHelper {
     );
   }
 
+  Future<void> deleteFitnessItem(int id) async {
+    final db = await database;
+    await db.delete(
+      'fitness',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+
   Future<void> clearDatabase(String table) async {
     final db = await database;
     await db.delete(table);

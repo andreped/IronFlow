@@ -60,6 +60,34 @@ class _TableTabState extends State<TableTab> {
     }
   }
 
+  Future<void> _deleteFitnessRow(int id) async {
+    final bool? confirmed = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirm Deletion'),
+          content:
+              const Text('🚨 Are you sure you want to delete this record?'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () => Navigator.of(context).pop(false),
+            ),
+            TextButton(
+              child: const Text('Delete'),
+              onPressed: () => Navigator.of(context).pop(true),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirmed == true) {
+      await _dbHelper.deleteFitnessItem(id);
+      setState(() {});
+    }
+  }
+
   void _showEditDialog(Map<String, dynamic> exercise) {
     showDialog(
       context: context,
@@ -359,7 +387,11 @@ class _TableTabState extends State<TableTab> {
                                   SizedBox(width: 0.0),
                                   IconButton(
                                     icon: Icon(Icons.delete, size: 18.0),
-                                    onPressed: () async {},
+                                    onPressed: () async {
+                                      await _deleteFitnessRow(
+                                        record['id'] ?? 0
+                                      );
+                                    },
                                   ),
                                 ],
                               ),
