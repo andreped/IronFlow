@@ -169,26 +169,6 @@ class DatabaseHelper {
     );
   }
 
-  Future<void> updatePredefinedExercise(String oldName, String newName) async {
-    final db = await database;
-
-    // Update predefined_exercises table
-    await db.update(
-      'predefined_exercises',
-      {'name': newName},
-      where: 'name = ?',
-      whereArgs: [oldName],
-    );
-
-    // Update exercises table
-    await db.update(
-      'exercises',
-      {'exercise': newName},
-      where: 'exercise = ?',
-      whereArgs: [oldName],
-    );
-  }
-
   Future<bool> isNewHighScore(
       String exerciseName, double newWeight, int newReps) async {
     final db = await database;
@@ -217,33 +197,6 @@ class DatabaseHelper {
     }
 
     return false; // No new record
-  }
-
-  Future<Map<String, double>> getTotalWeightForDay(DateTime day) async {
-    final db = await database;
-    final List<Map<String, dynamic>> exercises = await db.query(
-      'exercises',
-      where: 'date(timestamp) = ?',
-      whereArgs: [day.toIso8601String().split('T')[0]],
-    );
-
-    Map<String, double> totalWeights = {};
-
-    for (var exercise in exercises) {
-      String exerciseName = exercise['exercise'];
-      double weight = double.parse(exercise['weight']);
-      int reps = exercise['reps'];
-      int sets = exercise['sets'];
-      double totalWeight = weight * reps * sets;
-
-      if (totalWeights.containsKey(exerciseName)) {
-        totalWeights[exerciseName] = totalWeights[exerciseName]! + totalWeight;
-      } else {
-        totalWeights[exerciseName] = totalWeight;
-      }
-    }
-
-    return totalWeights;
   }
 
   Future<Map<String, dynamic>> getSummaryForDay(DateTime day) async {
