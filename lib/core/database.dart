@@ -88,19 +88,10 @@ class DatabaseHelper {
     );
   }
 
-  Future<void> deleteExercise(int id) async {
+  Future<void> deleteRowItem(String table, int id) async {
     final db = await database;
     await db.delete(
-      'exercises',
-      where: 'id = ?',
-      whereArgs: [id],
-    );
-  }
-
-  Future<void> deleteFitnessItem(int id) async {
-    final db = await database;
-    await db.delete(
-      'fitness',
+      table,
       where: 'id = ?',
       whereArgs: [id],
     );
@@ -178,26 +169,6 @@ class DatabaseHelper {
     );
   }
 
-  Future<void> updatePredefinedExercise(String oldName, String newName) async {
-    final db = await database;
-
-    // Update predefined_exercises table
-    await db.update(
-      'predefined_exercises',
-      {'name': newName},
-      where: 'name = ?',
-      whereArgs: [oldName],
-    );
-
-    // Update exercises table
-    await db.update(
-      'exercises',
-      {'exercise': newName},
-      where: 'exercise = ?',
-      whereArgs: [oldName],
-    );
-  }
-
   Future<bool> isNewHighScore(
       String exerciseName, double newWeight, int newReps) async {
     final db = await database;
@@ -226,33 +197,6 @@ class DatabaseHelper {
     }
 
     return false; // No new record
-  }
-
-  Future<Map<String, double>> getTotalWeightForDay(DateTime day) async {
-    final db = await database;
-    final List<Map<String, dynamic>> exercises = await db.query(
-      'exercises',
-      where: 'date(timestamp) = ?',
-      whereArgs: [day.toIso8601String().split('T')[0]],
-    );
-
-    Map<String, double> totalWeights = {};
-
-    for (var exercise in exercises) {
-      String exerciseName = exercise['exercise'];
-      double weight = double.parse(exercise['weight']);
-      int reps = exercise['reps'];
-      int sets = exercise['sets'];
-      double totalWeight = weight * reps * sets;
-
-      if (totalWeights.containsKey(exerciseName)) {
-        totalWeights[exerciseName] = totalWeights[exerciseName]! + totalWeight;
-      } else {
-        totalWeights[exerciseName] = totalWeight;
-      }
-    }
-
-    return totalWeights;
   }
 
   Future<Map<String, dynamic>> getSummaryForDay(DateTime day) async {
@@ -372,20 +316,6 @@ class DatabaseHelper {
     );
   }
 
-  Future<void> deletePredefinedExercise(String exerciseName) async {
-    final db = await database;
-    await db.delete(
-      'predefined_exercises',
-      where: 'name = ?',
-      whereArgs: [exerciseName],
-    );
-  }
-
-  Future<void> deleteAllPredefinedExercises() async {
-    final db = await database;
-    await db.delete('predefined_exercises');
-  }
-
   Future<List<Map<String, dynamic>>> getMaxWeightsForExercises() async {
     final db = await database;
     final List<Map<String, dynamic>> maxWeights = await db.rawQuery(
@@ -439,19 +369,6 @@ class DatabaseHelper {
     );
 
     return results.isNotEmpty ? results.first : null;
-  }
-
-  Future<Map<String, dynamic>> getLastLoggedFitnessName() async {
-    final db = await database;
-    final List<Map<String, dynamic>> results = await db.rawQuery(
-      '''
-      SELECT * FROM fitness
-      ORDER BY timestamp DESC
-      LIMIT 1
-      ''',
-    );
-
-    return results.isNotEmpty ? results.first : {};
   }
 
   // Methods for fitness table

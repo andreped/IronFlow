@@ -32,7 +32,7 @@ class _TableTabState extends State<TableTab> {
     }
   }
 
-  Future<void> _deleteExercise(int id) async {
+  Future<void> _deleteRow(String table, int id) async {
     final bool? confirmed = await showDialog<bool>(
       context: context,
       builder: (BuildContext context) {
@@ -55,35 +55,7 @@ class _TableTabState extends State<TableTab> {
     );
 
     if (confirmed == true) {
-      await _dbHelper.deleteExercise(id);
-      setState(() {});
-    }
-  }
-
-  Future<void> _deleteFitnessRow(int id) async {
-    final bool? confirmed = await showDialog<bool>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Confirm Deletion'),
-          content:
-              const Text('🚨 Are you sure you want to delete this record?'),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Cancel'),
-              onPressed: () => Navigator.of(context).pop(false),
-            ),
-            TextButton(
-              child: const Text('Delete'),
-              onPressed: () => Navigator.of(context).pop(true),
-            ),
-          ],
-        );
-      },
-    );
-
-    if (confirmed == true) {
-      await _dbHelper.deleteFitnessItem(id);
+      await _dbHelper.deleteRowItem(table, id);
       setState(() {});
     }
   }
@@ -294,8 +266,8 @@ class _TableTabState extends State<TableTab> {
                                   IconButton(
                                     icon: Icon(Icons.delete, size: 18.0),
                                     onPressed: () async {
-                                      await _deleteExercise(
-                                          exercise['id'] ?? 0);
+                                      await _deleteRow(
+                                          'exercises', exercise['id'] ?? 0);
                                     },
                                   ),
                                 ],
@@ -389,8 +361,8 @@ class _TableTabState extends State<TableTab> {
                                   IconButton(
                                     icon: Icon(Icons.delete, size: 18.0),
                                     onPressed: () async {
-                                      await _deleteFitnessRow(
-                                          record['id'] ?? 0);
+                                      await _deleteRow(
+                                          'fitness', record['id'] ?? 0);
                                     },
                                   ),
                                 ],
