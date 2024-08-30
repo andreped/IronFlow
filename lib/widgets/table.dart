@@ -267,8 +267,7 @@ class _TableTabState extends State<TableTab> {
                                     icon: Icon(Icons.delete, size: 18.0),
                                     onPressed: () async {
                                       await _deleteRow(
-                                          'exercises',
-                                          exercise['id'] ?? 0);
+                                          'exercises', exercise['id'] ?? 0);
                                     },
                                   ),
                                 ],
@@ -363,8 +362,7 @@ class _TableTabState extends State<TableTab> {
                                     icon: Icon(Icons.delete, size: 18.0),
                                     onPressed: () async {
                                       await _deleteRow(
-                                          'fitness',
-                                          record['id'] ?? 0);
+                                          'fitness', record['id'] ?? 0);
                                     },
                                   ),
                                 ],
