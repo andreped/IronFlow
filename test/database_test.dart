@@ -94,7 +94,7 @@ void main() {
       )).thenAnswer((_) async => 1);
 
       // Act
-      await databaseHelper.deleteExercise(1);
+      await databaseHelper.deleteRowItem("exercises", 1);
 
       // Assert
       verify(mockDatabase.delete(
