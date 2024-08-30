@@ -363,15 +363,6 @@ class DatabaseHelper {
     );
   }
 
-  Future<void> deletePredefinedExercise(String exerciseName) async {
-    final db = await database;
-    await db.delete(
-      'predefined_exercises',
-      where: 'name = ?',
-      whereArgs: [exerciseName],
-    );
-  }
-
   Future<List<Map<String, dynamic>>> getMaxWeightsForExercises() async {
     final db = await database;
     final List<Map<String, dynamic>> maxWeights = await db.rawQuery(
