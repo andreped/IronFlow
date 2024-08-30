@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../core/database.dart';
+import '../core/convert.dart';
 
 class ExerciseSetter extends StatefulWidget {
   final Function() onExerciseAdded;
@@ -68,7 +69,7 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
           _lastSets = lastLogged['sets'] ?? 1;
 
           _weightController.text = _isLbs
-              ? _convertKgToLbs(_lastWeight ?? 0).toStringAsFixed(2)
+              ? convertKgToLbs(_lastWeight ?? 0).toStringAsFixed(2)
               : _lastWeight?.toString() ?? '';
           _repsController.text = _lastReps?.toString() ?? '';
           _setsController.text = _lastSets?.toString() ?? '1';
@@ -93,14 +94,6 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
         });
       }
     }
-  }
-
-  double _convertKgToLbs(double kg) {
-    return kg * 2.20462;
-  }
-
-  double _convertLbsToKg(double lbs) {
-    return lbs / 2.20462;
   }
 
   Future<void> _addOrUpdateExercise() async {
@@ -128,7 +121,7 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
         if (hasFullData) {
           // Parse and validate the input fields
           final weight = _isLbs
-              ? _convertLbsToKg(double.tryParse(
+              ? convertLbsToKg(double.tryParse(
                       _weightController.text.replaceAll(',', '.')) ??
                   0)
               : double.tryParse(_weightController.text.replaceAll(',', '.'));
