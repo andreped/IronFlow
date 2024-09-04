@@ -320,9 +320,19 @@ class DatabaseHelper {
     final db = await database;
     final List<Map<String, dynamic>> maxWeights = await db.rawQuery(
       '''
-      SELECT exercise, MAX(CAST(weight AS REAL)) as max_weight
+      SELECT exercise, weight, reps
       FROM exercises
-      GROUP BY exercise
+      WHERE (exercise, CAST(weight AS REAL), reps) IN (
+        SELECT exercise, weight, MAX(reps)
+        FROM exercises
+        WHERE (exercise, CAST(weight AS REAL)) IN (
+          SELECT exercise, MAX(CAST(weight AS REAL))
+          FROM exercises
+          GROUP BY exercise
+        )
+        GROUP BY exercise, weight
+      )
+      ORDER BY exercise
       ''',
     );
 

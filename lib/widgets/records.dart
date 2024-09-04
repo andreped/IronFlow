@@ -110,7 +110,8 @@ class _RecordsTabState extends State<RecordsTab> {
                         itemBuilder: (context, index) {
                           final record = _maxWeights[index];
                           final exercise = record['exercise'] as String;
-                          final weight = record['max_weight'];
+                          final weight = record['weight'];
+                          final reps = record['reps'];
                           final displayWeight = _convertWeight(
                               weight is String ? double.parse(weight) : weight);
 
@@ -119,7 +120,7 @@ class _RecordsTabState extends State<RecordsTab> {
                               ListTile(
                                 title: Text(exercise),
                                 trailing: Text(
-                                    '${displayWeight.toStringAsFixed(1)} ${widget.isKg ? 'kg' : 'lbs'}'),
+                                    '${displayWeight.toStringAsFixed(1)} ${widget.isKg ? 'kg' : 'lbs'} x $reps reps'),
                               ),
                               if (index < _maxWeights.length - 1) Divider(),
                             ],
