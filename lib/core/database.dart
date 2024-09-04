@@ -389,4 +389,18 @@ class DatabaseHelper {
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
+
+  Future<bool> isExerciseUsed(String exerciseName) async {
+    final db = await database;
+    var result = await db.rawQuery(
+        'SELECT COUNT(*) FROM exercises WHERE exercise = ?', [exerciseName]);
+    int? count = Sqflite.firstIntValue(result);
+    return count! > 0;
+  }
+
+  Future<void> deleteExercise(String exerciseName) async {
+    final db = await database;
+    await db.delete('predefined_exercises',
+        where: 'name = ?', whereArgs: [exerciseName]);
+  }
 }
