@@ -47,16 +47,19 @@ class _RecordsTabState extends State<RecordsTab> {
 
     if (_isSortedByWeight) {
       _maxWeights.sort((a, b) {
-        final maxWeightA = double.parse(a['max_weight']);
-        final maxWeightB = double.parse(b['max_weight']);
+        final maxWeightA =
+            a['weight'] != null ? double.parse(a['weight'].toString()) : 0.0;
+        final maxWeightB =
+            b['weight'] != null ? double.parse(b['weight'].toString()) : 0.0;
         if (maxWeightA == maxWeightB) {
           // If weights are equal, sort alphabetically by exercise name
-          return a['exercise'].compareTo(b['exercise']);
+          return (a['exercise'] ?? '').compareTo(b['exercise'] ?? '');
         }
         return maxWeightB.compareTo(maxWeightA);
       });
     } else {
-      _maxWeights.sort((a, b) => a['exercise'].compareTo(b['exercise']));
+      _maxWeights
+          .sort((a, b) => (a['exercise'] ?? '').compareTo(b['exercise'] ?? ''));
     }
   }
 
