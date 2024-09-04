@@ -453,6 +453,67 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
                   });
                 },
               ),
+              IconButton(
+                icon: Icon(Icons.delete),
+                onPressed: () async {
+                  if (_selectedExercise != null) {
+                    bool confirmDelete = await showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text('Confirm Delete'),
+                          content: Text(
+                              'Are you sure you want to delete this exercise?'),
+                          actions: <Widget>[
+                            TextButton(
+                              child: Text('Cancel'),
+                              onPressed: () {
+                                Navigator.of(context).pop(false);
+                              },
+                            ),
+                            TextButton(
+                              child: Text('Delete'),
+                              onPressed: () {
+                                Navigator.of(context).pop(true);
+                              },
+                            ),
+                          ],
+                        );
+                      },
+                    );
+
+                    if (confirmDelete) {
+                      bool isUsed =
+                          await _dbHelper.isExerciseUsed(_selectedExercise!);
+                      if (!isUsed) {
+                        await _dbHelper.deleteExercise(_selectedExercise!);
+                        setState(() {
+                          _predefinedExercises.remove(_selectedExercise);
+                          _selectedExercise = null;
+                        });
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                              content: Text('✅ Exercise successfully deleted.'),
+                              duration: Duration(seconds: 2)),
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                              content: Text(
+                                  '🚫 Cannot delete exercise that is in use!'),
+                              duration: Duration(seconds: 2)),
+                        );
+                      }
+                    }
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                          content: Text('❗ No exercise selected to delete.'),
+                          duration: Duration(seconds: 2)),
+                    );
+                  }
+                },
+              ),
             ] else ...[
               Expanded(
                 child: TextFormField(
