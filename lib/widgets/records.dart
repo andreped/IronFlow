@@ -110,8 +110,9 @@ class _RecordsTabState extends State<RecordsTab> {
                         itemBuilder: (context, index) {
                           final record = _maxWeights[index];
                           final exercise = record['exercise'] as String;
-                          final weight = double.parse(record['max_weight']);
-                          final displayWeight = _convertWeight(weight);
+                          final weight = record['max_weight'];
+                          final displayWeight = _convertWeight(
+                              weight is String ? double.parse(weight) : weight);
 
                           return Column(
                             children: [
