@@ -320,23 +320,27 @@ class DatabaseHelper {
     final db = await database;
     final List<Map<String, dynamic>> maxWeights = await db.rawQuery(
       '''
-      SELECT exercise, weight, reps
+      SELECT exercise, weight, reps, sets
       FROM exercises
-      WHERE (exercise, CAST(weight AS REAL), reps) IN (
-        SELECT exercise, weight, MAX(reps)
+      WHERE (exercise, weight) IN (
+        SELECT exercise, MAX(CAST(weight AS REAL)) as weight
         FROM exercises
-        WHERE (exercise, CAST(weight AS REAL)) IN (
-          SELECT exercise, MAX(CAST(weight AS REAL))
-          FROM exercises
-          GROUP BY exercise
-        )
-        GROUP BY exercise, weight
+        GROUP BY exercise
       )
-      ORDER BY exercise
+      ORDER BY exercise, reps DESC
       ''',
     );
 
-    return maxWeights;
+    // Remove duplicates by keeping only the first occurrence of each exercise
+    final Map<String, Map<String, dynamic>> uniqueMaxWeights = {};
+    for (var record in maxWeights) {
+      final exercise = record['exercise'];
+      if (!uniqueMaxWeights.containsKey(exercise)) {
+        uniqueMaxWeights[exercise] = record;
+      }
+    }
+
+    return uniqueMaxWeights.values.toList();
   }
 
   Future<Map<String, dynamic>> getLastLoggedExercise(
