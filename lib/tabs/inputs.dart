@@ -233,7 +233,7 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
     // disallow adding predefined exercises if they already exist
     if (_predefinedExercises.contains(exerciseName)) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('⛔ Exercise already exists in database.'),
+        content: Text('⛔ Exercise already exists in database'),
         duration: Duration(seconds: 2),
         backgroundColor: Colors.red,
       ));
