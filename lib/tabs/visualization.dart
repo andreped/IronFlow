@@ -101,7 +101,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
               .toList();
 
       final groupedByDate = <DateTime, List<Map<String, dynamic>>>{};
-      
+
       // Group records by date
       for (var record in filteredRecords) {
         final dateTime =
@@ -137,7 +137,8 @@ class _VisualizationTabState extends State<VisualizationTab> {
             double totalRepsSets = 0.0;
 
             for (var record in recordsForDay) {
-              final weight = double.tryParse(record['weight'].toString()) ?? 0.0;
+              final weight =
+                  double.tryParse(record['weight'].toString()) ?? 0.0;
               final reps = double.tryParse(record['reps'].toString()) ?? 1.0;
               final sets = double.tryParse(record['sets'].toString()) ?? 1.0;
 
@@ -152,15 +153,16 @@ class _VisualizationTabState extends State<VisualizationTab> {
             value = recordsForDay.fold(0.0, (sum, record) {
               final sets = double.tryParse(record['sets'].toString()) ?? 1.0;
               final reps = double.tryParse(record['reps'].toString()) ?? 1.0;
-              final weight = double.tryParse(record['weight'].toString()) ?? 0.0;
+              final weight =
+                  double.tryParse(record['weight'].toString()) ?? 0.0;
               return sum + (sets * reps * weight);
             });
             break;
 
           default:
-            value = double.tryParse(
-                    recordsForDay.last[_dataType.toLowerCase()]) ??
-                0.0;
+            value =
+                double.tryParse(recordsForDay.last[_dataType.toLowerCase()]) ??
+                    0.0;
             break;
         }
 
