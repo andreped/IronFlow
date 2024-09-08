@@ -42,21 +42,21 @@ class _VisualizationTabState extends State<VisualizationTab> {
   Future<void> _fetchExerciseNames() async {
     print('Fetching names from $_selectedTable table...');
     try {
-      List<Map<String, dynamic>> variables;
+      List<String> names;
       if (_selectedTable == 'Exercise') {
-        variables = await _dbHelper.getExercises();
+        // fetch recorded exercises
+        names = await _dbHelper.getRecordedExercises();
       } else {
-        variables = await _dbHelper.getFitnessData();
+        // fetch fitness data
+        List<Map<String, dynamic>> variables = await _dbHelper.getFitnessData();
+        names = variables
+            .map((entry) => entry['exercise'] as String)
+            .toSet()
+            .toList();
       }
 
-      // fetch data from table
-      final names = variables
-          .map((entry) => entry['exercise'] as String)
-          .toSet()
-          .toList();
-
       // sort names if not empty
-      if (!names.isEmpty) {
+      if (names.isNotEmpty) {
         names.sort();
       }
 
@@ -71,10 +71,12 @@ class _VisualizationTabState extends State<VisualizationTab> {
       print('Error fetching names: $e');
     }
 
-    // render first exercise by default
-    if (!_exerciseNames.isEmpty) {
-      _selectedExercise = _exerciseNames.first;
-      _fetchDataPoints(_selectedExercise);
+    // render first exercise by default if any
+    if (_exerciseNames.isNotEmpty && _selectedExercise == null) {
+      setState(() {
+        _selectedExercise = _exerciseNames.first;
+        _fetchDataPoints(_selectedExercise);
+      });
     }
   }
 
