@@ -14,7 +14,8 @@ class RecordsTab extends StatefulWidget {
 class _RecordsTabState extends State<RecordsTab> {
   final DatabaseHelper _dbHelper = DatabaseHelper();
   List<Map<String, dynamic>> _maxWeights = [];
-  bool _isSortedByWeight = false;
+  bool _isSortedByWeight = true;
+  bool _isAscending = false;
   bool _isLoading = true; // Track loading state
   String? _errorMessage; // Track error message
 
@@ -55,17 +56,29 @@ class _RecordsTabState extends State<RecordsTab> {
           // If weights are equal, sort alphabetically by exercise name
           return (a['exercise'] ?? '').compareTo(b['exercise'] ?? '');
         }
-        return maxWeightB.compareTo(maxWeightA);
+        return _isAscending
+            ? maxWeightA.compareTo(maxWeightB)
+            : maxWeightB.compareTo(maxWeightA);
       });
     } else {
-      _maxWeights
-          .sort((a, b) => (a['exercise'] ?? '').compareTo(b['exercise'] ?? ''));
+      _maxWeights.sort((a, b) {
+        return _isAscending
+            ? (a['exercise'] ?? '').compareTo(b['exercise'] ?? '')
+            : (b['exercise'] ?? '').compareTo(a['exercise'] ?? '');
+      });
     }
   }
 
   void _toggleSorting() {
     setState(() {
       _isSortedByWeight = !_isSortedByWeight;
+      _sortRecords();
+    });
+  }
+
+  void _toggleSortOrder() {
+    setState(() {
+      _isAscending = !_isAscending;
       _sortRecords();
     });
   }
@@ -80,7 +93,6 @@ class _RecordsTabState extends State<RecordsTab> {
     return widget.isKg ? weightInKg : weightInKg * 2.20462;
   }
 
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -95,6 +107,14 @@ class _RecordsTabState extends State<RecordsTab> {
             tooltip:
                 _isSortedByWeight ? 'Sort Alphabetically' : 'Sort by Weight',
           ),
+          IconButton(
+            icon: Icon(
+              _isAscending ? Icons.arrow_upward : Icons.arrow_downward,
+              color: Theme.of(context).iconTheme.color,
+            ),
+            onPressed: _toggleSortOrder,
+            tooltip: _isAscending ? 'Sort Descending' : 'Sort Ascending',
+          ),
         ],
       ),
       body: Padding(
@@ -108,7 +128,7 @@ class _RecordsTabState extends State<RecordsTab> {
                   )
                 : _maxWeights.isEmpty
                     ? const Center(child: Text('No data available'))
-                    : ListView.builder(
+                    : ListView.separated(
                         itemCount: _maxWeights.length,
                         itemBuilder: (context, index) {
                           final record = _maxWeights[index];
@@ -118,17 +138,13 @@ class _RecordsTabState extends State<RecordsTab> {
                           final displayWeight = _convertWeight(
                               weight is String ? double.parse(weight) : weight);
 
-                          return Column(
-                            children: [
-                              ListTile(
-                                title: Text(exercise),
-                                trailing: Text(
-                                    '${displayWeight.toStringAsFixed(1)} ${widget.isKg ? 'kg' : 'lbs'} x $reps reps'),
-                              ),
-                              if (index < _maxWeights.length - 1) Divider(),
-                            ],
+                          return ListTile(
+                            title: Text(exercise),
+                            trailing: Text(
+                                '${displayWeight.toStringAsFixed(1)} ${widget.isKg ? 'kg' : 'lbs'} x $reps reps'),
                           );
                         },
+                        separatorBuilder: (context, index) => Divider(),
                       ),
       ),
     );
