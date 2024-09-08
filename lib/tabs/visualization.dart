@@ -101,9 +101,12 @@ class _VisualizationTabState extends State<VisualizationTab> {
               .toList();
 
       final groupedByDate = <DateTime, List<Map<String, dynamic>>>{};
+
+      // Group records by date
       for (var record in filteredRecords) {
         final dateTime =
             DateUtils.dateOnly(DateTime.parse(record['timestamp']));
+
         if (groupedByDate.containsKey(dateTime)) {
           groupedByDate[dateTime]!.add(record);
         } else {
@@ -118,34 +121,48 @@ class _VisualizationTabState extends State<VisualizationTab> {
       double? minValue;
       double? maxValue;
 
-      groupedByDate.forEach((date, records) {
-        double value = 0.0;
+      groupedByDate.forEach((date, recordsForDay) {
+        double value;
         switch (_aggregationMethod) {
           case 'Max':
-            value = records
+            value = recordsForDay
                 .map((record) =>
                     double.tryParse(record[_dataType.toLowerCase()]) ?? 0.0)
                 .reduce((a, b) => a > b ? a : b);
             break;
+
           case 'Average':
-            value = records
-                    .map((record) =>
-                        double.tryParse(record[_dataType.toLowerCase()]) ?? 0.0)
-                    .reduce((a, b) => a + b) /
-                records.length;
-            break;
-          case 'Total':
-            value = records.fold(0.0, (sum, record) {
+            // Weighted Average for this day
+            double totalWeight = 0.0;
+            double totalRepsSets = 0.0;
+
+            for (var record in recordsForDay) {
               final weight =
                   double.tryParse(record['weight'].toString()) ?? 0.0;
-              final reps = int.tryParse(record['reps'].toString()) ?? 0;
-              final sets = int.tryParse(record['sets'].toString()) ?? 0;
+              final reps = double.tryParse(record['reps'].toString()) ?? 1.0;
+              final sets = double.tryParse(record['sets'].toString()) ?? 1.0;
+
+              totalWeight += sets * reps * weight;
+              totalRepsSets += sets * reps;
+            }
+
+            value = totalRepsSets > 0 ? totalWeight / totalRepsSets : 0.0;
+            break;
+
+          case 'Total':
+            value = recordsForDay.fold(0.0, (sum, record) {
+              final sets = double.tryParse(record['sets'].toString()) ?? 1.0;
+              final reps = double.tryParse(record['reps'].toString()) ?? 1.0;
+              final weight =
+                  double.tryParse(record['weight'].toString()) ?? 0.0;
               return sum + (sets * reps * weight);
             });
             break;
+
           default:
             value =
-                double.tryParse(records.last[_dataType.toLowerCase()]) ?? 0.0;
+                double.tryParse(recordsForDay.last[_dataType.toLowerCase()]) ??
+                    0.0;
             break;
         }
 
@@ -156,7 +173,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
           dayDifference,
           convertedValue,
           dotPainter: FlDotCirclePainter(
-            color: Theme.of(context).primaryChartColor, // Use theme color
+            color: Theme.of(context).primaryColor, // Use theme color
             radius: 6,
           ),
         ));
