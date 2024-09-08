@@ -14,8 +14,8 @@ class RecordsTab extends StatefulWidget {
 class _RecordsTabState extends State<RecordsTab> {
   final DatabaseHelper _dbHelper = DatabaseHelper();
   List<Map<String, dynamic>> _maxWeights = [];
-  bool _isSortedByWeight = false;
-  bool _isAscending = true;
+  bool _isSortedByWeight = true;
+  bool _isAscending = false;
   bool _isLoading = true; // Track loading state
   String? _errorMessage; // Track error message
 
