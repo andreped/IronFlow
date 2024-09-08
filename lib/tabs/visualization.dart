@@ -166,6 +166,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
             break;
         }
 
+        value = double.parse(value.toStringAsFixed(2));
         final dayDifference = date.difference(earliestDate).inDays.toDouble();
         final convertedValue = _convertWeight(value);
 
