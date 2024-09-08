@@ -100,15 +100,14 @@ class _VisualizationTabState extends State<VisualizationTab> {
               .where((record) => record['exercise'] == exerciseName)
               .toList();
 
-      final groupedByDate = <DateTime, List<double>>{};
+      final groupedByDate = <DateTime, List<Map<String, dynamic>>>{};
       for (var record in filteredRecords) {
         final dateTime =
             DateUtils.dateOnly(DateTime.parse(record['timestamp']));
-        final value = double.tryParse(record[_dataType.toLowerCase()]) ?? 0.0;
         if (groupedByDate.containsKey(dateTime)) {
-          groupedByDate[dateTime]!.add(value);
+          groupedByDate[dateTime]!.add(record);
         } else {
-          groupedByDate[dateTime] = [value];
+          groupedByDate[dateTime] = [record];
         }
       }
 
@@ -119,19 +118,37 @@ class _VisualizationTabState extends State<VisualizationTab> {
       double? minValue;
       double? maxValue;
 
-      groupedByDate.forEach((date, values) {
-        double value;
+      groupedByDate.forEach((date, records) {
+        double value = 0.0;
         switch (_aggregationMethod) {
           case 'Max':
-            value = values.reduce((a, b) => a > b ? a : b);
+            value = records
+                .map((record) =>
+                    double.tryParse(record[_dataType.toLowerCase()]) ?? 0.0)
+                .reduce((a, b) => a > b ? a : b);
             break;
           case 'Average':
-            value = values.reduce((a, b) => a + b) / values.length;
+            value = records
+                    .map((record) =>
+                        double.tryParse(record[_dataType.toLowerCase()]) ?? 0.0)
+                    .reduce((a, b) => a + b) /
+                records.length;
+            break;
+          case 'Total':
+            value = records.fold(0.0, (sum, record) {
+              final weight =
+                  double.tryParse(record['weight'].toString()) ?? 0.0;
+              final reps = int.tryParse(record['reps'].toString()) ?? 0;
+              final sets = int.tryParse(record['sets'].toString()) ?? 0;
+              return sum + (sets * reps * weight);
+            });
             break;
           default:
-            value = values.last;
+            value =
+                double.tryParse(records.last[_dataType.toLowerCase()]) ?? 0.0;
             break;
         }
+
         final dayDifference = date.difference(earliestDate).inDays.toDouble();
         final convertedValue = _convertWeight(value);
 
@@ -312,11 +329,11 @@ class _VisualizationTabState extends State<VisualizationTab> {
         if (newValue != null) {
           setState(() {
             _aggregationMethod = newValue;
-            _fetchDataPoints(_selectedExercise); // Refetch data with new method
+            _fetchDataPoints(_selectedExercise);
           });
         }
       },
-      items: ['Max', 'Average'].map((method) {
+      items: ['Max', 'Average', 'Total'].map((method) {
         return DropdownMenuItem<String>(
           value: method,
           child: Text(method,
