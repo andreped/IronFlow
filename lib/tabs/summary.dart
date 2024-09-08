@@ -107,25 +107,31 @@ class _SummaryTabState extends State<SummaryTab> {
     await showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
-        return ListView.builder(
-          itemCount: exercises.length,
-          itemBuilder: (context, index) {
-            final exercise = exercises[index];
-            return ListTile(
-              title: Text(exercise),
-              onTap: () async {
-                final dailyRecords =
-                    await _dbHelper.getDailyRecordsForExercise(exercise);
-                setState(() {
-                  _selectedExercise = exercise;
-                  _dailyRecords = dailyRecords;
-                  _isExerciseView = true;
-                });
-                Navigator.of(context).pop();
-              },
-            );
-          },
-        );
+        if (exercises.isEmpty) {
+          return Center(
+            child: Text('No exercises recorded yet.'),
+          );
+        } else {
+          return ListView.builder(
+            itemCount: exercises.length,
+            itemBuilder: (context, index) {
+              final exercise = exercises[index];
+              return ListTile(
+                title: Text(exercise),
+                onTap: () async {
+                  final dailyRecords =
+                      await _dbHelper.getDailyRecordsForExercise(exercise);
+                  setState(() {
+                    _selectedExercise = exercise;
+                    _dailyRecords = dailyRecords;
+                    _isExerciseView = true;
+                  });
+                  Navigator.of(context).pop();
+                },
+              );
+            },
+          );
+        }
       },
     );
   }
