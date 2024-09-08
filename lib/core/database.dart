@@ -102,6 +102,16 @@ class DatabaseHelper {
     await db.delete(table);
   }
 
+  Future<List<String>> getRecordedExercises() async {
+    final db = await database;
+    final result = await db.rawQuery('''
+      SELECT DISTINCT exercise 
+      FROM exercises
+    ''');
+
+    return result.map((row) => row['exercise'] as String).toList();
+  }
+
   Future<List<Map<String, dynamic>>> getExercises({
     String sortColumn = 'timestamp',
     bool ascending = false,
