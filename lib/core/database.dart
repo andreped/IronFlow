@@ -375,7 +375,7 @@ class DatabaseHelper {
     final db = await database;
     final List<Map<String, dynamic>> results = await db.rawQuery(
       '''
-      SELECT exercise FROM exercises
+      SELECT DISTINCT exercise FROM exercises
       ORDER BY timestamp DESC
       LIMIT 1
       ''',
