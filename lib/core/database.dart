@@ -107,7 +107,9 @@ class DatabaseHelper {
     bool ascending = false,
   }) async {
     final db = await database;
-    final orderBy = '$sortColumn ${ascending ? 'ASC' : 'DESC'}';
+    final orderBy = sortColumn == 'weight'
+        ? 'CAST($sortColumn AS REAL) ${ascending ? 'ASC' : 'DESC'}'
+        : '$sortColumn ${ascending ? 'ASC' : 'DESC'}';
     return await db.query(
       'exercises',
       orderBy: orderBy,

@@ -186,7 +186,7 @@ class _TableTabState extends State<TableTab> {
                 return Table(
                   columnWidths: {
                     0: FixedColumnWidth(150.0),
-                    1: FixedColumnWidth(110.0),
+                    1: FixedColumnWidth(120.0),
                     2: FixedColumnWidth(70.0),
                     3: FixedColumnWidth(70.0),
                     4: FixedColumnWidth(120.0),
