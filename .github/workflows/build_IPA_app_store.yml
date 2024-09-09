@@ -74,7 +74,7 @@ jobs:
         run: flutter pub get && flutter build ipa --release --export-options-plist /Users/runner/export_options.plist
       
       - name: Upload IPA
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: IronFlow
           path: ./build/ios/ipa/IronFlow.ipa
