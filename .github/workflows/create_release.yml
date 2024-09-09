@@ -39,7 +39,7 @@ jobs:
         run: mv ./build/app/outputs/flutter-apk/app-release.apk IronFlow.apk
 
       - name: Upload APK
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: IronFlow
           path: IronFlow.apk
@@ -79,7 +79,7 @@ jobs:
           mv IronFlow.zip IronFlow.ipa
       
       - name: Upload IPA
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: IronFlow
           path: ./IronFlow.ipa
