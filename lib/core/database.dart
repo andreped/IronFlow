@@ -171,6 +171,27 @@ class DatabaseHelper {
     );
   }
 
+  Future<void> updateFitness({
+    required int id,
+    required String weight,
+    required int height,
+    required int age,
+    required String timestamp,
+  }) async {
+    final db = await database;
+    await db.update(
+      'fitness',
+      {
+        'weight': weight,
+        'height': height,
+        'age': age,
+        'timestamp': timestamp,
+      },
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+
   Future<void> updateExerciseName(String oldName, String newName) async {
     final db = await database;
     await db.update(

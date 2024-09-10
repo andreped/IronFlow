@@ -173,10 +173,10 @@ class _FitnessEditDialogState extends State<FitnessEditDialog> {
                     ? _weightController.text
                     : (double.parse(_weightController.text) / 2.20462)
                         .toStringAsFixed(2);
-                final reps = int.tryParse(_heightController.text);
-                final sets = int.tryParse(_ageController.text);
+                final height = int.tryParse(_heightController.text);
+                final age = int.tryParse(_ageController.text);
 
-                if (weight == null || reps == null || sets == null) {
+                if (weight == null || height == null || age == null) {
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                     content: Text('Please enter valid values'),
                     duration: Duration(seconds: 2),
@@ -186,11 +186,10 @@ class _FitnessEditDialogState extends State<FitnessEditDialog> {
                 }
 
                 Navigator.of(context).pop({
-                  'id': widget.exerciseData['id'],
-                  'exercise': _exerciseController.text,
+                  'id': widget.fitnessData['id'],
                   'weight': weight,
-                  'reps': reps,
-                  'sets': sets,
+                  'height': height,
+                  'age': age,
                   'timestamp': _timestampController.text,
                 });
               }
@@ -286,7 +285,6 @@ class _FitnessEditDialogState extends State<FitnessEditDialog> {
 
   @override
   void dispose() {
-    _exerciseController.dispose();
     _weightController.dispose();
     _heightController.dispose();
     _ageController.dispose();
