@@ -315,7 +315,7 @@ class DatabaseHelper {
   Future<List<String>> getPredefinedExercises() async {
     final db = await database;
     final List<Map<String, dynamic>> exercises =
-        await db.query('predefined_exercises');
+        await db.rawQuery('SELECT DISTINCT name FROM predefined_exercises');
     return exercises.map((e) => e['name'] as String).toList();
   }
 
