@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../core/database.dart';
 import 'exercise_edit_dialog.dart';
+import 'fitness_edit_dialog.dart';
 import 'package:intl/intl.dart';
 
 class TableTab extends StatefulWidget {
@@ -82,6 +83,34 @@ class _TableTabState extends State<TableTab> {
           weight: weight,
           reps: result['reps'],
           sets: result['sets'],
+          timestamp: result['timestamp'],
+        );
+        setState(() {});
+      }
+    });
+  }
+
+  void _showFitnessEditDialog(Map<String, dynamic> fitness) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return FitnessEditDialog(
+          fitnessData: fitness,
+          isKg: widget.isKg, // Pass the unit selection
+        );
+      },
+    ).then((result) async {
+      if (result != null) {
+        // Convert weight based on selected unit before saving
+        final weight = widget.isKg
+            ? result['weight']
+            : (double.parse(result['weight']) * 2.20462).toStringAsFixed(2);
+
+        await _dbHelper.updateFitness(
+          id: result['id'],
+          weight: weight,
+          height: result['height'],
+          age: result['age'],
           timestamp: result['timestamp'],
         );
         setState(() {});
@@ -355,7 +384,9 @@ class _TableTabState extends State<TableTab> {
                                 children: [
                                   IconButton(
                                     icon: Icon(Icons.edit, size: 18.0),
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      _showFitnessEditDialog(record);
+                                    },
                                   ),
                                   SizedBox(width: 0.0),
                                   IconButton(
