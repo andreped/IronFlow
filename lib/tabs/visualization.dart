@@ -380,7 +380,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
   }
 
   Widget _buildChart(ThemeData theme, Color scatterColor, Color lineColor,
-    Color axisTextColor) {
+      Color axisTextColor) {
     // Calculate the min and max values dynamically
     double _minX = _dataPoints.map((e) => e.x).reduce((a, b) => a < b ? a : b);
     double _maxX = _dataPoints.map((e) => e.x).reduce((a, b) => a > b ? a : b);
@@ -403,193 +403,194 @@ class _VisualizationTabState extends State<VisualizationTab> {
     }
 
     return _chartType == 'Line'
-      ? LineChart(
-          LineChartData(
-            lineBarsData: [
-              LineChartBarData(
-                spots: _dataPoints,
-                isCurved: false,
-                color: lineColor,
-                belowBarData: BarAreaData(show: false),
-              ),
-            ],
-            minX: _minX,
-            maxX: _maxX,
-            minY: _minY,
-            maxY: _maxY,
-            titlesData: FlTitlesData(
-              show: true,
-              bottomTitles: AxisTitles(
-                sideTitles: SideTitles(
-                  showTitles: true,
-                  getTitlesWidget: (value, meta) =>
-                      _bottomTitleWidgets(value, meta, axisTextColor),
+        ? LineChart(
+            LineChartData(
+              lineBarsData: [
+                LineChartBarData(
+                  spots: _dataPoints,
+                  isCurved: false,
+                  color: lineColor,
+                  belowBarData: BarAreaData(show: false),
                 ),
-                axisNameWidget: Padding(
-                  padding: const EdgeInsets.only(top: 8.0),
-                  child: Text(
-                    'Days',
-                    style: TextStyle(
-                      color: axisTextColor,
-                      fontSize: 12,
+              ],
+              minX: _minX,
+              maxX: _maxX,
+              minY: _minY,
+              maxY: _maxY,
+              titlesData: FlTitlesData(
+                show: true,
+                bottomTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: true,
+                    getTitlesWidget: (value, meta) =>
+                        _bottomTitleWidgets(value, meta, axisTextColor),
+                  ),
+                  axisNameWidget: Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: Text(
+                      'Days',
+                      style: TextStyle(
+                        color: axisTextColor,
+                        fontSize: 12,
+                      ),
                     ),
                   ),
+                  axisNameSize: 30,
                 ),
-                axisNameSize: 30,
-              ),
-              leftTitles: AxisTitles(
-                sideTitles: SideTitles(
-                  showTitles: true,
-                  getTitlesWidget: (value, meta) =>
-                      _leftTitleWidgets(value, meta, axisTextColor),
-                  reservedSize: 50, // Ensure enough space for the Y-axis labels
-                ),
-                axisNameWidget: Padding(
-                  padding: const EdgeInsets.only(right: 8.0),
-                  child: Text(
-                    widget.isKg ? 'Weight [kg]' : 'Weight [lbs]',
-                    style: TextStyle(
-                      color: axisTextColor,
-                      fontSize: 12,
+                leftTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: true,
+                    getTitlesWidget: (value, meta) =>
+                        _leftTitleWidgets(value, meta, axisTextColor),
+                    reservedSize:
+                        50, // Ensure enough space for the Y-axis labels
+                  ),
+                  axisNameWidget: Padding(
+                    padding: const EdgeInsets.only(right: 8.0),
+                    child: Text(
+                      widget.isKg ? 'Weight [kg]' : 'Weight [lbs]',
+                      style: TextStyle(
+                        color: axisTextColor,
+                        fontSize: 12,
+                      ),
                     ),
                   ),
+                  axisNameSize: 30,
                 ),
-                axisNameSize: 30,
-              ),
-              topTitles: AxisTitles(
-                sideTitles: SideTitles(
-                  showTitles: false, // Hide top axis titles
-                ),
-              ),
-              rightTitles: AxisTitles(
-                sideTitles: SideTitles(
-                  showTitles: false, // Hide right axis titles
-                ),
-              ),
-            ),
-            borderData: FlBorderData(
-              show: true,
-              border: Border.all(
-                color: axisTextColor, // Set the color for the border
-                width: 0.75, // Set the width for the border
-              ),
-            ),
-            gridData: FlGridData(
-              show: true,
-              drawHorizontalLine: true,
-              drawVerticalLine: true,
-              horizontalInterval: horizontalInterval,
-              verticalInterval: verticalInterval,
-              getDrawingHorizontalLine: (value) {
-                return FlLine(
-                  color: Colors.grey,
-                  strokeWidth: 0.5,
-                );
-              },
-              getDrawingVerticalLine: (value) {
-                return FlLine(
-                  color: Colors.grey,
-                  strokeWidth: 0.5,
-                );
-              },
-            ),
-            lineTouchData: LineTouchData(
-              enabled: true,
-              handleBuiltInTouches: true,
-            ),
-          ),
-        )
-      : ScatterChart(
-          ScatterChartData(
-            scatterSpots: _dataPoints,
-            minX: _minX,
-            maxX: _maxX,
-            minY: _minY,
-            maxY: _maxY,
-            titlesData: FlTitlesData(
-              show: true,
-              bottomTitles: AxisTitles(
-                sideTitles: SideTitles(
-                  showTitles: true,
-                  getTitlesWidget: (value, meta) =>
-                      _bottomTitleWidgets(value, meta, axisTextColor),
-                ),
-                axisNameWidget: Padding(
-                  padding: const EdgeInsets.only(top: 8.0),
-                  child: Text(
-                    'Days',
-                    style: TextStyle(
-                      color: axisTextColor,
-                      fontSize: 12,
-                    ),
+                topTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: false, // Hide top axis titles
                   ),
                 ),
-                axisNameSize: 30,
-              ),
-              leftTitles: AxisTitles(
-                sideTitles: SideTitles(
-                  showTitles: true,
-                  getTitlesWidget: (value, meta) =>
-                      _leftTitleWidgets(value, meta, axisTextColor),
-                  reservedSize: 50, // Ensure enough space for the Y-axis labels
-                ),
-                axisNameWidget: Padding(
-                  padding: const EdgeInsets.only(right: 8.0),
-                  child: Text(
-                    widget.isKg ? 'Weight [kg]' : 'Weight [lbs]',
-                    style: TextStyle(
-                      color: axisTextColor,
-                      fontSize: 12,
-                    ),
+                rightTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: false, // Hide right axis titles
                   ),
                 ),
-                axisNameSize: 30,
               ),
-              topTitles: AxisTitles(
-                sideTitles: SideTitles(
-                  showTitles: false, // Hide top axis titles
+              borderData: FlBorderData(
+                show: true,
+                border: Border.all(
+                  color: axisTextColor, // Set the color for the border
+                  width: 0.75, // Set the width for the border
                 ),
               ),
-              rightTitles: AxisTitles(
-                sideTitles: SideTitles(
-                  showTitles: false, // Hide right axis titles
+              gridData: FlGridData(
+                show: true,
+                drawHorizontalLine: true,
+                drawVerticalLine: true,
+                horizontalInterval: horizontalInterval,
+                verticalInterval: verticalInterval,
+                getDrawingHorizontalLine: (value) {
+                  return FlLine(
+                    color: Colors.grey,
+                    strokeWidth: 0.5,
+                  );
+                },
+                getDrawingVerticalLine: (value) {
+                  return FlLine(
+                    color: Colors.grey,
+                    strokeWidth: 0.5,
+                  );
+                },
+              ),
+              lineTouchData: LineTouchData(
+                enabled: true,
+                handleBuiltInTouches: true,
+              ),
+            ),
+          )
+        : ScatterChart(
+            ScatterChartData(
+              scatterSpots: _dataPoints,
+              minX: _minX,
+              maxX: _maxX,
+              minY: _minY,
+              maxY: _maxY,
+              titlesData: FlTitlesData(
+                show: true,
+                bottomTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: true,
+                    getTitlesWidget: (value, meta) =>
+                        _bottomTitleWidgets(value, meta, axisTextColor),
+                  ),
+                  axisNameWidget: Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: Text(
+                      'Days',
+                      style: TextStyle(
+                        color: axisTextColor,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
+                  axisNameSize: 30,
+                ),
+                leftTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: true,
+                    getTitlesWidget: (value, meta) =>
+                        _leftTitleWidgets(value, meta, axisTextColor),
+                    reservedSize:
+                        50, // Ensure enough space for the Y-axis labels
+                  ),
+                  axisNameWidget: Padding(
+                    padding: const EdgeInsets.only(right: 8.0),
+                    child: Text(
+                      widget.isKg ? 'Weight [kg]' : 'Weight [lbs]',
+                      style: TextStyle(
+                        color: axisTextColor,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
+                  axisNameSize: 30,
+                ),
+                topTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: false, // Hide top axis titles
+                  ),
+                ),
+                rightTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: false, // Hide right axis titles
+                  ),
                 ),
               ),
-            ),
-            borderData: FlBorderData(
-              show: true,
-              border: Border.all(
-                color: axisTextColor, // Set the color for the border
-                width: 0.75, // Set the width for the border
+              borderData: FlBorderData(
+                show: true,
+                border: Border.all(
+                  color: axisTextColor, // Set the color for the border
+                  width: 0.75, // Set the width for the border
+                ),
+              ),
+              gridData: FlGridData(
+                show: true,
+                drawHorizontalLine: true,
+                drawVerticalLine: true,
+                horizontalInterval: horizontalInterval,
+                verticalInterval: verticalInterval,
+                getDrawingHorizontalLine: (value) {
+                  return FlLine(
+                    color: Colors.grey,
+                    strokeWidth: 0.5,
+                  );
+                },
+                getDrawingVerticalLine: (value) {
+                  return FlLine(
+                    color: Colors.grey,
+                    strokeWidth: 0.5,
+                  );
+                },
+              ),
+              scatterTouchData: ScatterTouchData(
+                enabled: true,
+                handleBuiltInTouches: true,
               ),
             ),
-            gridData: FlGridData(
-              show: true,
-              drawHorizontalLine: true,
-              drawVerticalLine: true,
-              horizontalInterval: horizontalInterval,
-              verticalInterval: verticalInterval,
-              getDrawingHorizontalLine: (value) {
-                return FlLine(
-                  color: Colors.grey,
-                  strokeWidth: 0.5,
-                );
-              },
-              getDrawingVerticalLine: (value) {
-                return FlLine(
-                  color: Colors.grey,
-                  strokeWidth: 0.5,
-                );
-              },
-            ),
-            scatterTouchData: ScatterTouchData(
-              enabled: true,
-              handleBuiltInTouches: true,
-            ),
-          ),
-        );
-}
-
+          );
+  }
 
   Widget _bottomTitleWidgets(double value, TitleMeta meta, Color textColor) {
     const double reservedSize = 20.0;
