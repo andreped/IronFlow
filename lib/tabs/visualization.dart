@@ -388,18 +388,18 @@ class _VisualizationTabState extends State<VisualizationTab> {
     double _maxY = _dataPoints.map((e) => e.y).reduce((a, b) => a > b ? a : b);
 
     // Calculate the dynamic intervals
-    int lineInterval = 6;
+    int nbLines = 6;
     double horizontalRange = _maxY - _minY;
     double verticalRange = _maxX - _minX;
-    double horizontalInterval = horizontalRange / lineInterval;
-    double verticalInterval = verticalRange / lineInterval;
+    double horizontalInterval = horizontalRange / nbLines;
+    double verticalInterval = verticalRange / nbLines;
 
-    // Ensure a maximum of x lines for each axis
-    if (horizontalRange / horizontalInterval > lineInterval) {
-      horizontalInterval = horizontalRange / lineInterval;
+    // Ensure a maximum of x lines for each axis and that intervals are not zero
+    if (horizontalInterval == 0) {
+      horizontalInterval = 1;
     }
-    if (verticalRange / verticalInterval > lineInterval) {
-      verticalInterval = verticalRange / lineInterval;
+    if (verticalInterval == 0) {
+      verticalInterval = 1;
     }
 
     return _chartType == 'Line'
@@ -428,7 +428,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
                 axisNameWidget: Padding(
                   padding: const EdgeInsets.only(top: 8.0),
                   child: Text(
-                    'days',
+                    'Days',
                     style: TextStyle(
                       color: axisTextColor,
                       fontSize: 12,
@@ -447,7 +447,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
                 axisNameWidget: Padding(
                   padding: const EdgeInsets.only(right: 8.0),
                   child: Text(
-                    widget.isKg ? 'weight [kg]' : 'weight [lbs]',
+                    widget.isKg ? 'Weight [kg]' : 'Weight [lbs]',
                     style: TextStyle(
                       color: axisTextColor,
                       fontSize: 12,
@@ -517,7 +517,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
                 axisNameWidget: Padding(
                   padding: const EdgeInsets.only(top: 8.0),
                   child: Text(
-                    'days',
+                    'Days',
                     style: TextStyle(
                       color: axisTextColor,
                       fontSize: 12,
@@ -536,7 +536,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
                 axisNameWidget: Padding(
                   padding: const EdgeInsets.only(right: 8.0),
                   child: Text(
-                    widget.isKg ? 'weight [kg]' : 'weight [lbs]',
+                    widget.isKg ? 'Weight [kg]' : 'Weight [lbs]',
                     style: TextStyle(
                       color: axisTextColor,
                       fontSize: 12,
@@ -589,6 +589,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
           ),
         );
 }
+
 
   Widget _bottomTitleWidgets(double value, TitleMeta meta, Color textColor) {
     const double reservedSize = 20.0;
