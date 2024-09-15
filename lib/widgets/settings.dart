@@ -261,7 +261,10 @@ class _SettingsModalState extends State<SettingsModal> {
             ListTile(
               title: Text(
                 'Backup Database',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontSize: 14),
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyMedium
+                    ?.copyWith(fontSize: 14),
               ),
               trailing: IconButton(
                 icon: Icon(Icons.backup, color: Colors.blueAccent),
@@ -273,7 +276,10 @@ class _SettingsModalState extends State<SettingsModal> {
             ListTile(
               title: Text(
                 'Restore Database',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontSize: 14),
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyMedium
+                    ?.copyWith(fontSize: 14),
               ),
               trailing: IconButton(
                 icon: Icon(Icons.restore, color: Colors.greenAccent),

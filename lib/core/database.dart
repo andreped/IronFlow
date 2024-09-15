@@ -472,7 +472,8 @@ class DatabaseHelper {
       await requestPermissions();
 
       // Request storage permissions (only needed for Android)
-      if (Platform.isAndroid && await Permission.storage.request().isGranted || Platform.isIOS) {
+      if (Platform.isAndroid && await Permission.storage.request().isGranted ||
+          Platform.isIOS) {
         // Get the default directory (Downloads on Android, Documents on iOS)
         Directory? directory;
         if (Platform.isAndroid) {
@@ -510,7 +511,8 @@ class DatabaseHelper {
   Future<void> restoreDatabase() async {
     try {
       // Request storage permissions (only needed for Android)
-      if (Platform.isAndroid && await Permission.storage.request().isGranted || Platform.isIOS) {
+      if (Platform.isAndroid && await Permission.storage.request().isGranted ||
+          Platform.isIOS) {
         // Let the user select the backup file
         FilePickerResult? result = await FilePicker.platform.pickFiles(
           dialogTitle: 'Select Backup File',
