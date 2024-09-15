@@ -27,7 +27,10 @@ class _TableTabState extends State<TableTab> {
         ascending: _sortAscending,
       );
     } else if (_selectedTable == 'fitness') {
-      return await _dbHelper.getFitnessData();
+      return await _dbHelper.getFitnessData(
+        sortColumn: _sortColumn,
+        ascending: _sortAscending,
+      );
     } else {
       return [];
     }
@@ -310,12 +313,11 @@ class _TableTabState extends State<TableTab> {
               } else if (_selectedTable == 'fitness') {
                 return Table(
                   columnWidths: {
-                    0: FixedColumnWidth(50.0),
-                    1: FixedColumnWidth(120.0),
-                    2: FixedColumnWidth(80.0),
-                    3: FixedColumnWidth(50.0),
-                    4: FixedColumnWidth(120.0),
-                    5: FixedColumnWidth(130.0),
+                    0: FixedColumnWidth(120.0),
+                    1: FixedColumnWidth(80.0),
+                    2: FixedColumnWidth(60.0),
+                    3: FixedColumnWidth(120.0),
+                    4: FixedColumnWidth(130.0),
                   },
                   border: TableBorder(
                     horizontalInside: BorderSide(
@@ -329,7 +331,6 @@ class _TableTabState extends State<TableTab> {
                   children: [
                     TableRow(
                       children: [
-                        _buildHeader('id'),
                         _buildHeader('weight'),
                         _buildHeader('height'),
                         _buildHeader('age'),
@@ -346,11 +347,6 @@ class _TableTabState extends State<TableTab> {
                     for (var record in data)
                       TableRow(
                         children: [
-                          TableCell(
-                              child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 8, vertical: 14.0),
-                                  child: Text(record['id'].toString()))),
                           TableCell(
                               child: Padding(
                                   padding: const EdgeInsets.symmetric(
