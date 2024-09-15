@@ -458,13 +458,29 @@ class DatabaseHelper {
         where: 'name = ?', whereArgs: [exerciseName]);
   }
 
+  Future<void> requestPermissions() async {
+    if (Platform.isAndroid) {
+      await Permission.storage.request();
+    } else if (Platform.isIOS) {
+      await Permission.photos.request(); // Requesting photos permission for iOS
+    }
+  }
+
   Future<void> backupDatabase() async {
     try {
       // Request storage permissions
-      if (await Permission.storage.request().isGranted) {
-        // Get the default directory (Downloads)
-        Directory? downloadsDirectory = await getDownloadsDirectory();
-        String defaultPath = downloadsDirectory?.path ?? '';
+      await requestPermissions();
+
+      // Request storage permissions (only needed for Android)
+      if (Platform.isAndroid && await Permission.storage.request().isGranted || Platform.isIOS) {
+        // Get the default directory (Downloads on Android, Documents on iOS)
+        Directory? directory;
+        if (Platform.isAndroid) {
+          directory = await getExternalStorageDirectory();
+        } else if (Platform.isIOS) {
+          directory = await getApplicationDocumentsDirectory();
+        }
+        String defaultPath = directory?.path ?? '';
 
         // Let the user choose the directory
         String? selectedDirectory = await FilePicker.platform.getDirectoryPath(
@@ -493,8 +509,8 @@ class DatabaseHelper {
 
   Future<void> restoreDatabase() async {
     try {
-      // Request storage permissions
-      if (await Permission.storage.request().isGranted) {
+      // Request storage permissions (only needed for Android)
+      if (Platform.isAndroid && await Permission.storage.request().isGranted || Platform.isIOS) {
         // Let the user select the backup file
         FilePickerResult? result = await FilePicker.platform.pickFiles(
           dialogTitle: 'Select Backup File',
@@ -502,8 +518,11 @@ class DatabaseHelper {
           allowedExtensions: ['db'],
         );
 
+        print('File picker result: $result');
+
         if (result != null && result.files.single.path != null) {
           String selectedFilePath = result.files.single.path!;
+          print('Selected file path: $selectedFilePath');
 
           // Perform the restore operation
           String dbPath = await _databasePath();

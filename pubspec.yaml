@@ -44,7 +44,7 @@ dependencies:
   file_picker: ^5.3.1
 
   # permissions android
-  permission_handler: ^10.2.0
+  permission_handler: ^11.3.1
 
   # visualization
   fl_chart: ^0.68.0
