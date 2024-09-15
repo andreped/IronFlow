@@ -1,3 +1,7 @@
+import 'package:path_provider/path_provider.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'dart:io';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import '../common/constants.dart';
@@ -452,5 +456,69 @@ class DatabaseHelper {
     final db = await database;
     await db.delete('predefined_exercises',
         where: 'name = ?', whereArgs: [exerciseName]);
+  }
+
+  Future<void> backupDatabase() async {
+    try {
+      // Request storage permissions
+      if (await Permission.storage.request().isGranted) {
+        // Get the default directory (Downloads)
+        Directory? downloadsDirectory = await getDownloadsDirectory();
+        String defaultPath = downloadsDirectory?.path ?? '';
+
+        // Let the user choose the directory
+        String? selectedDirectory = await FilePicker.platform.getDirectoryPath(
+          dialogTitle: 'Select Backup Directory',
+          initialDirectory: defaultPath,
+        );
+
+        if (selectedDirectory != null) {
+          // Perform the backup operation
+          String dbPath = await _databasePath();
+          File databaseFile = File(dbPath);
+          String backupPath = '$selectedDirectory/backup_database.db';
+          await databaseFile.copy(backupPath);
+
+          print('Database backed up successfully to $backupPath');
+        } else {
+          print('Backup operation cancelled');
+        }
+      } else {
+        print('Storage permission denied');
+      }
+    } catch (e) {
+      print('Failed to back up database: $e');
+    }
+  }
+
+  Future<void> restoreDatabase() async {
+    try {
+      // Request storage permissions
+      if (await Permission.storage.request().isGranted) {
+        // Let the user select the backup file
+        FilePickerResult? result = await FilePicker.platform.pickFiles(
+          dialogTitle: 'Select Backup File',
+          type: FileType.custom,
+          allowedExtensions: ['db'],
+        );
+
+        if (result != null && result.files.single.path != null) {
+          String selectedFilePath = result.files.single.path!;
+
+          // Perform the restore operation
+          String dbPath = await _databasePath();
+          File selectedFile = File(selectedFilePath);
+          await selectedFile.copy(dbPath);
+
+          print('Database restored successfully from $selectedFilePath');
+        } else {
+          print('Restore operation cancelled');
+        }
+      } else {
+        print('Storage permission denied');
+      }
+    } catch (e) {
+      print('Failed to restore database: $e');
+    }
   }
 }

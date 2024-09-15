@@ -257,6 +257,37 @@ class _SettingsModalState extends State<SettingsModal> {
                 },
               ),
             ),
+            Divider(),
+            ListTile(
+              title: Text(
+                'Backup Database',
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyMedium
+                    ?.copyWith(fontSize: 14),
+              ),
+              trailing: IconButton(
+                icon: Icon(Icons.backup, color: Colors.blueAccent),
+                onPressed: () async {
+                  await _dbHelper.backupDatabase();
+                },
+              ),
+            ),
+            ListTile(
+              title: Text(
+                'Restore Database',
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyMedium
+                    ?.copyWith(fontSize: 14),
+              ),
+              trailing: IconButton(
+                icon: Icon(Icons.restore, color: Colors.greenAccent),
+                onPressed: () async {
+                  await _dbHelper.restoreDatabase();
+                },
+              ),
+            )
           ],
         ),
       ),
