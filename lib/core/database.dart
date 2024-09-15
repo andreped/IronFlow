@@ -17,8 +17,7 @@ class DatabaseHelper {
   }
 
   Future<Database> _initDatabase() async {
-    String path =
-        join(await getDatabasesPath(), 'exercises.db'); // Updated database name
+    String path = await _databasePath();
     print("Database is located at: $path");
     return await openDatabase(
       path,
@@ -31,6 +30,10 @@ class DatabaseHelper {
       },
       readOnly: false, // Ensure the database is not opened in read-only mode
     );
+  }
+
+  Future<String> _databasePath() async {
+    return join(await getDatabasesPath(), 'exercises.db');
   }
 
   Future<void> _createTables(Database db) async {
