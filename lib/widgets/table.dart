@@ -27,7 +27,10 @@ class _TableTabState extends State<TableTab> {
         ascending: _sortAscending,
       );
     } else if (_selectedTable == 'fitness') {
-      return await _dbHelper.getFitnessData();
+      return await _dbHelper.getFitnessData(
+        sortColumn: _sortColumn,
+        ascending: _sortAscending,
+      );
     } else {
       return [];
     }
@@ -313,7 +316,7 @@ class _TableTabState extends State<TableTab> {
                     0: FixedColumnWidth(50.0),
                     1: FixedColumnWidth(120.0),
                     2: FixedColumnWidth(80.0),
-                    3: FixedColumnWidth(50.0),
+                    3: FixedColumnWidth(60.0),
                     4: FixedColumnWidth(120.0),
                     5: FixedColumnWidth(130.0),
                   },
