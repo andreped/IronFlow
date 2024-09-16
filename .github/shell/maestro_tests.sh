@@ -5,6 +5,6 @@ i=0
 while [ $i -le 2 ]; do
 #pgrep -lf maestro | awk '{print $1}' | xargs -r kill
 #sleep 1
-$HOME/.maestro/bin/maestro test .maestro/inputs_tab_CI_flow.yml && break
+$HOME/.maestro/bin/maestro test .maestro/ && break
 let i=i+1
 done
