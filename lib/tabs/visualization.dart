@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:intl/intl.dart';
 import '../core/database.dart';
 import '../core/theme.dart'; // Import the theme.dart
 
@@ -20,7 +21,11 @@ class _VisualizationTabState extends State<VisualizationTab> {
   String _dataType = 'Weight'; // Default data type for Fitness table
   List<String> _exerciseNames = [];
   List<ScatterSpot> _dataPoints = [];
-  double? _minX, _maxX, _minY, _maxY;
+  double _minX = 0.0;
+  double _maxX = 0.0;
+  double _minY = 0.0;
+  double _maxY = 100.0;
+  DateTimeRange? _selectedDateRange;
 
   final DatabaseHelper _dbHelper = DatabaseHelper();
 
@@ -115,10 +120,14 @@ class _VisualizationTabState extends State<VisualizationTab> {
         final dateTime =
             DateUtils.dateOnly(DateTime.parse(record['timestamp']));
 
-        if (groupedByDate.containsKey(dateTime)) {
-          groupedByDate[dateTime]!.add(record);
-        } else {
-          groupedByDate[dateTime] = [record];
+        if (_selectedDateRange == null ||
+            (dateTime.isAfter(_selectedDateRange!.start) &&
+                dateTime.isBefore(_selectedDateRange!.end))) {
+          if (groupedByDate.containsKey(dateTime)) {
+            groupedByDate[dateTime]!.add(record);
+          } else {
+            groupedByDate[dateTime] = [record];
+          }
         }
       }
 
@@ -208,6 +217,23 @@ class _VisualizationTabState extends State<VisualizationTab> {
     }
   }
 
+  Future<void> _selectDateRange(BuildContext context) async {
+    final DateTimeRange? picked = await showDateRangePicker(
+      context: context,
+      firstDate: DateTime(2000),
+      lastDate: DateTime.now(),
+      initialDateRange: _selectedDateRange,
+    );
+    if (picked != null && picked != _selectedDateRange) {
+      setState(() {
+        _selectedDateRange = picked;
+      });
+      if (_selectedExercise != null) {
+        _fetchDataPoints(_selectedExercise!);
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -251,6 +277,14 @@ class _VisualizationTabState extends State<VisualizationTab> {
                 SizedBox(
                   width: 90,
                   child: _buildAggregationDropdown(theme),
+                ),
+                const SizedBox(height: 16.0),
+                ElevatedButton(
+                  onPressed: () => _selectDateRange(context),
+                  child: Text(
+                    'Date Range',
+                    style: theme.textTheme.bodyMedium,
+                  ),
                 ),
                 const SizedBox(width: 16.0),
                 SizedBox(
