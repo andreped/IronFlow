@@ -52,6 +52,11 @@ The app is compatible with both Android and iOS.
 For testing the application, we use [Maestro](https://github.com/mobile-dev-inc/maestro).
 Integration tests are performed for all pull requests and before releases using [GitHub Actions](https://github.com/andreped/IronFlow/actions/workflows/integration_tests.yml).
 
+To run integration tests, run the command:
+```bash
+maestro test .maestro
+```
+
 ## [Getting Started](https://github.com/andreped/IronFlow#Getting-Started)
 
 A cross-platform mobile app was developed to test the produced solutions. Installers for both
