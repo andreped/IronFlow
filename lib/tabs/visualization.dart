@@ -71,12 +71,20 @@ class _VisualizationTabState extends State<VisualizationTab> {
       print('Error fetching names: $e');
     }
 
-    // render first exercise by default if any
+    // render last recorded exercise by default if any
     if (_exerciseNames.isNotEmpty && _selectedExercise == null) {
-      setState(() {
-        _selectedExercise = _exerciseNames.first;
-        _fetchDataPoints(_selectedExercise);
-      });
+      try {
+        String? lastRecordedExercise =
+            await _dbHelper.getLastLoggedExerciseName();
+        if (lastRecordedExercise != null) {
+          setState(() {
+            _selectedExercise = lastRecordedExercise;
+            _fetchDataPoints(_selectedExercise);
+          });
+        }
+      } catch (e) {
+        print('Error fetching last recorded exercise: $e');
+      }
     }
   }
 
