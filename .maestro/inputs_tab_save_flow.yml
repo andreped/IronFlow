@@ -2,8 +2,8 @@ appId: com.andreped.IronFlow
 ---
 - clearState
 - launchApp
-- tapOn: .*Exercise.*
-- tapOn: Deadlift
+- tapOn: .*Select an exercise.*
+- tapOn: .*Deadlift.*
 - tapOn: .*Weight.*
 - inputText: "100"
 - tapOn:
@@ -15,17 +15,19 @@ appId: com.andreped.IronFlow
 - tapOn: .*Sets.*
 - inputText: "3"
 - tapOn: .*Done.*
-- tapOn: Save Changes
+- tapOn: .*Save.*
 - assertVisible: .*Exercise Added Successfully.*
 
 - tapOn: .*Weight.*
 - inputText: "80"
 - tapOn: .*Done.*
-- tapOn: .*Save Changes.*
+- tapOn: .*Save.*
 - assertVisible: .*Exercise Added Successfully.*
 
 - tapOn: .*Weight.*
 - inputText: "120"
 - tapOn: .*Done.*
-- tapOn: .*Save Changes.*
+- tapOn: .*Save.*
 - assertVisible: .*New high score.*
+
+
