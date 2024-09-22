@@ -214,18 +214,6 @@ class _TableWidgetState extends State<TableWidget> {
   }
 
   void _sortTable(String column) {
-    double horizontalScrollPosition = 0.0;
-    double verticalScrollPosition = 0.0;
-
-    // Check if the scroll controllers are attached to any scroll views
-    if (_horizontalScrollController.hasClients) {
-      horizontalScrollPosition = _horizontalScrollController.position.pixels;
-    }
-    if (_verticalScrollController.hasClients) {
-      verticalScrollPosition = _verticalScrollController.position.pixels;
-    }
-
-    // Sort the data directly
     setState(() {
       if (_sortColumn == column) {
         _sortAscending = !_sortAscending;
@@ -237,24 +225,14 @@ class _TableWidgetState extends State<TableWidget> {
       // Perform the sorting on the data
       _data.sort((a, b) {
         int compareResult;
-        if (_sortColumn == 'columnName') {
-          compareResult = a['columnName'].compareTo(b['columnName']);
+        if (column == 'exercise' || column == 'timestamp') {
+          compareResult = a[column].compareTo(b[column]);
         } else {
-          // Add more sorting logic for other columns if needed
-          compareResult = 0;
+          compareResult = double.parse(a[column].toString())
+              .compareTo(double.parse(b[column].toString()));
         }
         return _sortAscending ? compareResult : -compareResult;
       });
-    });
-
-    // Restore the scroll positions after sorting
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_horizontalScrollController.hasClients) {
-        _horizontalScrollController.jumpTo(horizontalScrollPosition);
-      }
-      if (_verticalScrollController.hasClients) {
-        _verticalScrollController.jumpTo(verticalScrollPosition);
-      }
     });
   }
 
