@@ -12,6 +12,10 @@ class ExerciseStoreApp extends StatelessWidget {
   final ValueChanged<AppTheme> updateTheme;
   final bool isKg;
   final ValueChanged<bool> toggleUnit;
+  final String aggregationMethod;
+  final ValueChanged<String> setAggregationMethod;
+  final String plotType;
+  final ValueChanged<String> setPlotType;
 
   const ExerciseStoreApp({
     Key? key,
@@ -19,6 +23,10 @@ class ExerciseStoreApp extends StatelessWidget {
     required this.updateTheme,
     required this.isKg,
     required this.toggleUnit,
+    required this.aggregationMethod,
+    required this.setAggregationMethod,
+    required this.plotType,
+    required this.setPlotType,
   }) : super(key: key);
 
   @override
@@ -38,6 +46,10 @@ class ExerciseStoreApp extends StatelessWidget {
         updateTheme: updateTheme,
         isKg: isKg,
         toggleUnit: toggleUnit,
+        aggregationMethod: aggregationMethod,
+        setAggregationMethod: setAggregationMethod,
+        plotType: plotType,
+        setPlotType: setPlotType,
       ),
     );
   }
@@ -48,6 +60,10 @@ class ExerciseStoreHomePage extends StatefulWidget {
   final ValueChanged<AppTheme> updateTheme;
   final bool isKg;
   final ValueChanged<bool> toggleUnit;
+  final String aggregationMethod;
+  final ValueChanged<String> setAggregationMethod;
+  final String plotType;
+  final ValueChanged<String> setPlotType;
 
   const ExerciseStoreHomePage({
     Key? key,
@@ -55,6 +71,10 @@ class ExerciseStoreHomePage extends StatefulWidget {
     required this.updateTheme,
     required this.isKg,
     required this.toggleUnit,
+    required this.aggregationMethod,
+    required this.setAggregationMethod,
+    required this.plotType,
+    required this.setPlotType,
   }) : super(key: key);
 
   @override
@@ -156,6 +176,8 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage>
               child: VisualizationTab(
                 key: PageStorageKey('visualizationTab'),
                 isKg: widget.isKg,
+                defaultAggregationMethod: widget.aggregationMethod,
+                defaultChartType: widget.plotType,
               ),
             ),
             TableTab(isKg: widget.isKg),

@@ -26,6 +26,8 @@ class _SettingsModalState extends State<SettingsModal> {
   final DatabaseHelper _dbHelper = DatabaseHelper();
   late AppTheme _appTheme;
   late bool _isKg;
+  late String _aggregationMethod;
+  late String _plotType;
   late Future<String> _appVersion;
 
   @override
@@ -33,6 +35,8 @@ class _SettingsModalState extends State<SettingsModal> {
     super.initState();
     _appTheme = widget.appTheme;
     _isKg = widget.isKg;
+    _aggregationMethod = 'Max'; // Default value
+    _plotType = 'Line'; // Default value
     _appVersion = _getAppVersion();
     _loadSettings();
   }
@@ -42,6 +46,9 @@ class _SettingsModalState extends State<SettingsModal> {
     setState(() {
       _appTheme = AppTheme.values[prefs.getInt('appTheme') ?? _appTheme.index];
       _isKg = prefs.getBool('isKg') ?? _isKg;
+      _aggregationMethod =
+          prefs.getString('aggregationMethod') ?? _aggregationMethod;
+      _plotType = prefs.getString('plotType') ?? _plotType;
     });
   }
 
@@ -49,6 +56,8 @@ class _SettingsModalState extends State<SettingsModal> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt('appTheme', _appTheme.index);
     await prefs.setBool('isKg', _isKg);
+    await prefs.setString('aggregationMethod', _aggregationMethod);
+    await prefs.setString('plotType', _plotType);
   }
 
   Future<String> _getAppVersion() async {
@@ -72,6 +81,24 @@ class _SettingsModalState extends State<SettingsModal> {
     });
     widget.onUnitChanged(newValue);
     _saveSettings();
+  }
+
+  void _handleAggregationMethodChange(String? newMethod) {
+    if (newMethod != null) {
+      setState(() {
+        _aggregationMethod = newMethod;
+      });
+      _saveSettings();
+    }
+  }
+
+  void _handlePlotTypeChange(String? newType) {
+    if (newType != null) {
+      setState(() {
+        _plotType = newType;
+      });
+      _saveSettings();
+    }
   }
 
   Future<void> _showConfirmationDialogs(String tableName) async {
@@ -240,6 +267,70 @@ class _SettingsModalState extends State<SettingsModal> {
                     fontSize: 16,
                   ),
                 ),
+              ),
+            ),
+            // Aggregation method selection
+            ListTile(
+              title: Text(
+                'Aggregation Method',
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyMedium
+                    ?.copyWith(fontSize: 14),
+              ),
+              trailing: DropdownButton<String>(
+                value: _aggregationMethod,
+                style: TextStyle(
+                  fontSize: 14,
+                  color: isDarkMode
+                      ? Colors.purple // Use primary color for dark mode
+                      : Colors.black, // Set text color for light mode
+                ),
+                items: [
+                  DropdownMenuItem(
+                    value: 'Total',
+                    child: Text('Total'),
+                  ),
+                  DropdownMenuItem(
+                    value: 'Max',
+                    child: Text('Max'),
+                  ),
+                  DropdownMenuItem(
+                    value: 'Average',
+                    child: Text('Average'),
+                  ),
+                ],
+                onChanged: _handleAggregationMethodChange,
+              ),
+            ),
+            // Plot type selection
+            ListTile(
+              title: Text(
+                'Plot Type',
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyMedium
+                    ?.copyWith(fontSize: 14),
+              ),
+              trailing: DropdownButton<String>(
+                value: _plotType,
+                style: TextStyle(
+                  fontSize: 14,
+                  color: isDarkMode
+                      ? Colors.purple // Use primary color for dark mode
+                      : Colors.black, // Set text color for light mode
+                ),
+                items: [
+                  DropdownMenuItem(
+                    value: 'Line',
+                    child: Text('Line'),
+                  ),
+                  DropdownMenuItem(
+                    value: 'Scatter',
+                    child: Text('Scatter'),
+                  ),
+                ],
+                onChanged: _handlePlotTypeChange,
               ),
             ),
             Divider(),
