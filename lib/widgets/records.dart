@@ -123,7 +123,7 @@ class _RecordsTabState extends State<RecordsTab> {
                                 minWidth: constraints.maxWidth,
                               ),
                               child: DataTable(
-                                columnSpacing: 32.0, // Adjust the column spacing
+                                columnSpacing: 32.0,
                                 columns: [
                                   DataColumn(
                                     label: Expanded(
@@ -137,7 +137,7 @@ class _RecordsTabState extends State<RecordsTab> {
                                                 _isAscending
                                                     ? Icons.arrow_upward
                                                     : Icons.arrow_downward,
-                                                size: 16.0, // Adjust the size of the arrow
+                                                size: 16.0,
                                                 color: arrowColor,
                                               ),
                                           ],
@@ -150,15 +150,17 @@ class _RecordsTabState extends State<RecordsTab> {
                                       child: InkWell(
                                         onTap: () => _toggleSorting(true),
                                         child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.end,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
                                           children: [
-                                            Text('Weight [${widget.isKg ? 'kg' : 'lbs'}]'),
+                                            Text(
+                                                'Weight [${widget.isKg ? 'kg' : 'lbs'}]'),
                                             if (_isSortedByWeight)
                                               Icon(
                                                 _isAscending
                                                     ? Icons.arrow_upward
                                                     : Icons.arrow_downward,
-                                                size: 16.0, // Adjust the size of the arrow
+                                                size: 16.0,
                                                 color: arrowColor,
                                               ),
                                           ],
@@ -172,7 +174,9 @@ class _RecordsTabState extends State<RecordsTab> {
                                   final weight = record['weight'];
                                   final reps = record['reps'];
                                   final displayWeight = _convertWeight(
-                                      weight is String ? double.parse(weight) : weight);
+                                      weight is String
+                                          ? double.parse(weight)
+                                          : weight);
 
                                   return DataRow(cells: [
                                     DataCell(Text(exercise)),
