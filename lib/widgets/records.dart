@@ -124,7 +124,8 @@ class _RecordsTabState extends State<RecordsTab> {
                               ),
                               child: DataTable(
                                 columnSpacing: 32.0,
-                                dataRowHeight: 65.0, // Set the height of each row
+                                dataRowHeight:
+                                    65.0, // Set the height of each row
                                 columns: [
                                   DataColumn(
                                     label: Expanded(
