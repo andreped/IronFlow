@@ -44,7 +44,8 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
   void initState() {
     super.initState();
     _loadPredefinedExercises();
-    _confettiController = ConfettiController(duration: const Duration(seconds: 4));
+    _confettiController =
+        ConfettiController(duration: const Duration(seconds: 4));
   }
 
   @override
@@ -378,62 +379,67 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
     return Stack(
       children: [
         Scaffold(
-        appBar: AppBar(
-          title: const Text('Log Exercise'),
-          actions: [
-            // Dropdown to select "Exercise" or "Fitness" logging
-            DropdownButton<String>(
-              value: _selectedLoggingType,
-              onChanged: (String? newValue) async {
-                setState(() {
-                  _selectedLoggingType = newValue!;
-                });
+          appBar: AppBar(
+            title: const Text('Log Exercise'),
+            actions: [
+              // Dropdown to select "Exercise" or "Fitness" logging
+              DropdownButton<String>(
+                value: _selectedLoggingType,
+                onChanged: (String? newValue) async {
+                  setState(() {
+                    _selectedLoggingType = newValue!;
+                  });
 
-                // Load the last logged data for the selected type
-                await _loadLastLoggedExercise();
-              },
-              items: <String>['Exercise', 'Fitness']
-                  .map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-            ),
-          ],
-        ),
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (_selectedLoggingType == 'Exercise') ...[
-                  _buildExerciseForm(),
-                ] else if (_selectedLoggingType == 'Fitness') ...[
-                  _buildFitnessForm(),
+                  // Load the last logged data for the selected type
+                  await _loadLastLoggedExercise();
+                },
+                items: <String>['Exercise', 'Fitness']
+                    .map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+              ),
+            ],
+          ),
+          body: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (_selectedLoggingType == 'Exercise') ...[
+                    _buildExerciseForm(),
+                  ] else if (_selectedLoggingType == 'Fitness') ...[
+                    _buildFitnessForm(),
+                  ],
+                  SizedBox(height: 20),
+                  if (!_isAddingNewExercise)
+                    ElevatedButton(
+                      onPressed: _addOrUpdateExercise,
+                      child: Text('Save'),
+                    ),
                 ],
-                SizedBox(height: 20),
-                if (!_isAddingNewExercise)
-                  ElevatedButton(
-                    onPressed: _addOrUpdateExercise,
-                    child: Text('Save'),
-                  ),
-              ],
+              ),
             ),
           ),
         ),
-      ),
-      Align(
-        alignment: Alignment.topCenter,
-        child: ConfettiWidget(
-          confettiController: _confettiController,
-          blastDirectionality: BlastDirectionality.explosive,
-          shouldLoop: false,
-          colors: const [Colors.red, Colors.blue, Colors.green, Colors.yellow],
+        Align(
+          alignment: Alignment.topCenter,
+          child: ConfettiWidget(
+            confettiController: _confettiController,
+            blastDirectionality: BlastDirectionality.explosive,
+            shouldLoop: false,
+            colors: const [
+              Colors.red,
+              Colors.blue,
+              Colors.green,
+              Colors.yellow
+            ],
+          ),
         ),
-      ),
       ],
     );
   }
