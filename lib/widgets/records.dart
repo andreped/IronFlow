@@ -129,18 +129,28 @@ class _RecordsTabState extends State<RecordsTab> {
                                 columns: [
                                   DataColumn(
                                     label: Expanded(
-                                      child: InkWell(
+                                      child: GestureDetector(
                                         onTap: () => _toggleSorting(false),
                                         child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
                                           children: [
-                                            Text('Exercise'),
+                                            Text('Exercise',
+                                                style: TextStyle(
+                                                    fontWeight:
+                                                        FontWeight.bold)),
                                             if (!_isSortedByWeight)
-                                              Icon(
-                                                _isAscending
-                                                    ? Icons.arrow_upward
-                                                    : Icons.arrow_downward,
-                                                size: 16.0,
-                                                color: arrowColor,
+                                              Row(
+                                                children: [
+                                                  SizedBox(width: 4.0),
+                                                  Icon(
+                                                    _isAscending
+                                                        ? Icons.arrow_upward
+                                                        : Icons.arrow_downward,
+                                                    size: 16.0,
+                                                    color: arrowColor,
+                                                  ),
+                                                ],
                                               ),
                                           ],
                                         ),
@@ -149,21 +159,29 @@ class _RecordsTabState extends State<RecordsTab> {
                                   ),
                                   DataColumn(
                                     label: Expanded(
-                                      child: InkWell(
+                                      child: GestureDetector(
                                         onTap: () => _toggleSorting(true),
                                         child: Row(
                                           mainAxisAlignment:
-                                              MainAxisAlignment.end,
+                                              MainAxisAlignment.start,
                                           children: [
                                             Text(
-                                                'Weight [${widget.isKg ? 'kg' : 'lbs'}]'),
+                                                'Weight [${widget.isKg ? 'kg' : 'lbs'}]',
+                                                style: TextStyle(
+                                                    fontWeight:
+                                                        FontWeight.bold)),
                                             if (_isSortedByWeight)
-                                              Icon(
-                                                _isAscending
-                                                    ? Icons.arrow_upward
-                                                    : Icons.arrow_downward,
-                                                size: 16.0,
-                                                color: arrowColor,
+                                              Row(
+                                                children: [
+                                                  SizedBox(width: 4.0),
+                                                  Icon(
+                                                    _isAscending
+                                                        ? Icons.arrow_upward
+                                                        : Icons.arrow_downward,
+                                                    size: 16.0,
+                                                    color: arrowColor,
+                                                  ),
+                                                ],
                                               ),
                                           ],
                                         ),
@@ -183,12 +201,14 @@ class _RecordsTabState extends State<RecordsTab> {
                                   return DataRow(cells: [
                                     DataCell(Text(exercise)),
                                     DataCell(
-                                      Align(
-                                        alignment: Alignment.centerRight,
-                                        child: Text(
-                                          '${displayWeight.toStringAsFixed(1)} x $reps reps',
-                                          textAlign: TextAlign.right,
-                                        ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            '${displayWeight.toStringAsFixed(1)} x $reps reps',
+                                          ),
+                                        ],
                                       ),
                                     ),
                                   ]);
