@@ -247,7 +247,7 @@ class _TableWidgetState extends State<TableWidget> {
                 title,
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
-              if (_sortColumn == column)
+              if (_sortColumn == column.toLowerCase())
                 Icon(
                   _sortAscending ? Icons.arrow_upward : Icons.arrow_downward,
                   size: 16,
@@ -283,8 +283,8 @@ class _TableWidgetState extends State<TableWidget> {
                     }
                   : {
                       0: FixedColumnWidth(120.0),
-                      1: FixedColumnWidth(80.0),
-                      2: FixedColumnWidth(60.0),
+                      1: FixedColumnWidth(90.0),
+                      2: FixedColumnWidth(70.0),
                       3: FixedColumnWidth(120.0),
                       4: FixedColumnWidth(130.0),
                     },
