@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
 import '../core/database.dart';
-import '../core/theme.dart'; // Import the theme.dart
+import '../core/theme.dart';
 
 class VisualizationTab extends StatefulWidget {
   final bool isKg;
@@ -182,7 +182,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
           dayDifference,
           convertedValue,
           dotPainter: FlDotCirclePainter(
-            color: Theme.of(context).primaryColor, // Use theme color
+            color: Theme.of(context).colorScheme.secondary, // Use theme color
             radius: 6,
           ),
         ));
