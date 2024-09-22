@@ -35,7 +35,7 @@ class _SettingsModalState extends State<SettingsModal> {
     super.initState();
     _appTheme = widget.appTheme;
     _isKg = widget.isKg;
-    _aggregationMethod = 'Max'; // Default value
+    _aggregationMethod = 'Top3Avg'; // Default value
     _plotType = 'Line'; // Default value
     _appVersion = _getAppVersion();
     _loadSettings();
@@ -298,6 +298,10 @@ class _SettingsModalState extends State<SettingsModal> {
                   DropdownMenuItem(
                     value: 'Average',
                     child: Text('Average'),
+                  ),
+                  DropdownMenuItem(
+                    value: 'Top3Avg',
+                    child: Text('Top3Avg'),
                   ),
                 ],
                 onChanged: _handleAggregationMethodChange,
