@@ -427,8 +427,8 @@ class _TableWidgetState extends State<TableWidget> {
                                   child: Padding(
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 8, vertical: 14.0),
-                                      child: Text(
-                                          (item['weight'] ?? 0).toString()))),
+                                      child: Text(_formatWeight(
+                                          item['weight'] ?? '')))),
                               TableCell(
                                   child: Padding(
                                       padding: const EdgeInsets.symmetric(
