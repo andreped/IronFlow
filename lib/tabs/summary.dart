@@ -141,7 +141,8 @@ class _SummaryTabState extends State<SummaryTab> {
     exercises.sort();
     if (exercises.isNotEmpty) {
       final lastExercise = await _dbHelper.getLastLoggedExerciseName();
-      final dailyRecords = await _dbHelper.getDailyRecordsForExercise(lastExercise!);
+      final dailyRecords =
+          await _dbHelper.getDailyRecordsForExercise(lastExercise!);
       setState(() {
         _selectedExercise = lastExercise;
         _dailyRecords = dailyRecords;
