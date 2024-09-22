@@ -48,6 +48,7 @@ class _SummaryTabState extends State<SummaryTab> {
           lastDay: DateTime.now(),
           selectedDayPredicate: (day) => isSameDay(day, widget.selectedDay),
           calendarFormat: CalendarFormat.month,
+          startingDayOfWeek: StartingDayOfWeek.monday,
           onDaySelected: (selectedDay, focusedDay) {
             setState(() {
               widget.onDateSelected(selectedDay);
