@@ -285,7 +285,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
                   onPressed: () => _selectDateRange(context),
                   child: Text(
                     'Date Range',
-                    style: theme.textTheme.bodyMedium,
+                    style: theme.textTheme.bodyMedium?.copyWith(color: Colors.white),
                   ),
                 ),
                 const SizedBox(width: 16.0),
