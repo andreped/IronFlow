@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../core/database.dart';
 import '../core/convert.dart';
+import 'package:confetti/confetti.dart';
 
 class ExerciseSetter extends StatefulWidget {
   final Function() onExerciseAdded;
@@ -18,6 +19,7 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
   final _weightController = TextEditingController();
   final _repsController = TextEditingController();
   final _setsController = TextEditingController(text: '1'); // Default sets to 1
+  late ConfettiController _confettiController;
 
   // Controllers for "Fitness" logging
   final _userWeightController = TextEditingController();
@@ -42,6 +44,14 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
   void initState() {
     super.initState();
     _loadPredefinedExercises();
+    _confettiController =
+        ConfettiController(duration: const Duration(seconds: 4));
+  }
+
+  @override
+  void dispose() {
+    _confettiController.dispose();
+    super.dispose();
   }
 
   Future<void> _loadPredefinedExercises() async {
@@ -161,6 +171,9 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
               duration: Duration(seconds: 2),
               backgroundColor: Colors.green,
             ));
+
+            // Start confetti
+            _confettiController.play();
           } else {
             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
               content: Text('🎯 Exercise added successfully'),
@@ -363,53 +376,71 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Log Exercise'),
-        actions: [
-          // Dropdown to select "Exercise" or "Fitness" logging
-          DropdownButton<String>(
-            value: _selectedLoggingType,
-            onChanged: (String? newValue) async {
-              setState(() {
-                _selectedLoggingType = newValue!;
-              });
+    return Stack(
+      children: [
+        Scaffold(
+          appBar: AppBar(
+            title: const Text('Log Exercise'),
+            actions: [
+              // Dropdown to select "Exercise" or "Fitness" logging
+              DropdownButton<String>(
+                value: _selectedLoggingType,
+                onChanged: (String? newValue) async {
+                  setState(() {
+                    _selectedLoggingType = newValue!;
+                  });
 
-              // Load the last logged data for the selected type
-              await _loadLastLoggedExercise();
-            },
-            items: <String>['Exercise', 'Fitness']
-                .map<DropdownMenuItem<String>>((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
-              );
-            }).toList(),
+                  // Load the last logged data for the selected type
+                  await _loadLastLoggedExercise();
+                },
+                items: <String>['Exercise', 'Fitness']
+                    .map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+              ),
+            ],
           ),
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (_selectedLoggingType == 'Exercise') ...[
-                _buildExerciseForm(),
-              ] else if (_selectedLoggingType == 'Fitness') ...[
-                _buildFitnessForm(),
-              ],
-              SizedBox(height: 20),
-              if (!_isAddingNewExercise)
-                ElevatedButton(
-                  onPressed: _addOrUpdateExercise,
-                  child: Text('Save'),
-                ),
+          body: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (_selectedLoggingType == 'Exercise') ...[
+                    _buildExerciseForm(),
+                  ] else if (_selectedLoggingType == 'Fitness') ...[
+                    _buildFitnessForm(),
+                  ],
+                  SizedBox(height: 20),
+                  if (!_isAddingNewExercise)
+                    ElevatedButton(
+                      onPressed: _addOrUpdateExercise,
+                      child: Text('Save'),
+                    ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        Align(
+          alignment: Alignment.topCenter,
+          child: ConfettiWidget(
+            confettiController: _confettiController,
+            blastDirectionality: BlastDirectionality.explosive,
+            shouldLoop: false,
+            colors: const [
+              Colors.red,
+              Colors.blue,
+              Colors.green,
+              Colors.yellow
             ],
           ),
         ),
-      ),
+      ],
     );
   }
 
