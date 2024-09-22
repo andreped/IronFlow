@@ -91,6 +91,11 @@ class _VisualizationTabState extends State<VisualizationTab> {
         print('Error fetching last recorded exercise: $e');
       }
     }
+
+    // Fetch data points for the default data type if Fitness table is selected
+    if (_selectedTable == 'Fitness') {
+      _fetchDataPoints(null);
+    }
   }
 
   double _convertWeight(double weightInKg) {
@@ -355,8 +360,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
           setState(() {
             _selectedExercise = newValue;
           });
-          _fetchDataPoints(
-              newValue); // Fetch data points for the selected exercise
+          _fetchDataPoints(newValue);
         }
       },
       items: _exerciseNames.map((exerciseName) {
@@ -379,8 +383,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
         if (newValue != null) {
           setState(() {
             _dataType = newValue;
-            _fetchDataPoints(
-                _selectedExercise); // Refetch data with new data type
+            _fetchDataPoints(_selectedExercise);
           });
         }
       },
