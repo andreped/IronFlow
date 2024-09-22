@@ -52,9 +52,12 @@ class _RecordsTabState extends State<RecordsTab> {
             a['weight'] != null ? double.parse(a['weight'].toString()) : 0.0;
         final maxWeightB =
             b['weight'] != null ? double.parse(b['weight'].toString()) : 0.0;
+        final repsA = a['reps'] != null ? int.parse(a['reps'].toString()) : 0;
+        final repsB = b['reps'] != null ? int.parse(b['reps'].toString()) : 0;
+
         if (maxWeightA == maxWeightB) {
-          // If weights are equal, sort alphabetically by exercise name
-          return (a['exercise'] ?? '').compareTo(b['exercise'] ?? '');
+          // If weights are equal, sort by reps
+          return _isAscending ? repsA.compareTo(repsB) : repsB.compareTo(repsA);
         }
         return _isAscending
             ? maxWeightA.compareTo(maxWeightB)
@@ -69,16 +72,14 @@ class _RecordsTabState extends State<RecordsTab> {
     }
   }
 
-  void _toggleSorting() {
+  void _toggleSorting(bool isWeightColumn) {
     setState(() {
-      _isSortedByWeight = !_isSortedByWeight;
-      _sortRecords();
-    });
-  }
-
-  void _toggleSortOrder() {
-    setState(() {
-      _isAscending = !_isAscending;
+      if (_isSortedByWeight == isWeightColumn) {
+        _isAscending = !_isAscending;
+      } else {
+        _isSortedByWeight = isWeightColumn;
+        _isAscending = true;
+      }
       _sortRecords();
     });
   }
@@ -93,29 +94,14 @@ class _RecordsTabState extends State<RecordsTab> {
     return widget.isKg ? weightInKg : weightInKg * 2.20462;
   }
 
+  @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final arrowColor = isDarkMode ? Colors.purple : null;
+
     return Scaffold(
       appBar: AppBar(
         title: Text('High Scores'),
-        actions: [
-          IconButton(
-            icon: Icon(
-              _isSortedByWeight ? Icons.fitness_center : Icons.sort_by_alpha,
-              color: Theme.of(context).iconTheme.color,
-            ),
-            onPressed: _toggleSorting,
-            tooltip:
-                _isSortedByWeight ? 'Sort Alphabetically' : 'Sort by Weight',
-          ),
-          IconButton(
-            icon: Icon(
-              _isAscending ? Icons.arrow_upward : Icons.arrow_downward,
-              color: Theme.of(context).iconTheme.color,
-            ),
-            onPressed: _toggleSortOrder,
-            tooltip: _isAscending ? 'Sort Descending' : 'Sort Ascending',
-          ),
-        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -128,23 +114,83 @@ class _RecordsTabState extends State<RecordsTab> {
                   )
                 : _maxWeights.isEmpty
                     ? const Center(child: Text('No data available'))
-                    : ListView.separated(
-                        itemCount: _maxWeights.length,
-                        itemBuilder: (context, index) {
-                          final record = _maxWeights[index];
-                          final exercise = record['exercise'] as String;
-                          final weight = record['weight'];
-                          final reps = record['reps'];
-                          final displayWeight = _convertWeight(
-                              weight is String ? double.parse(weight) : weight);
+                    : LayoutBuilder(
+                        builder: (context, constraints) {
+                          return SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: ConstrainedBox(
+                              constraints: BoxConstraints(
+                                minWidth: constraints.maxWidth,
+                              ),
+                              child: DataTable(
+                                columnSpacing: 32.0, // Adjust the column spacing
+                                columns: [
+                                  DataColumn(
+                                    label: Expanded(
+                                      child: InkWell(
+                                        onTap: () => _toggleSorting(false),
+                                        child: Row(
+                                          children: [
+                                            Text('Exercise'),
+                                            if (!_isSortedByWeight)
+                                              Icon(
+                                                _isAscending
+                                                    ? Icons.arrow_upward
+                                                    : Icons.arrow_downward,
+                                                size: 16.0, // Adjust the size of the arrow
+                                                color: arrowColor,
+                                              ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  DataColumn(
+                                    label: Expanded(
+                                      child: InkWell(
+                                        onTap: () => _toggleSorting(true),
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.end,
+                                          children: [
+                                            Text('Weight [${widget.isKg ? 'kg' : 'lbs'}]'),
+                                            if (_isSortedByWeight)
+                                              Icon(
+                                                _isAscending
+                                                    ? Icons.arrow_upward
+                                                    : Icons.arrow_downward,
+                                                size: 16.0, // Adjust the size of the arrow
+                                                color: arrowColor,
+                                              ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                                rows: _maxWeights.map((record) {
+                                  final exercise = record['exercise'] as String;
+                                  final weight = record['weight'];
+                                  final reps = record['reps'];
+                                  final displayWeight = _convertWeight(
+                                      weight is String ? double.parse(weight) : weight);
 
-                          return ListTile(
-                            title: Text(exercise),
-                            trailing: Text(
-                                '${displayWeight.toStringAsFixed(1)} ${widget.isKg ? 'kg' : 'lbs'} x $reps reps'),
+                                  return DataRow(cells: [
+                                    DataCell(Text(exercise)),
+                                    DataCell(
+                                      Align(
+                                        alignment: Alignment.centerRight,
+                                        child: Text(
+                                          '${displayWeight.toStringAsFixed(1)} x $reps reps',
+                                          textAlign: TextAlign.right,
+                                        ),
+                                      ),
+                                    ),
+                                  ]);
+                                }).toList(),
+                              ),
+                            ),
                           );
                         },
-                        separatorBuilder: (context, index) => Divider(),
                       ),
       ),
     );
