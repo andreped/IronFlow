@@ -164,6 +164,7 @@ class _TableTabState extends State<TableTab> {
                 Icon(
                   _sortAscending ? Icons.arrow_upward : Icons.arrow_downward,
                   size: 16,
+                  color: Theme.of(context).colorScheme.secondary,
                 ),
             ],
           ),
