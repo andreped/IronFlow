@@ -258,7 +258,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
       final lastMonth = DateTime(now.year, now.month - 1, now.day);
       _selectedDateRange = DateTimeRange(start: lastMonth, end: now);
     }
-    
+
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -281,7 +281,8 @@ class _VisualizationTabState extends State<VisualizationTab> {
                           style: theme.textTheme.bodyMedium,
                         ),
                       )
-                    : _buildChart(theme, scatterColor, lineColor, axisTextColor),
+                    : _buildChart(
+                        theme, scatterColor, lineColor, axisTextColor),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -295,7 +296,8 @@ class _VisualizationTabState extends State<VisualizationTab> {
                     onPressed: () => _selectDateRange(context),
                     child: Text(
                       'Date Range',
-                      style: theme.textTheme.bodyMedium?.copyWith(color: Colors.white),
+                      style: theme.textTheme.bodyMedium
+                          ?.copyWith(color: Colors.white),
                     ),
                   ),
                   const SizedBox(width: 16.0),
