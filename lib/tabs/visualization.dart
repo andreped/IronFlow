@@ -197,6 +197,45 @@ class _VisualizationTabState extends State<VisualizationTab> {
             value = totalRepsSets > 0 ? totalWeight / totalRepsSets : 0.0;
             break;
 
+          case 'Top3Avg':
+            // Sort records by the value of interest in descending order
+            final sortedRecords = recordsForDay
+                .map((record) => {
+                      'weight':
+                          double.tryParse(record['weight'].toString()) ?? 0.0,
+                      'reps': double.tryParse(record['reps'].toString()) ?? 1.0,
+                      'sets': double.tryParse(record['sets'].toString()) ?? 1.0,
+                    })
+                .toList()
+              ..sort((a, b) => ((b['weight'] ?? 0.0) *
+                      (b['reps'] ?? 1.0) *
+                      (b['sets'] ?? 1.0))
+                  .compareTo((a['weight'] ?? 0.0) *
+                      (a['reps'] ?? 1.0) *
+                      (a['sets'] ?? 1.0)));
+
+            // Take the top 3 records
+            final top3Records = sortedRecords.take(3).toList();
+
+            // Calculate the weighted average for the top 3 records
+            double top3TotalWeight = 0.0;
+            double top3TotalRepsSets = 0.0;
+
+            for (var record in top3Records) {
+              final weight = record['weight'];
+              final reps = record['reps'];
+              final sets = record['sets'];
+
+              top3TotalWeight +=
+                  (sets ?? 1.0) * (reps ?? 1.0) * (weight ?? 0.0);
+              top3TotalRepsSets += (sets ?? 1.0) * (reps ?? 1.0);
+            }
+
+            value = top3TotalRepsSets > 0
+                ? top3TotalWeight / top3TotalRepsSets
+                : 0.0;
+            break;
+
           case 'Total':
             value = recordsForDay.fold(0.0, (sum, record) {
               final sets = double.tryParse(record['sets'].toString()) ?? 1.0;
@@ -317,7 +356,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   SizedBox(
-                    width: 90,
+                    width: 100,
                     child: _buildAggregationDropdown(theme),
                   ),
                   const SizedBox(height: 16.0),
@@ -435,7 +474,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
           });
         }
       },
-      items: ['Max', 'Average', 'Total'].map((method) {
+      items: ['Max', 'Average', 'Top3Avg', 'Total'].map((method) {
         return DropdownMenuItem<String>(
           value: method,
           child: Text(method,
