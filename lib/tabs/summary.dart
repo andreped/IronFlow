@@ -136,6 +136,19 @@ class _SummaryTabState extends State<SummaryTab> {
     );
   }
 
+  Future<void> _loadLastLoggedExercise() async {
+    List<String> exercises = await _dbHelper.getRecordedExercises();
+    exercises.sort();
+    if (exercises.isNotEmpty) {
+      final lastExercise = await _dbHelper.getLastLoggedExerciseName();
+      final dailyRecords = await _dbHelper.getDailyRecordsForExercise(lastExercise!);
+      setState(() {
+        _selectedExercise = lastExercise;
+        _dailyRecords = dailyRecords;
+      });
+    }
+  }
+
   double _convertWeight(double weightInKg) {
     return widget.isKg ? weightInKg : weightInKg * 2.20462;
   }
@@ -178,15 +191,17 @@ class _SummaryTabState extends State<SummaryTab> {
                         : Icons.fitness_center,
                     color: primaryColor,
                   ),
-                  onPressed: () {
+                  onPressed: () async {
                     setState(() {
                       _isExerciseView = !_isExerciseView;
-                      if (!_isExerciseView) {
-                        // Clear exercise data when switching to Day View
-                        _selectedExercise = null;
-                        _dailyRecords = {};
-                      }
                     });
+                    if (_isExerciseView) {
+                      await _loadLastLoggedExercise();
+                    } else {
+                      // Clear exercise data when switching to Day View
+                      _selectedExercise = null;
+                      _dailyRecords = {};
+                    }
                   },
                 ),
               ],
