@@ -6,8 +6,15 @@ import '../core/theme.dart';
 
 class VisualizationTab extends StatefulWidget {
   final bool isKg;
+  final String defaultAggregationMethod;
+  final String defaultChartType;
 
-  const VisualizationTab({Key? key, required this.isKg}) : super(key: key);
+  const VisualizationTab({
+    Key? key,
+    required this.isKg,
+    required this.defaultAggregationMethod,
+    required this.defaultChartType,
+  }) : super(key: key);
 
   @override
   _VisualizationTabState createState() => _VisualizationTabState();
@@ -16,8 +23,8 @@ class VisualizationTab extends StatefulWidget {
 class _VisualizationTabState extends State<VisualizationTab> {
   String? _selectedExercise;
   String _selectedTable = 'Exercise'; // Default selected table
-  String _aggregationMethod = 'Max'; // Default aggregation method
-  String _chartType = 'Line'; // Default chart type
+  late String _aggregationMethod;
+  late String _chartType;
   String _dataType = 'Weight'; // Default data type for Fitness table
   List<String> _exerciseNames = [];
   List<ScatterSpot> _dataPoints = [];
@@ -32,7 +39,24 @@ class _VisualizationTabState extends State<VisualizationTab> {
   @override
   void initState() {
     super.initState();
+    _initializeDefaults();
     _fetchExerciseNames(); // Fetch exercise names initially
+  }
+
+  void _initializeDefaults() {
+    setState(() {
+      _aggregationMethod = widget.defaultAggregationMethod;
+      _chartType = widget.defaultChartType;
+    });
+  }
+
+  @override
+  void didUpdateWidget(covariant VisualizationTab oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.defaultAggregationMethod != oldWidget.defaultAggregationMethod ||
+        widget.defaultChartType != oldWidget.defaultChartType) {
+      _initializeDefaults();
+    }
   }
 
   @override
