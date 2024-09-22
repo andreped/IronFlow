@@ -164,6 +164,7 @@ class _TableTabState extends State<TableTab> {
                 Icon(
                   _sortAscending ? Icons.arrow_upward : Icons.arrow_downward,
                   size: 16,
+                  color: Theme.of(context).colorScheme.secondary,
                 ),
             ],
           ),
@@ -205,7 +206,7 @@ class _TableTabState extends State<TableTab> {
           child: FutureBuilder<List<Map<String, dynamic>>>(
             future: _getData(),
             builder: (context, snapshot) {
-              if (!snapshot.hasData) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
               }
 
@@ -213,7 +214,8 @@ class _TableTabState extends State<TableTab> {
                 return Center(child: Text('Error: ${snapshot.error}'));
               }
 
-              final data = snapshot.data!;
+              final data = snapshot.data ?? [];
+
               if (_selectedTable == 'exercises') {
                 return Table(
                   columnWidths: {
@@ -344,60 +346,74 @@ class _TableTabState extends State<TableTab> {
                         ),
                       ],
                     ),
-                    for (var record in data)
+                    if (data.isEmpty)
                       TableRow(
                         children: [
-                          TableCell(
+                          for (int i = 0; i < 5; i++)
+                            TableCell(
                               child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 8, vertical: 14.0),
-                                  child: Text(
-                                      (record['weight'] ?? 0).toString()))),
-                          TableCell(
-                              child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 8, vertical: 14.0),
-                                  child: Text(
-                                      (record['height'] ?? 0).toString()))),
-                          TableCell(
-                              child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 8, vertical: 14.0),
-                                  child:
-                                      Text((record['age'] ?? 0).toString()))),
-                          TableCell(
-                              child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 8, vertical: 14.0),
-                                  child: Text(
-                                      _formatDate((record['timestamp']) ?? 0)
-                                          .toString()))),
-                          TableCell(
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 0.0),
-                              child: Row(
-                                children: [
-                                  IconButton(
-                                    icon: Icon(Icons.edit, size: 18.0),
-                                    onPressed: () {
-                                      _showFitnessEditDialog(record);
-                                    },
-                                  ),
-                                  SizedBox(width: 0.0),
-                                  IconButton(
-                                    icon: Icon(Icons.delete, size: 18.0),
-                                    onPressed: () async {
-                                      await _deleteRow(
-                                          'fitness', record['id'] ?? 0);
-                                    },
-                                  ),
-                                ],
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 14.0),
+                                child: Text(''),
                               ),
                             ),
-                          ),
                         ],
-                      ),
+                      )
+                    else
+                      for (var record in data)
+                        TableRow(
+                          children: [
+                            TableCell(
+                                child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 14.0),
+                                    child: Text(
+                                        (record['weight'] ?? 0).toString()))),
+                            TableCell(
+                                child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 14.0),
+                                    child: Text(
+                                        (record['height'] ?? 0).toString()))),
+                            TableCell(
+                                child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 14.0),
+                                    child:
+                                        Text((record['age'] ?? 0).toString()))),
+                            TableCell(
+                                child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 14.0),
+                                    child: Text(
+                                        _formatDate((record['timestamp']) ?? 0)
+                                            .toString()))),
+                            TableCell(
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 0.0),
+                                child: Row(
+                                  children: [
+                                    IconButton(
+                                      icon: Icon(Icons.edit, size: 18.0),
+                                      onPressed: () {
+                                        _showFitnessEditDialog(record);
+                                      },
+                                    ),
+                                    SizedBox(width: 0.0),
+                                    IconButton(
+                                      icon: Icon(Icons.delete, size: 18.0),
+                                      onPressed: () async {
+                                        await _deleteRow(
+                                            'fitness', record['id'] ?? 0);
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                   ],
                 );
               } else {
