@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../core/database.dart';
-import '../core/theme.dart'; // Import the theme for isKg
+import '../core/theme.dart';
 
 class RecordsTab extends StatefulWidget {
   final bool isKg;
@@ -117,13 +117,15 @@ class _RecordsTabState extends State<RecordsTab> {
                     : LayoutBuilder(
                         builder: (context, constraints) {
                           return SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
+                            scrollDirection: Axis.vertical,
                             child: ConstrainedBox(
                               constraints: BoxConstraints(
                                 minWidth: constraints.maxWidth,
                               ),
                               child: DataTable(
                                 columnSpacing: 32.0,
+                                dataRowHeight:
+                                    65.0, // Set the height of each row
                                 columns: [
                                   DataColumn(
                                     label: Expanded(
