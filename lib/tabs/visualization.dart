@@ -198,7 +198,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
           break;
 
         case 'Top3Avg':
-          // Sort records by the value of interest in descending order
+          // Sort records by weight in descending order
           final sortedRecords = recordsForDay
               .map((record) => {
                     'weight':
@@ -207,13 +207,10 @@ class _VisualizationTabState extends State<VisualizationTab> {
                     'sets': double.tryParse(record['sets'].toString()) ?? 1.0,
                   })
               .toList()
-            ..sort((a, b) =>
-                ((b['weight'] ?? 0.0) * (b['reps'] ?? 1.0) * (b['sets'] ?? 1.0))
-                    .compareTo((a['weight'] ?? 0.0) *
-                        (a['reps'] ?? 1.0) *
-                        (a['sets'] ?? 1.0)));
+            ..sort(
+                (a, b) => (b['weight'] ?? 0.0).compareTo(a['weight'] ?? 0.0));
 
-          // Take the top 3 records
+          // Take the top 3 records with the highest weights
           final top3Records = sortedRecords.take(3).toList();
 
           // Calculate the weighted average for the top 3 records
