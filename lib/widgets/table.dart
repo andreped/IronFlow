@@ -320,14 +320,22 @@ class _TableTabState extends State<TableTab> {
                               child: Row(
                                 children: [
                                   IconButton(
-                                    icon: Icon(Icons.edit, size: 18.0),
+                                    icon: Icon(Icons.edit,
+                                        size: 18.0,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .secondary),
                                     onPressed: () {
                                       _showEditDialog(exercise);
                                     },
                                   ),
                                   SizedBox(width: 0.0),
                                   IconButton(
-                                    icon: Icon(Icons.delete, size: 18.0),
+                                    icon: Icon(Icons.delete,
+                                        size: 18.0,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .secondary),
                                     onPressed: () async {
                                       await _deleteRow(
                                           'exercises', exercise['id'] ?? 0);
@@ -424,14 +432,22 @@ class _TableTabState extends State<TableTab> {
                                 child: Row(
                                   children: [
                                     IconButton(
-                                      icon: Icon(Icons.edit, size: 18.0),
+                                      icon: Icon(Icons.edit,
+                                          size: 18.0,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .secondary),
                                       onPressed: () {
                                         _showFitnessEditDialog(record);
                                       },
                                     ),
                                     SizedBox(width: 0.0),
                                     IconButton(
-                                      icon: Icon(Icons.delete, size: 18.0),
+                                      icon: Icon(Icons.delete,
+                                          size: 18.0,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .secondary),
                                       onPressed: () async {
                                         await _deleteRow(
                                             'fitness', record['id'] ?? 0);
