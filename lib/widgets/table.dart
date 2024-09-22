@@ -213,7 +213,7 @@ class _TableWidgetState extends State<TableWidget> {
         : (weightInKg * 2.20462).toStringAsFixed(2);
   }
 
-void _sortTable(String column) {
+  void _sortTable(String column) {
     double horizontalScrollPosition = 0.0;
     double verticalScrollPosition = 0.0;
 
@@ -340,7 +340,8 @@ void _sortTable(String column) {
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Text('Actions',
-                                  style: TextStyle(fontWeight: FontWeight.bold)),
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.bold)),
                             ),
                           ),
                         ]
@@ -353,7 +354,8 @@ void _sortTable(String column) {
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Text('Actions',
-                                  style: TextStyle(fontWeight: FontWeight.bold)),
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.bold)),
                             ),
                           ),
                         ],
@@ -377,14 +379,14 @@ void _sortTable(String column) {
                                 child: Padding(
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 8, vertical: 14.0),
-                                    child: Text(
-                                        (item['reps'] ?? 0).toString()))),
+                                    child:
+                                        Text((item['reps'] ?? 0).toString()))),
                             TableCell(
                                 child: Padding(
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 8, vertical: 14.0),
-                                    child: Text(
-                                        (item['sets'] ?? 0).toString()))),
+                                    child:
+                                        Text((item['sets'] ?? 0).toString()))),
                             TableCell(
                                 child: Padding(
                                     padding: const EdgeInsets.symmetric(
@@ -415,8 +417,8 @@ void _sortTable(String column) {
                                               .colorScheme
                                               .secondary),
                                       onPressed: () async {
-                                        await _deleteRow('exercises',
-                                            item['id'] ?? 0);
+                                        await _deleteRow(
+                                            'exercises', item['id'] ?? 0);
                                       },
                                     ),
                                   ],
@@ -441,8 +443,8 @@ void _sortTable(String column) {
                                 child: Padding(
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 8, vertical: 14.0),
-                                    child: Text(
-                                        (item['age'] ?? 0).toString()))),
+                                    child:
+                                        Text((item['age'] ?? 0).toString()))),
                             TableCell(
                                 child: Padding(
                                     padding: const EdgeInsets.symmetric(
