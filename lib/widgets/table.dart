@@ -5,7 +5,7 @@ import 'fitness_edit_dialog.dart';
 import 'package:intl/intl.dart';
 
 class TableTab extends StatefulWidget {
-  final bool isKg; // Add this parameter to manage unit selection
+  final bool isKg;
 
   TableTab({required this.isKg});
 
@@ -20,20 +20,38 @@ class _TableTabState extends State<TableTab> {
   String _sortColumn = 'timestamp';
   bool _sortAscending = false;
 
+  Map<String, List<Map<String, dynamic>>> _cache = {};
+  late Future<List<Map<String, dynamic>>> _dataFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _dataFuture = _getData();
+  }
+
   Future<List<Map<String, dynamic>>> _getData() async {
+    final cacheKey = '$_selectedTable-$_sortColumn-$_sortAscending';
+    if (_cache.containsKey(cacheKey)) {
+      return _cache[cacheKey]!;
+    }
+
+    List<Map<String, dynamic>> data;
     if (_selectedTable == 'exercises') {
-      return await _dbHelper.getExercises(
+      data = await _dbHelper.getExercises(
         sortColumn: _sortColumn,
         ascending: _sortAscending,
       );
     } else if (_selectedTable == 'fitness') {
-      return await _dbHelper.getFitnessData(
+      data = await _dbHelper.getFitnessData(
         sortColumn: _sortColumn,
         ascending: _sortAscending,
       );
     } else {
-      return [];
+      data = [];
     }
+
+    _cache[cacheKey] = data;
+    return data;
   }
 
   Future<void> _deleteRow(String table, int id) async {
@@ -60,7 +78,10 @@ class _TableTabState extends State<TableTab> {
 
     if (confirmed == true) {
       await _dbHelper.deleteRowItem(table, id);
-      setState(() {});
+      _cache.clear(); // Clear cache after deletion
+      setState(() {
+        _dataFuture = _getData();
+      });
     }
   }
 
@@ -70,12 +91,11 @@ class _TableTabState extends State<TableTab> {
       builder: (BuildContext context) {
         return ExerciseEditDialog(
           exerciseData: exercise,
-          isKg: widget.isKg, // Pass the unit selection
+          isKg: widget.isKg,
         );
       },
     ).then((result) async {
       if (result != null) {
-        // Convert weight based on selected unit before saving
         final weight = widget.isKg
             ? result['weight']
             : (double.parse(result['weight']) * 2.20462).toStringAsFixed(2);
@@ -88,7 +108,10 @@ class _TableTabState extends State<TableTab> {
           sets: result['sets'],
           timestamp: result['timestamp'],
         );
-        setState(() {});
+        _cache.clear(); // Clear cache after update
+        setState(() {
+          _dataFuture = _getData();
+        });
       }
     });
   }
@@ -99,12 +122,11 @@ class _TableTabState extends State<TableTab> {
       builder: (BuildContext context) {
         return FitnessEditDialog(
           fitnessData: fitness,
-          isKg: widget.isKg, // Pass the unit selection
+          isKg: widget.isKg,
         );
       },
     ).then((result) async {
       if (result != null) {
-        // Convert weight based on selected unit before saving
         final weight = widget.isKg
             ? result['weight']
             : (double.parse(result['weight']) * 2.20462).toStringAsFixed(2);
@@ -116,7 +138,10 @@ class _TableTabState extends State<TableTab> {
           age: result['age'],
           timestamp: result['timestamp'],
         );
-        setState(() {});
+        _cache.clear(); // Clear cache after update
+        setState(() {
+          _dataFuture = _getData();
+        });
       }
     });
   }
@@ -142,6 +167,8 @@ class _TableTabState extends State<TableTab> {
         _sortColumn = column;
         _sortAscending = true;
       }
+      _cache.clear(); // Clear cache after sorting
+      _dataFuture = _getData();
     });
   }
 
@@ -194,6 +221,8 @@ class _TableTabState extends State<TableTab> {
             onChanged: (String? newValue) {
               setState(() {
                 _selectedTable = newValue!;
+                _cache.clear(); // Clear cache after table change
+                _dataFuture = _getData();
               });
             },
           ),
@@ -204,7 +233,7 @@ class _TableTabState extends State<TableTab> {
         child: SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: FutureBuilder<List<Map<String, dynamic>>>(
-            future: _getData(),
+            future: _dataFuture,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
