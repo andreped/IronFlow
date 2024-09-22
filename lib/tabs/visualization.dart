@@ -258,59 +258,56 @@ class _VisualizationTabState extends State<VisualizationTab> {
       final lastMonth = DateTime(now.year, now.month - 1, now.day);
       _selectedDateRange = DateTimeRange(start: lastMonth, end: now);
     }
-
-    final dateRangeText = _selectedDateRange == null
-        ? 'Select Date Range'
-        : '${DateFormat('MM/dd/yyyy').format(_selectedDateRange!.start)} - ${DateFormat('MM/dd/yyyy').format(_selectedDateRange!.end)}';
-
+    
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            _buildTableDropdown(theme),
-            const SizedBox(height: 16.0),
-            if (_selectedTable == 'Exercise') _buildExerciseDropdown(theme),
-            if (_selectedTable == 'Fitness') _buildDataTypeDropdown(theme),
-            const SizedBox(height: 16.0),
-            ConstrainedBox(
-              constraints: BoxConstraints(
-                maxHeight: chartMaxHeight,
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              _buildTableDropdown(theme),
+              const SizedBox(height: 16.0),
+              if (_selectedTable == 'Exercise') _buildExerciseDropdown(theme),
+              if (_selectedTable == 'Fitness') _buildDataTypeDropdown(theme),
+              const SizedBox(height: 16.0),
+              ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxHeight: chartMaxHeight,
+                ),
+                child: _dataPoints.isEmpty
+                    ? Center(
+                        child: Text(
+                          'No Data Available',
+                          style: theme.textTheme.bodyMedium,
+                        ),
+                      )
+                    : _buildChart(theme, scatterColor, lineColor, axisTextColor),
               ),
-              child: _dataPoints.isEmpty
-                  ? Center(
-                      child: Text(
-                        'No Data Available',
-                        style: theme.textTheme.bodyMedium,
-                      ),
-                    )
-                  : _buildChart(theme, scatterColor, lineColor, axisTextColor),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                SizedBox(
-                  width: 90,
-                  child: _buildAggregationDropdown(theme),
-                ),
-                const SizedBox(height: 16.0),
-                ElevatedButton(
-                  onPressed: () => _selectDateRange(context),
-                  child: Text(
-                    'Date Range',
-                    style: theme.textTheme.bodyMedium
-                        ?.copyWith(color: Colors.white),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  SizedBox(
+                    width: 90,
+                    child: _buildAggregationDropdown(theme),
                   ),
-                ),
-                const SizedBox(width: 16.0),
-                SizedBox(
-                  width: 100,
-                  child: _buildChartTypeToggle(theme),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16.0),
-          ],
+                  const SizedBox(height: 16.0),
+                  ElevatedButton(
+                    onPressed: () => _selectDateRange(context),
+                    child: Text(
+                      'Date Range',
+                      style: theme.textTheme.bodyMedium?.copyWith(color: Colors.white),
+                    ),
+                  ),
+                  const SizedBox(width: 16.0),
+                  SizedBox(
+                    width: 100,
+                    child: _buildChartTypeToggle(theme),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16.0),
+            ],
+          ),
         ),
       ),
     );
