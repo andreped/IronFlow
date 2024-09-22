@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:intl/intl.dart';
 import '../core/database.dart';
-import '../core/theme.dart'; // Import the theme.dart
+import '../core/theme.dart';
 
 class VisualizationTab extends StatefulWidget {
   final bool isKg;
@@ -20,7 +21,11 @@ class _VisualizationTabState extends State<VisualizationTab> {
   String _dataType = 'Weight'; // Default data type for Fitness table
   List<String> _exerciseNames = [];
   List<ScatterSpot> _dataPoints = [];
-  double? _minX, _maxX, _minY, _maxY;
+  double _minX = 0.0;
+  double _maxX = 0.0;
+  double _minY = 0.0;
+  double _maxY = 100.0;
+  DateTimeRange? _selectedDateRange;
 
   final DatabaseHelper _dbHelper = DatabaseHelper();
 
@@ -115,10 +120,16 @@ class _VisualizationTabState extends State<VisualizationTab> {
         final dateTime =
             DateUtils.dateOnly(DateTime.parse(record['timestamp']));
 
-        if (groupedByDate.containsKey(dateTime)) {
-          groupedByDate[dateTime]!.add(record);
-        } else {
-          groupedByDate[dateTime] = [record];
+        if (_selectedDateRange == null ||
+            (dateTime.isAfter(
+                    _selectedDateRange!.start.subtract(Duration(days: 1))) &&
+                dateTime.isBefore(
+                    _selectedDateRange!.end.add(Duration(days: 1))))) {
+          if (groupedByDate.containsKey(dateTime)) {
+            groupedByDate[dateTime]!.add(record);
+          } else {
+            groupedByDate[dateTime] = [record];
+          }
         }
       }
 
@@ -182,7 +193,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
           dayDifference,
           convertedValue,
           dotPainter: FlDotCirclePainter(
-            color: Theme.of(context).primaryColor, // Use theme color
+            color: Theme.of(context).colorScheme.secondary, // Use theme color
             radius: 6,
           ),
         ));
@@ -202,25 +213,55 @@ class _VisualizationTabState extends State<VisualizationTab> {
             _dataPoints.map((point) => point.x).reduce((a, b) => a > b ? a : b);
         _minY = minValue ?? 0.0;
         _maxY = maxValue ?? 100.0; // Set default if no data
+
+        // Convert minY and maxY to the appropriate unit
+        _minY = _convertWeight(_minY);
+        _maxY = _convertWeight(_maxY);
       });
     } catch (e) {
       print('Error fetching data points: $e');
     }
   }
 
+  Future<void> _selectDateRange(BuildContext context) async {
+    final DateTimeRange? picked = await showDateRangePicker(
+      context: context,
+      firstDate: DateTime(2000),
+      lastDate: DateTime.now(),
+      initialDateRange: _selectedDateRange,
+    );
+    if (picked != null && picked != _selectedDateRange) {
+      setState(() {
+        _selectedDateRange = picked;
+      });
+      if (_selectedExercise != null) {
+        _fetchDataPoints(_selectedExercise!);
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final scatterColor =
-        theme.primaryChartColor; // Use primaryChartColor for scatter points
-    final lineColor =
-        theme.primaryChartColor; // Use primaryChartColor for lines
+    final scatterColor = theme.primaryChartColor;
+    final lineColor = theme.primaryChartColor;
     final axisTextColor = theme.textTheme.bodyMedium?.color ?? Colors.black;
 
     // Get the height of the screen
     final screenHeight = MediaQuery.of(context).size.height;
     // Define the maximum height for the chart as 45% of the screen height
     final chartMaxHeight = screenHeight * 0.45;
+
+    // Initialize the date range to the last month if not already set
+    if (_selectedDateRange == null) {
+      final now = DateTime.now();
+      final lastMonth = DateTime(now.year, now.month - 1, now.day);
+      _selectedDateRange = DateTimeRange(start: lastMonth, end: now);
+    }
+
+    final dateRangeText = _selectedDateRange == null
+        ? 'Select Date Range'
+        : '${DateFormat('MM/dd/yyyy').format(_selectedDateRange!.start)} - ${DateFormat('MM/dd/yyyy').format(_selectedDateRange!.end)}';
 
     return Scaffold(
       body: Padding(
@@ -251,6 +292,15 @@ class _VisualizationTabState extends State<VisualizationTab> {
                 SizedBox(
                   width: 90,
                   child: _buildAggregationDropdown(theme),
+                ),
+                const SizedBox(height: 16.0),
+                ElevatedButton(
+                  onPressed: () => _selectDateRange(context),
+                  child: Text(
+                    'Date Range',
+                    style: theme.textTheme.bodyMedium
+                        ?.copyWith(color: Colors.white),
+                  ),
                 ),
                 const SizedBox(width: 16.0),
                 SizedBox(
@@ -448,10 +498,20 @@ class _VisualizationTabState extends State<VisualizationTab> {
                 leftTitles: AxisTitles(
                   sideTitles: SideTitles(
                     showTitles: true,
-                    getTitlesWidget: (value, meta) =>
-                        _leftTitleWidgets(value, meta, axisTextColor),
+                    getTitlesWidget: (value, meta) {
+                      final convertedValue =
+                          widget.isKg ? value : value * 2.20462;
+                      return Text(
+                        convertedValue.toStringAsFixed(1),
+                        style: TextStyle(
+                          color: axisTextColor,
+                          fontSize: 12,
+                        ),
+                      );
+                    },
                     reservedSize:
                         50, // Ensure enough space for the Y-axis labels
+                    interval: horizontalInterval,
                   ),
                   axisNameWidget: Padding(
                     padding: const EdgeInsets.only(right: 8.0),
@@ -538,10 +598,20 @@ class _VisualizationTabState extends State<VisualizationTab> {
                 leftTitles: AxisTitles(
                   sideTitles: SideTitles(
                     showTitles: true,
-                    getTitlesWidget: (value, meta) =>
-                        _leftTitleWidgets(value, meta, axisTextColor),
+                    getTitlesWidget: (value, meta) {
+                      final convertedValue =
+                          widget.isKg ? value : value * 2.20462;
+                      return Text(
+                        convertedValue.toStringAsFixed(1),
+                        style: TextStyle(
+                          color: axisTextColor,
+                          fontSize: 12,
+                        ),
+                      );
+                    },
                     reservedSize:
                         50, // Ensure enough space for the Y-axis labels
+                    interval: horizontalInterval,
                   ),
                   axisNameWidget: Padding(
                     padding: const EdgeInsets.only(right: 8.0),
@@ -601,14 +671,18 @@ class _VisualizationTabState extends State<VisualizationTab> {
   }
 
   Widget _bottomTitleWidgets(double value, TitleMeta meta, Color textColor) {
-    const double reservedSize = 20.0;
+    const double reservedSize = 50.0;
+
+    // Convert the value back to a date
+    final date = DateTime.now().add(Duration(days: value.toInt()));
+    final formattedDate = DateFormat('MM/dd').format(date);
 
     return SideTitleWidget(
       axisSide: meta.axisSide,
       child: SizedBox(
         width: reservedSize,
         child: Text(
-          value.toStringAsFixed(1),
+          formattedDate,
           style: TextStyle(
             color: textColor,
             fontSize: 12,
