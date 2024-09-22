@@ -109,17 +109,22 @@ class _VisualizationTabState extends State<VisualizationTab> {
 
       final filteredRecords = exerciseName == null
           ? records
-          : records.where((record) => record['exercise'] == exerciseName).toList();
+          : records
+              .where((record) => record['exercise'] == exerciseName)
+              .toList();
 
       final groupedByDate = <DateTime, List<Map<String, dynamic>>>{};
 
       // Group records by date
       for (var record in filteredRecords) {
-        final dateTime = DateUtils.dateOnly(DateTime.parse(record['timestamp']));
+        final dateTime =
+            DateUtils.dateOnly(DateTime.parse(record['timestamp']));
 
         if (_selectedDateRange == null ||
-            (dateTime.isAfter(_selectedDateRange!.start.subtract(Duration(days: 1))) &&
-                dateTime.isBefore(_selectedDateRange!.end.add(Duration(days: 1))))) {
+            (dateTime.isAfter(
+                    _selectedDateRange!.start.subtract(Duration(days: 1))) &&
+                dateTime.isBefore(
+                    _selectedDateRange!.end.add(Duration(days: 1))))) {
           if (groupedByDate.containsKey(dateTime)) {
             groupedByDate[dateTime]!.add(record);
           } else {
@@ -129,7 +134,8 @@ class _VisualizationTabState extends State<VisualizationTab> {
       }
 
       final aggregatedDataPoints = <ScatterSpot>[];
-      final earliestDate = DateUtils.dateOnly(DateTime.parse(filteredRecords.last['timestamp']));
+      final earliestDate =
+          DateUtils.dateOnly(DateTime.parse(filteredRecords.last['timestamp']));
 
       double? minValue;
       double? maxValue;
@@ -139,7 +145,8 @@ class _VisualizationTabState extends State<VisualizationTab> {
         switch (_aggregationMethod) {
           case 'Max':
             value = recordsForDay
-                .map((record) => double.tryParse(record[_dataType.toLowerCase()]) ?? 0.0)
+                .map((record) =>
+                    double.tryParse(record[_dataType.toLowerCase()]) ?? 0.0)
                 .reduce((a, b) => a > b ? a : b);
             break;
 
@@ -149,7 +156,8 @@ class _VisualizationTabState extends State<VisualizationTab> {
             double totalRepsSets = 0.0;
 
             for (var record in recordsForDay) {
-              final weight = double.tryParse(record['weight'].toString()) ?? 0.0;
+              final weight =
+                  double.tryParse(record['weight'].toString()) ?? 0.0;
               final reps = double.tryParse(record['reps'].toString()) ?? 1.0;
               final sets = double.tryParse(record['sets'].toString()) ?? 1.0;
 
@@ -164,13 +172,16 @@ class _VisualizationTabState extends State<VisualizationTab> {
             value = recordsForDay.fold(0.0, (sum, record) {
               final sets = double.tryParse(record['sets'].toString()) ?? 1.0;
               final reps = double.tryParse(record['reps'].toString()) ?? 1.0;
-              final weight = double.tryParse(record['weight'].toString()) ?? 0.0;
+              final weight =
+                  double.tryParse(record['weight'].toString()) ?? 0.0;
               return sum + (sets * reps * weight);
             });
             break;
 
           default:
-            value = double.tryParse(recordsForDay.last[_dataType.toLowerCase()]) ?? 0.0;
+            value =
+                double.tryParse(recordsForDay.last[_dataType.toLowerCase()]) ??
+                    0.0;
             break;
         }
 
@@ -188,14 +199,18 @@ class _VisualizationTabState extends State<VisualizationTab> {
         ));
 
         // Update min and max values
-        if (minValue == null || convertedValue < (minValue as double)) minValue = convertedValue;
-        if (maxValue == null || convertedValue > (maxValue as double)) maxValue = convertedValue;
+        if (minValue == null || convertedValue < (minValue as double))
+          minValue = convertedValue;
+        if (maxValue == null || convertedValue > (maxValue as double))
+          maxValue = convertedValue;
       });
 
       setState(() {
         _dataPoints = aggregatedDataPoints;
-        _minX = _dataPoints.map((point) => point.x).reduce((a, b) => a < b ? a : b);
-        _maxX = _dataPoints.map((point) => point.x).reduce((a, b) => a > b ? a : b);
+        _minX =
+            _dataPoints.map((point) => point.x).reduce((a, b) => a < b ? a : b);
+        _maxX =
+            _dataPoints.map((point) => point.x).reduce((a, b) => a > b ? a : b);
         _minY = minValue ?? 0.0;
         _maxY = maxValue ?? 100.0; // Set default if no data
 
@@ -228,10 +243,8 @@ class _VisualizationTabState extends State<VisualizationTab> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final scatterColor =
-        theme.primaryChartColor;
-    final lineColor =
-        theme.primaryChartColor;
+    final scatterColor = theme.primaryChartColor;
+    final lineColor = theme.primaryChartColor;
     final axisTextColor = theme.textTheme.bodyMedium?.color ?? Colors.black;
 
     // Get the height of the screen
@@ -247,8 +260,8 @@ class _VisualizationTabState extends State<VisualizationTab> {
     }
 
     final dateRangeText = _selectedDateRange == null
-      ? 'Select Date Range'
-      : '${DateFormat('MM/dd/yyyy').format(_selectedDateRange!.start)} - ${DateFormat('MM/dd/yyyy').format(_selectedDateRange!.end)}';
+        ? 'Select Date Range'
+        : '${DateFormat('MM/dd/yyyy').format(_selectedDateRange!.start)} - ${DateFormat('MM/dd/yyyy').format(_selectedDateRange!.end)}';
 
     return Scaffold(
       body: Padding(
@@ -285,7 +298,8 @@ class _VisualizationTabState extends State<VisualizationTab> {
                   onPressed: () => _selectDateRange(context),
                   child: Text(
                     'Date Range',
-                    style: theme.textTheme.bodyMedium?.copyWith(color: Colors.white),
+                    style: theme.textTheme.bodyMedium
+                        ?.copyWith(color: Colors.white),
                   ),
                 ),
                 const SizedBox(width: 16.0),
@@ -423,7 +437,8 @@ class _VisualizationTabState extends State<VisualizationTab> {
     );
   }
 
-  Widget _buildChart(ThemeData theme, Color scatterColor, Color lineColor, Color axisTextColor) {
+  Widget _buildChart(ThemeData theme, Color scatterColor, Color lineColor,
+      Color axisTextColor) {
     // Calculate the min and max values dynamically
     double _minX = _dataPoints.map((e) => e.x).reduce((a, b) => a < b ? a : b);
     double _maxX = _dataPoints.map((e) => e.x).reduce((a, b) => a > b ? a : b);
@@ -446,209 +461,213 @@ class _VisualizationTabState extends State<VisualizationTab> {
     }
 
     return _chartType == 'Line'
-      ? LineChart(
-          LineChartData(
-            lineBarsData: [
-              LineChartBarData(
-                spots: _dataPoints,
-                isCurved: false,
-                color: lineColor,
-                belowBarData: BarAreaData(show: false),
-              ),
-            ],
-            minX: _minX,
-            maxX: _maxX,
-            minY: _minY,
-            maxY: _maxY,
-            titlesData: FlTitlesData(
-              show: true,
-              bottomTitles: AxisTitles(
-                sideTitles: SideTitles(
-                  showTitles: true,
-                  getTitlesWidget: (value, meta) =>
-                      _bottomTitleWidgets(value, meta, axisTextColor),
+        ? LineChart(
+            LineChartData(
+              lineBarsData: [
+                LineChartBarData(
+                  spots: _dataPoints,
+                  isCurved: false,
+                  color: lineColor,
+                  belowBarData: BarAreaData(show: false),
                 ),
-                axisNameWidget: Padding(
-                  padding: const EdgeInsets.only(top: 8.0),
-                  child: Text(
-                    'Days',
-                    style: TextStyle(
-                      color: axisTextColor,
-                      fontSize: 12,
-                    ),
+              ],
+              minX: _minX,
+              maxX: _maxX,
+              minY: _minY,
+              maxY: _maxY,
+              titlesData: FlTitlesData(
+                show: true,
+                bottomTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: true,
+                    getTitlesWidget: (value, meta) =>
+                        _bottomTitleWidgets(value, meta, axisTextColor),
                   ),
-                ),
-                axisNameSize: 30,
-              ),
-              leftTitles: AxisTitles(
-                sideTitles: SideTitles(
-                  showTitles: true,
-                  getTitlesWidget: (value, meta) {
-                    final convertedValue = widget.isKg ? value : value * 2.20462;
-                    return Text(
-                      convertedValue.toStringAsFixed(1),
+                  axisNameWidget: Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: Text(
+                      'Days',
                       style: TextStyle(
                         color: axisTextColor,
                         fontSize: 12,
                       ),
-                    );
-                  },
-                  reservedSize: 50, // Ensure enough space for the Y-axis labels
-                  interval: horizontalInterval,
-                ),
-                axisNameWidget: Padding(
-                  padding: const EdgeInsets.only(right: 8.0),
-                  child: Text(
-                    widget.isKg ? 'Weight [kg]' : 'Weight [lbs]',
-                    style: TextStyle(
-                      color: axisTextColor,
-                      fontSize: 12,
                     ),
                   ),
+                  axisNameSize: 30,
                 ),
-                axisNameSize: 30,
-              ),
-              topTitles: AxisTitles(
-                sideTitles: SideTitles(
-                  showTitles: false, // Hide top axis titles
-                ),
-              ),
-              rightTitles: AxisTitles(
-                sideTitles: SideTitles(
-                  showTitles: false, // Hide right axis titles
-                ),
-              ),
-            ),
-            borderData: FlBorderData(
-              show: true,
-              border: Border.all(
-                color: axisTextColor, // Set the color for the border
-                width: 0.75, // Set the width for the border
-              ),
-            ),
-            gridData: FlGridData(
-              show: true,
-              drawHorizontalLine: true,
-              drawVerticalLine: true,
-              horizontalInterval: horizontalInterval,
-              verticalInterval: verticalInterval,
-              getDrawingHorizontalLine: (value) {
-                return FlLine(
-                  color: Colors.grey,
-                  strokeWidth: 0.5,
-                );
-              },
-              getDrawingVerticalLine: (value) {
-                return FlLine(
-                  color: Colors.grey,
-                  strokeWidth: 0.5,
-                );
-              },
-            ),
-            lineTouchData: LineTouchData(
-              enabled: true,
-              handleBuiltInTouches: true,
-            ),
-          ),
-        )
-      : ScatterChart(
-          ScatterChartData(
-            scatterSpots: _dataPoints,
-            minX: _minX,
-            maxX: _maxX,
-            minY: _minY,
-            maxY: _maxY,
-            titlesData: FlTitlesData(
-              show: true,
-              bottomTitles: AxisTitles(
-                sideTitles: SideTitles(
-                  showTitles: true,
-                  getTitlesWidget: (value, meta) =>
-                      _bottomTitleWidgets(value, meta, axisTextColor),
-                ),
-                axisNameWidget: Padding(
-                  padding: const EdgeInsets.only(top: 8.0),
-                  child: Text(
-                    'Days',
-                    style: TextStyle(
-                      color: axisTextColor,
-                      fontSize: 12,
-                    ),
+                leftTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: true,
+                    getTitlesWidget: (value, meta) {
+                      final convertedValue =
+                          widget.isKg ? value : value * 2.20462;
+                      return Text(
+                        convertedValue.toStringAsFixed(1),
+                        style: TextStyle(
+                          color: axisTextColor,
+                          fontSize: 12,
+                        ),
+                      );
+                    },
+                    reservedSize:
+                        50, // Ensure enough space for the Y-axis labels
+                    interval: horizontalInterval,
                   ),
-                ),
-                axisNameSize: 30,
-              ),
-              leftTitles: AxisTitles(
-                sideTitles: SideTitles(
-                  showTitles: true,
-                  getTitlesWidget: (value, meta) {
-                    final convertedValue = widget.isKg ? value : value * 2.20462;
-                    return Text(
-                      convertedValue.toStringAsFixed(1),
+                  axisNameWidget: Padding(
+                    padding: const EdgeInsets.only(right: 8.0),
+                    child: Text(
+                      widget.isKg ? 'Weight [kg]' : 'Weight [lbs]',
                       style: TextStyle(
                         color: axisTextColor,
                         fontSize: 12,
                       ),
-                    );
-                  },
-                  reservedSize: 50, // Ensure enough space for the Y-axis labels
-                  interval: horizontalInterval,
-                ),
-                axisNameWidget: Padding(
-                  padding: const EdgeInsets.only(right: 8.0),
-                  child: Text(
-                    widget.isKg ? 'Weight [kg]' : 'Weight [lbs]',
-                    style: TextStyle(
-                      color: axisTextColor,
-                      fontSize: 12,
                     ),
                   ),
+                  axisNameSize: 30,
                 ),
-                axisNameSize: 30,
-              ),
-              topTitles: AxisTitles(
-                sideTitles: SideTitles(
-                  showTitles: false, // Hide top axis titles
+                topTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: false, // Hide top axis titles
+                  ),
+                ),
+                rightTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: false, // Hide right axis titles
+                  ),
                 ),
               ),
-              rightTitles: AxisTitles(
-                sideTitles: SideTitles(
-                  showTitles: false, // Hide right axis titles
+              borderData: FlBorderData(
+                show: true,
+                border: Border.all(
+                  color: axisTextColor, // Set the color for the border
+                  width: 0.75, // Set the width for the border
                 ),
               ),
-            ),
-            borderData: FlBorderData(
-              show: true,
-              border: Border.all(
-                color: axisTextColor, // Set the color for the border
-                width: 0.75, // Set the width for the border
+              gridData: FlGridData(
+                show: true,
+                drawHorizontalLine: true,
+                drawVerticalLine: true,
+                horizontalInterval: horizontalInterval,
+                verticalInterval: verticalInterval,
+                getDrawingHorizontalLine: (value) {
+                  return FlLine(
+                    color: Colors.grey,
+                    strokeWidth: 0.5,
+                  );
+                },
+                getDrawingVerticalLine: (value) {
+                  return FlLine(
+                    color: Colors.grey,
+                    strokeWidth: 0.5,
+                  );
+                },
+              ),
+              lineTouchData: LineTouchData(
+                enabled: true,
+                handleBuiltInTouches: true,
               ),
             ),
-            gridData: FlGridData(
-              show: true,
-              drawHorizontalLine: true,
-              drawVerticalLine: true,
-              horizontalInterval: horizontalInterval,
-              verticalInterval: verticalInterval,
-              getDrawingHorizontalLine: (value) {
-                return FlLine(
-                  color: Colors.grey,
-                  strokeWidth: 0.5,
-                );
-              },
-              getDrawingVerticalLine: (value) {
-                return FlLine(
-                  color: Colors.grey,
-                  strokeWidth: 0.5,
-                );
-              },
+          )
+        : ScatterChart(
+            ScatterChartData(
+              scatterSpots: _dataPoints,
+              minX: _minX,
+              maxX: _maxX,
+              minY: _minY,
+              maxY: _maxY,
+              titlesData: FlTitlesData(
+                show: true,
+                bottomTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: true,
+                    getTitlesWidget: (value, meta) =>
+                        _bottomTitleWidgets(value, meta, axisTextColor),
+                  ),
+                  axisNameWidget: Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: Text(
+                      'Days',
+                      style: TextStyle(
+                        color: axisTextColor,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
+                  axisNameSize: 30,
+                ),
+                leftTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: true,
+                    getTitlesWidget: (value, meta) {
+                      final convertedValue =
+                          widget.isKg ? value : value * 2.20462;
+                      return Text(
+                        convertedValue.toStringAsFixed(1),
+                        style: TextStyle(
+                          color: axisTextColor,
+                          fontSize: 12,
+                        ),
+                      );
+                    },
+                    reservedSize:
+                        50, // Ensure enough space for the Y-axis labels
+                    interval: horizontalInterval,
+                  ),
+                  axisNameWidget: Padding(
+                    padding: const EdgeInsets.only(right: 8.0),
+                    child: Text(
+                      widget.isKg ? 'Weight [kg]' : 'Weight [lbs]',
+                      style: TextStyle(
+                        color: axisTextColor,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
+                  axisNameSize: 30,
+                ),
+                topTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: false, // Hide top axis titles
+                  ),
+                ),
+                rightTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: false, // Hide right axis titles
+                  ),
+                ),
+              ),
+              borderData: FlBorderData(
+                show: true,
+                border: Border.all(
+                  color: axisTextColor, // Set the color for the border
+                  width: 0.75, // Set the width for the border
+                ),
+              ),
+              gridData: FlGridData(
+                show: true,
+                drawHorizontalLine: true,
+                drawVerticalLine: true,
+                horizontalInterval: horizontalInterval,
+                verticalInterval: verticalInterval,
+                getDrawingHorizontalLine: (value) {
+                  return FlLine(
+                    color: Colors.grey,
+                    strokeWidth: 0.5,
+                  );
+                },
+                getDrawingVerticalLine: (value) {
+                  return FlLine(
+                    color: Colors.grey,
+                    strokeWidth: 0.5,
+                  );
+                },
+              ),
+              scatterTouchData: ScatterTouchData(
+                enabled: true,
+                handleBuiltInTouches: true,
+              ),
             ),
-            scatterTouchData: ScatterTouchData(
-              enabled: true,
-              handleBuiltInTouches: true,
-            ),
-          ),
-        );
+          );
   }
 
   Widget _bottomTitleWidgets(double value, TitleMeta meta, Color textColor) {
