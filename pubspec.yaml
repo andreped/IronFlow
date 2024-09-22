@@ -43,6 +43,9 @@ dependencies:
   path_provider: ^2.0.11
   file_picker: ^5.3.1
 
+  # high score stuff
+  confetti: ^0.6.0
+
   # permissions android
   permission_handler: ^10.2.0
 
@@ -93,6 +96,7 @@ flutter:
   #   - images/a_dot_ham.jpeg
   assets:
     - assets/icon/app_icon_transparent.png
+    - assets/sounds/confetti.mp3
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
