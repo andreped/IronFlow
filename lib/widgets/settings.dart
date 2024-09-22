@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../core/database.dart';
 import '../core/theme.dart';
 
@@ -33,6 +34,21 @@ class _SettingsModalState extends State<SettingsModal> {
     _appTheme = widget.appTheme;
     _isKg = widget.isKg;
     _appVersion = _getAppVersion();
+    _loadSettings();
+  }
+
+  Future<void> _loadSettings() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _appTheme = AppTheme.values[prefs.getInt('appTheme') ?? _appTheme.index];
+      _isKg = prefs.getBool('isKg') ?? _isKg;
+    });
+  }
+
+  Future<void> _saveSettings() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('appTheme', _appTheme.index);
+    await prefs.setBool('isKg', _isKg);
   }
 
   Future<String> _getAppVersion() async {
@@ -46,6 +62,7 @@ class _SettingsModalState extends State<SettingsModal> {
         _appTheme = newTheme;
       });
       widget.onThemeChanged(newTheme);
+      _saveSettings();
     }
   }
 
@@ -54,6 +71,7 @@ class _SettingsModalState extends State<SettingsModal> {
       _isKg = newValue;
     });
     widget.onUnitChanged(newValue);
+    _saveSettings();
   }
 
   Future<void> _showConfirmationDialogs(String tableName) async {
