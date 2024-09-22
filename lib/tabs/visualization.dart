@@ -128,167 +128,160 @@ class _VisualizationTabState extends State<VisualizationTab> {
 
   Future<void> _fetchDataPoints(String? exerciseName) async {
     print('Fetching data points for: $exerciseName');
-    try {
-      List<Map<String, dynamic>> records;
-      if (_selectedTable == 'Exercise') {
-        records = await _dbHelper.getExercises();
-      } else {
-        records = await _dbHelper.getFitnessData();
-      }
-
-      final filteredRecords = exerciseName == null
-          ? records
-          : records
-              .where((record) => record['exercise'] == exerciseName)
-              .toList();
-
-      final groupedByDate = <DateTime, List<Map<String, dynamic>>>{};
-
-      // Group records by date
-      for (var record in filteredRecords) {
-        final dateTime =
-            DateUtils.dateOnly(DateTime.parse(record['timestamp']));
-
-        if (_selectedDateRange == null ||
-            (dateTime.isAfter(
-                    _selectedDateRange!.start.subtract(Duration(days: 1))) &&
-                dateTime.isBefore(
-                    _selectedDateRange!.end.add(Duration(days: 1))))) {
-          if (groupedByDate.containsKey(dateTime)) {
-            groupedByDate[dateTime]!.add(record);
-          } else {
-            groupedByDate[dateTime] = [record];
-          }
-        }
-      }
-
-      final aggregatedDataPoints = <ScatterSpot>[];
-      final earliestDate =
-          DateUtils.dateOnly(DateTime.parse(filteredRecords.last['timestamp']));
-
-      double? minValue;
-      double? maxValue;
-
-      groupedByDate.forEach((date, recordsForDay) {
-        double value;
-        switch (_aggregationMethod) {
-          case 'Max':
-            value = recordsForDay
-                .map((record) =>
-                    double.tryParse(record[_dataType.toLowerCase()]) ?? 0.0)
-                .reduce((a, b) => a > b ? a : b);
-            break;
-
-          case 'Average':
-            // Weighted Average for this day
-            double totalWeight = 0.0;
-            double totalRepsSets = 0.0;
-
-            for (var record in recordsForDay) {
-              final weight =
-                  double.tryParse(record['weight'].toString()) ?? 0.0;
-              final reps = double.tryParse(record['reps'].toString()) ?? 1.0;
-              final sets = double.tryParse(record['sets'].toString()) ?? 1.0;
-
-              totalWeight += sets * reps * weight;
-              totalRepsSets += sets * reps;
-            }
-
-            value = totalRepsSets > 0 ? totalWeight / totalRepsSets : 0.0;
-            break;
-
-          case 'Top3Avg':
-            // Sort records by the value of interest in descending order
-            final sortedRecords = recordsForDay
-                .map((record) => {
-                      'weight':
-                          double.tryParse(record['weight'].toString()) ?? 0.0,
-                      'reps': double.tryParse(record['reps'].toString()) ?? 1.0,
-                      'sets': double.tryParse(record['sets'].toString()) ?? 1.0,
-                    })
-                .toList()
-              ..sort((a, b) => ((b['weight'] ?? 0.0) *
-                      (b['reps'] ?? 1.0) *
-                      (b['sets'] ?? 1.0))
-                  .compareTo((a['weight'] ?? 0.0) *
-                      (a['reps'] ?? 1.0) *
-                      (a['sets'] ?? 1.0)));
-
-            // Take the top 3 records
-            final top3Records = sortedRecords.take(3).toList();
-
-            // Calculate the weighted average for the top 3 records
-            double top3TotalWeight = 0.0;
-            double top3TotalRepsSets = 0.0;
-
-            for (var record in top3Records) {
-              final weight = record['weight'];
-              final reps = record['reps'];
-              final sets = record['sets'];
-
-              top3TotalWeight +=
-                  (sets ?? 1.0) * (reps ?? 1.0) * (weight ?? 0.0);
-              top3TotalRepsSets += (sets ?? 1.0) * (reps ?? 1.0);
-            }
-
-            value = top3TotalRepsSets > 0
-                ? top3TotalWeight / top3TotalRepsSets
-                : 0.0;
-            break;
-
-          case 'Total':
-            value = recordsForDay.fold(0.0, (sum, record) {
-              final sets = double.tryParse(record['sets'].toString()) ?? 1.0;
-              final reps = double.tryParse(record['reps'].toString()) ?? 1.0;
-              final weight =
-                  double.tryParse(record['weight'].toString()) ?? 0.0;
-              return sum + (sets * reps * weight);
-            });
-            break;
-
-          default:
-            value =
-                double.tryParse(recordsForDay.last[_dataType.toLowerCase()]) ??
-                    0.0;
-            break;
-        }
-
-        value = double.parse(value.toStringAsFixed(2));
-        final dayDifference = date.difference(earliestDate).inDays.toDouble();
-        final convertedValue = _convertWeight(value);
-
-        aggregatedDataPoints.add(ScatterSpot(
-          dayDifference,
-          convertedValue,
-          dotPainter: FlDotCirclePainter(
-            color: Theme.of(context).colorScheme.secondary, // Use theme color
-            radius: 6,
-          ),
-        ));
-
-        // Update min and max values
-        if (minValue == null || convertedValue < (minValue as double))
-          minValue = convertedValue;
-        if (maxValue == null || convertedValue > (maxValue as double))
-          maxValue = convertedValue;
-      });
-
-      setState(() {
-        _dataPoints = aggregatedDataPoints;
-        _minX =
-            _dataPoints.map((point) => point.x).reduce((a, b) => a < b ? a : b);
-        _maxX =
-            _dataPoints.map((point) => point.x).reduce((a, b) => a > b ? a : b);
-        _minY = minValue ?? 0.0;
-        _maxY = maxValue ?? 100.0; // Set default if no data
-
-        // Convert minY and maxY to the appropriate unit
-        _minY = _convertWeight(_minY);
-        _maxY = _convertWeight(_maxY);
-      });
-    } catch (e) {
-      print('Error fetching data points: $e');
+    String currAggregationMethod = _aggregationMethod;
+    List<Map<String, dynamic>> records;
+    if (_selectedTable == 'Exercise') {
+      records = await _dbHelper.getExercises();
+    } else {
+      records = await _dbHelper.getFitnessData();
+      currAggregationMethod = 'Max';
     }
+
+    final filteredRecords = exerciseName == null
+        ? records
+        : records
+            .where((record) => record['exercise'] == exerciseName)
+            .toList();
+
+    final groupedByDate = <DateTime, List<Map<String, dynamic>>>{};
+
+    // Group records by date
+    for (var record in filteredRecords) {
+      final dateTime = DateUtils.dateOnly(DateTime.parse(record['timestamp']));
+
+      if (_selectedDateRange == null ||
+          (dateTime.isAfter(
+                  _selectedDateRange!.start.subtract(Duration(days: 1))) &&
+              dateTime
+                  .isBefore(_selectedDateRange!.end.add(Duration(days: 1))))) {
+        if (groupedByDate.containsKey(dateTime)) {
+          groupedByDate[dateTime]!.add(record);
+        } else {
+          groupedByDate[dateTime] = [record];
+        }
+      }
+    }
+
+    final aggregatedDataPoints = <ScatterSpot>[];
+    final earliestDate =
+        DateUtils.dateOnly(DateTime.parse(filteredRecords.last['timestamp']));
+
+    double? minValue;
+    double? maxValue;
+
+    groupedByDate.forEach((date, recordsForDay) {
+      double value;
+      switch (currAggregationMethod) {
+        case 'Max':
+          value = recordsForDay
+              .map((record) =>
+                  double.tryParse(record[_dataType.toLowerCase()].toString()) ??
+                  0.0)
+              .reduce((a, b) => a > b ? a : b);
+          break;
+
+        case 'Average':
+          // Weighted Average for this day
+          double totalWeight = 0.0;
+          double totalRepsSets = 0.0;
+
+          for (var record in recordsForDay) {
+            final weight = double.tryParse(record['weight'].toString()) ?? 0.0;
+            final reps = double.tryParse(record['reps'].toString()) ?? 1.0;
+            final sets = double.tryParse(record['sets'].toString()) ?? 1.0;
+
+            totalWeight += sets * reps * weight;
+            totalRepsSets += sets * reps;
+          }
+
+          value = totalRepsSets > 0 ? totalWeight / totalRepsSets : 0.0;
+          break;
+
+        case 'Top3Avg':
+          // Sort records by the value of interest in descending order
+          final sortedRecords = recordsForDay
+              .map((record) => {
+                    'weight':
+                        double.tryParse(record['weight'].toString()) ?? 0.0,
+                    'reps': double.tryParse(record['reps'].toString()) ?? 1.0,
+                    'sets': double.tryParse(record['sets'].toString()) ?? 1.0,
+                  })
+              .toList()
+            ..sort((a, b) =>
+                ((b['weight'] ?? 0.0) * (b['reps'] ?? 1.0) * (b['sets'] ?? 1.0))
+                    .compareTo((a['weight'] ?? 0.0) *
+                        (a['reps'] ?? 1.0) *
+                        (a['sets'] ?? 1.0)));
+
+          // Take the top 3 records
+          final top3Records = sortedRecords.take(3).toList();
+
+          // Calculate the weighted average for the top 3 records
+          double top3TotalWeight = 0.0;
+          double top3TotalRepsSets = 0.0;
+
+          for (var record in top3Records) {
+            final weight = record['weight'];
+            final reps = record['reps'];
+            final sets = record['sets'];
+
+            top3TotalWeight += (sets ?? 1.0) * (reps ?? 1.0) * (weight ?? 0.0);
+            top3TotalRepsSets += (sets ?? 1.0) * (reps ?? 1.0);
+          }
+
+          value =
+              top3TotalRepsSets > 0 ? top3TotalWeight / top3TotalRepsSets : 0.0;
+          break;
+
+        case 'Total':
+          value = recordsForDay.fold(0.0, (sum, record) {
+            final sets = double.tryParse(record['sets'].toString()) ?? 1.0;
+            final reps = double.tryParse(record['reps'].toString()) ?? 1.0;
+            final weight = double.tryParse(record['weight'].toString()) ?? 0.0;
+            return sum + (sets * reps * weight);
+          });
+          break;
+
+        default:
+          value =
+              double.tryParse(recordsForDay.last[_dataType.toLowerCase()]) ??
+                  0.0;
+          break;
+      }
+
+      value = double.parse(value.toStringAsFixed(2));
+      final dayDifference = date.difference(earliestDate).inDays.toDouble();
+      final convertedValue = _convertWeight(value);
+
+      aggregatedDataPoints.add(ScatterSpot(
+        dayDifference,
+        convertedValue,
+        dotPainter: FlDotCirclePainter(
+          color: Theme.of(context).colorScheme.secondary, // Use theme color
+          radius: 6,
+        ),
+      ));
+
+      // Update min and max values
+      if (minValue == null || convertedValue < (minValue as double))
+        minValue = convertedValue;
+      if (maxValue == null || convertedValue > (maxValue as double))
+        maxValue = convertedValue;
+    });
+
+    setState(() {
+      _dataPoints = aggregatedDataPoints;
+      _minX =
+          _dataPoints.map((point) => point.x).reduce((a, b) => a < b ? a : b);
+      _maxX =
+          _dataPoints.map((point) => point.x).reduce((a, b) => a > b ? a : b);
+      _minY = minValue ?? 0.0;
+      _maxY = maxValue ?? 100.0; // Set default if no data
+
+      // Convert minY and maxY to the appropriate unit
+      _minY = _convertWeight(_minY);
+      _maxY = _convertWeight(_maxY);
+    });
   }
 
   Future<void> _selectDateRange(BuildContext context) async {

@@ -17,7 +17,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   AppTheme _appTheme = AppTheme.system; // Default to system theme
   bool _isKg = true; // Default unit system
-  String _aggregationMethod = 'Max'; // Default aggregation method
+  String _aggregationMethod = 'Top3Avg'; // Default aggregation method
   String _plotType = 'Line'; // Default plot type
 
   @override
