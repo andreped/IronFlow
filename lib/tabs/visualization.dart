@@ -109,20 +109,17 @@ class _VisualizationTabState extends State<VisualizationTab> {
 
       final filteredRecords = exerciseName == null
           ? records
-          : records
-              .where((record) => record['exercise'] == exerciseName)
-              .toList();
+          : records.where((record) => record['exercise'] == exerciseName).toList();
 
       final groupedByDate = <DateTime, List<Map<String, dynamic>>>{};
 
       // Group records by date
       for (var record in filteredRecords) {
-        final dateTime =
-            DateUtils.dateOnly(DateTime.parse(record['timestamp']));
+        final dateTime = DateUtils.dateOnly(DateTime.parse(record['timestamp']));
 
         if (_selectedDateRange == null ||
-            (dateTime.isAfter(_selectedDateRange!.start) &&
-                dateTime.isBefore(_selectedDateRange!.end))) {
+            (dateTime.isAfter(_selectedDateRange!.start.subtract(Duration(days: 1))) &&
+                dateTime.isBefore(_selectedDateRange!.end.add(Duration(days: 1))))) {
           if (groupedByDate.containsKey(dateTime)) {
             groupedByDate[dateTime]!.add(record);
           } else {
@@ -132,8 +129,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
       }
 
       final aggregatedDataPoints = <ScatterSpot>[];
-      final earliestDate =
-          DateUtils.dateOnly(DateTime.parse(filteredRecords.last['timestamp']));
+      final earliestDate = DateUtils.dateOnly(DateTime.parse(filteredRecords.last['timestamp']));
 
       double? minValue;
       double? maxValue;
@@ -143,8 +139,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
         switch (_aggregationMethod) {
           case 'Max':
             value = recordsForDay
-                .map((record) =>
-                    double.tryParse(record[_dataType.toLowerCase()]) ?? 0.0)
+                .map((record) => double.tryParse(record[_dataType.toLowerCase()]) ?? 0.0)
                 .reduce((a, b) => a > b ? a : b);
             break;
 
@@ -154,8 +149,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
             double totalRepsSets = 0.0;
 
             for (var record in recordsForDay) {
-              final weight =
-                  double.tryParse(record['weight'].toString()) ?? 0.0;
+              final weight = double.tryParse(record['weight'].toString()) ?? 0.0;
               final reps = double.tryParse(record['reps'].toString()) ?? 1.0;
               final sets = double.tryParse(record['sets'].toString()) ?? 1.0;
 
@@ -170,16 +164,13 @@ class _VisualizationTabState extends State<VisualizationTab> {
             value = recordsForDay.fold(0.0, (sum, record) {
               final sets = double.tryParse(record['sets'].toString()) ?? 1.0;
               final reps = double.tryParse(record['reps'].toString()) ?? 1.0;
-              final weight =
-                  double.tryParse(record['weight'].toString()) ?? 0.0;
+              final weight = double.tryParse(record['weight'].toString()) ?? 0.0;
               return sum + (sets * reps * weight);
             });
             break;
 
           default:
-            value =
-                double.tryParse(recordsForDay.last[_dataType.toLowerCase()]) ??
-                    0.0;
+            value = double.tryParse(recordsForDay.last[_dataType.toLowerCase()]) ?? 0.0;
             break;
         }
 
@@ -197,18 +188,14 @@ class _VisualizationTabState extends State<VisualizationTab> {
         ));
 
         // Update min and max values
-        if (minValue == null || convertedValue < (minValue as double))
-          minValue = convertedValue;
-        if (maxValue == null || convertedValue > (maxValue as double))
-          maxValue = convertedValue;
+        if (minValue == null || convertedValue < (minValue as double)) minValue = convertedValue;
+        if (maxValue == null || convertedValue > (maxValue as double)) maxValue = convertedValue;
       });
 
       setState(() {
         _dataPoints = aggregatedDataPoints;
-        _minX =
-            _dataPoints.map((point) => point.x).reduce((a, b) => a < b ? a : b);
-        _maxX =
-            _dataPoints.map((point) => point.x).reduce((a, b) => a > b ? a : b);
+        _minX = _dataPoints.map((point) => point.x).reduce((a, b) => a < b ? a : b);
+        _maxX = _dataPoints.map((point) => point.x).reduce((a, b) => a > b ? a : b);
         _minY = minValue ?? 0.0;
         _maxY = maxValue ?? 100.0; // Set default if no data
       });
@@ -238,15 +225,26 @@ class _VisualizationTabState extends State<VisualizationTab> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final scatterColor =
-        theme.primaryChartColor; // Use primaryChartColor for scatter points
+        theme.primaryChartColor;
     final lineColor =
-        theme.primaryChartColor; // Use primaryChartColor for lines
+        theme.primaryChartColor;
     final axisTextColor = theme.textTheme.bodyMedium?.color ?? Colors.black;
 
     // Get the height of the screen
     final screenHeight = MediaQuery.of(context).size.height;
     // Define the maximum height for the chart as 45% of the screen height
     final chartMaxHeight = screenHeight * 0.45;
+
+    // Initialize the date range to the last month if not already set
+    if (_selectedDateRange == null) {
+      final now = DateTime.now();
+      final lastMonth = DateTime(now.year, now.month - 1, now.day);
+      _selectedDateRange = DateTimeRange(start: lastMonth, end: now);
+    }
+
+    final dateRangeText = _selectedDateRange == null
+      ? 'Select Date Range'
+      : '${DateFormat('MM/dd/yyyy').format(_selectedDateRange!.start)} - ${DateFormat('MM/dd/yyyy').format(_selectedDateRange!.end)}';
 
     return Scaffold(
       body: Padding(
@@ -635,14 +633,18 @@ class _VisualizationTabState extends State<VisualizationTab> {
   }
 
   Widget _bottomTitleWidgets(double value, TitleMeta meta, Color textColor) {
-    const double reservedSize = 20.0;
+    const double reservedSize = 50.0;
+
+    // Convert the value back to a date
+    final date = DateTime.now().add(Duration(days: value.toInt()));
+    final formattedDate = DateFormat('MM/dd').format(date);
 
     return SideTitleWidget(
       axisSide: meta.axisSide,
       child: SizedBox(
         width: reservedSize,
         child: Text(
-          value.toStringAsFixed(1),
+          formattedDate,
           style: TextStyle(
             color: textColor,
             fontSize: 12,
