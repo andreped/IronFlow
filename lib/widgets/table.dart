@@ -88,6 +88,11 @@ class _TableWidgetState extends State<TableWidget> {
   }
 
   Future<void> _loadData(String selectedTable) async {
+    // Clear the existing data to avoid any strange "cache" issues
+    setState(() {
+      _data = [];
+    });
+
     List<Map<String, dynamic>> data;
     if (selectedTable == 'exercises') {
       data = await widget.dbHelper.getExercises(
@@ -103,8 +108,9 @@ class _TableWidgetState extends State<TableWidget> {
       data = [];
     }
 
+    // Create a mutable copy to allow manipulation
     setState(() {
-      _data = List<Map<String, dynamic>>.from(data); // Create a mutable copy
+      _data = List<Map<String, dynamic>>.from(data);
     });
   }
 
