@@ -14,10 +14,13 @@ class RecordsTab extends StatefulWidget {
 class _RecordsTabState extends State<RecordsTab> {
   final DatabaseHelper _dbHelper = DatabaseHelper();
   List<Map<String, dynamic>> _maxWeights = [];
+  List<Map<String, dynamic>> _filteredWeights = [];
   bool _isSortedByWeight = true;
   bool _isAscending = false;
   bool _isLoading = true; // Track loading state
   String? _errorMessage; // Track error message
+  bool _isSearching = false;
+  final TextEditingController _searchController = TextEditingController();
 
   Future<void> _fetchAndSortRecords() async {
     setState(() {
@@ -29,6 +32,7 @@ class _RecordsTabState extends State<RecordsTab> {
       final data = await _dbHelper.getMaxWeightsForExercises();
       setState(() {
         _maxWeights = data;
+        _filteredWeights = data;
         _sortRecords();
         _isLoading = false; // Finished loading
       });
@@ -43,11 +47,11 @@ class _RecordsTabState extends State<RecordsTab> {
   }
 
   void _sortRecords() {
-    // Ensure that _maxWeights is a modifiable list
-    _maxWeights = List<Map<String, dynamic>>.from(_maxWeights);
+    // Ensure that _filteredWeights is a modifiable list
+    _filteredWeights = List<Map<String, dynamic>>.from(_filteredWeights);
 
     if (_isSortedByWeight) {
-      _maxWeights.sort((a, b) {
+      _filteredWeights.sort((a, b) {
         final maxWeightA =
             a['weight'] != null ? double.parse(a['weight'].toString()) : 0.0;
         final maxWeightB =
@@ -64,7 +68,7 @@ class _RecordsTabState extends State<RecordsTab> {
             : maxWeightB.compareTo(maxWeightA);
       });
     } else {
-      _maxWeights.sort((a, b) {
+      _filteredWeights.sort((a, b) {
         return _isAscending
             ? (a['exercise'] ?? '').compareTo(b['exercise'] ?? '')
             : (b['exercise'] ?? '').compareTo(a['exercise'] ?? '');
@@ -84,6 +88,36 @@ class _RecordsTabState extends State<RecordsTab> {
     });
   }
 
+  void _startSearch() {
+    setState(() {
+      _isSearching = true;
+    });
+  }
+
+  void _stopSearch() {
+    setState(() {
+      _isSearching = false;
+      _searchController.clear();
+      _filteredWeights = _maxWeights;
+    });
+  }
+
+  void _filterRecords(String query) {
+    setState(() {
+      if (query.isEmpty) {
+        _filteredWeights = _maxWeights;
+      } else {
+        _filteredWeights = _maxWeights
+            .where((record) => record['exercise']
+                .toString()
+                .toLowerCase()
+                .contains(query.toLowerCase()))
+            .toList();
+      }
+      _sortRecords();
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -98,10 +132,45 @@ class _RecordsTabState extends State<RecordsTab> {
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     final arrowColor = isDarkMode ? Colors.purple : null;
+    final textColor = isDarkMode ? Colors.white : Colors.black;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('High Scores'),
+        title: _isSearching
+            ? TextField(
+                controller: _searchController,
+                autofocus: true,
+                decoration: InputDecoration(
+                  hintText: 'Search for exercises...',
+                  hintStyle: TextStyle(color: textColor.withOpacity(0.6)),
+                  border: InputBorder.none,
+                ),
+                style: TextStyle(color: textColor),
+                onChanged: _filterRecords,
+              )
+            : Text('Records'),
+        leading: _isSearching
+            ? IconButton(
+                icon: Icon(Icons.arrow_back),
+                onPressed: _stopSearch,
+              )
+            : null,
+        actions: _isSearching
+            ? [
+                IconButton(
+                  icon: Icon(Icons.clear),
+                  onPressed: () {
+                    _searchController.clear();
+                    _filterRecords('');
+                  },
+                ),
+              ]
+            : [
+                IconButton(
+                  icon: Icon(Icons.search),
+                  onPressed: _startSearch,
+                ),
+              ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -112,7 +181,7 @@ class _RecordsTabState extends State<RecordsTab> {
                     child: Text(_errorMessage!,
                         style: TextStyle(color: Colors.red)),
                   )
-                : _maxWeights.isEmpty
+                : _filteredWeights.isEmpty
                     ? const Center(child: Text('No data available'))
                     : LayoutBuilder(
                         builder: (context, constraints) {
@@ -123,7 +192,7 @@ class _RecordsTabState extends State<RecordsTab> {
                                 minWidth: constraints.maxWidth,
                               ),
                               child: DataTable(
-                                columnSpacing: 32.0,
+                                columnSpacing: 64.0, // Increase column spacing
                                 dataRowHeight:
                                     65.0, // Set the height of each row
                                 columns: [
@@ -162,8 +231,8 @@ class _RecordsTabState extends State<RecordsTab> {
                                       child: GestureDetector(
                                         onTap: () => _toggleSorting(true),
                                         child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
+                                          mainAxisAlignment: MainAxisAlignment
+                                              .end, // Align to the right
                                           children: [
                                             Text(
                                                 'Weight [${widget.isKg ? 'kg' : 'lbs'}]',
@@ -189,7 +258,7 @@ class _RecordsTabState extends State<RecordsTab> {
                                     ),
                                   ),
                                 ],
-                                rows: _maxWeights.map((record) {
+                                rows: _filteredWeights.map((record) {
                                   final exercise = record['exercise'] as String;
                                   final weight = record['weight'];
                                   final reps = record['reps'];
@@ -201,14 +270,15 @@ class _RecordsTabState extends State<RecordsTab> {
                                   return DataRow(cells: [
                                     DataCell(Text(exercise)),
                                     DataCell(
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            '${displayWeight.toStringAsFixed(1)} x $reps reps',
-                                          ),
-                                        ],
+                                      Container(
+                                        alignment: Alignment
+                                            .centerRight, // Align to the right
+                                        padding: EdgeInsets.only(
+                                            right:
+                                                16.0), // Adjust padding as needed
+                                        child: Text(
+                                          '${displayWeight.toStringAsFixed(1)} x $reps reps',
+                                        ),
                                       ),
                                     ),
                                   ]);
