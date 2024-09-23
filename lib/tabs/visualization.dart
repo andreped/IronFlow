@@ -733,35 +733,27 @@ class _VisualizationTabState extends State<VisualizationTab> {
     final date = DateTime.now().add(Duration(days: value.toInt()));
     final formattedDate = DateFormat('MM/dd').format(date);
 
-    // Determine the maximum value for the x-axis
-    final maxValue = meta.max;
-
-    // Only render the tick label if it is not the last one
-    if (value < maxValue) {
-      return SideTitleWidget(
-        axisSide: meta.axisSide,
-        space: 0,
-        child: Padding(
-          padding: const EdgeInsets.only(top: 5.0),
-          child: Transform.translate(
-            offset: Offset(0, 10),
-            child: Transform.rotate(
-              angle: 65 * 3.1415926535897932 / 180,
-              child: Text(
-                formattedDate,
-                style: TextStyle(
-                  color: textColor,
-                  fontSize: 12,
-                ),
-                textAlign: TextAlign.right,
+    return SideTitleWidget(
+      axisSide: meta.axisSide,
+      space: 0,
+      child: Padding(
+        padding: const EdgeInsets.only(top: 5.0),
+        child: Transform.translate(
+          offset: Offset(0, 10),
+          child: Transform.rotate(
+            angle: 65 * 3.1415926535897932 / 180,
+            child: Text(
+              formattedDate,
+              style: TextStyle(
+                color: textColor,
+                fontSize: 12,
               ),
+              textAlign: TextAlign.right,
             ),
           ),
         ),
-      );
-    } else {
-      return Container(); // Return an empty container for the last tick
-    }
+      ),
+    );
   }
 
   Widget _leftTitleWidgets(double value, TitleMeta meta, Color textColor) {
