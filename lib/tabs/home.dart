@@ -133,6 +133,8 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage>
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+
     return Scaffold(
       appBar: AppBar(
         title: Image.asset(
@@ -143,7 +145,7 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage>
         centerTitle: true, // Center the logo in the AppBar
         actions: [
           IconButton(
-            icon: const Icon(Icons.settings),
+            icon: Icon(Icons.settings, color: theme.iconTheme.color),
             onPressed: _openSettings,
           ),
         ],
