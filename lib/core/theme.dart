@@ -40,6 +40,7 @@ class AppThemes {
   );
 
   static ThemeData darkTheme = ThemeData.dark().copyWith(
+    iconTheme: IconThemeData(color: Colors.purple),
     colorScheme: ColorScheme.dark().copyWith(
       primary: Colors.purple,
       secondary: Colors.purpleAccent,
