@@ -319,12 +319,12 @@ class _VisualizationTabState extends State<VisualizationTab> {
 
     return Scaffold(
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(0.0),
         child: SingleChildScrollView(
           child: Column(
             children: [
               _buildTableDropdown(theme),
-              const SizedBox(height: 16.0),
+              const SizedBox(height: 8.0),
               if (_selectedTable == 'Exercise') _buildExerciseDropdown(theme),
               if (_selectedTable == 'Fitness') _buildDataTypeDropdown(theme),
               const SizedBox(height: 16.0),
@@ -749,7 +749,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
   }
 
   Widget _leftTitleWidgets(double value, TitleMeta meta, Color textColor) {
-    const double reservedSize = 50.0;
+    const double reservedSize = 30.0;
 
     return SideTitleWidget(
       axisSide: meta.axisSide,
