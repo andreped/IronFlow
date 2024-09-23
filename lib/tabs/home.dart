@@ -166,6 +166,7 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage>
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: ExerciseSetter(
+                isKg: widget.isKg,
                 onExerciseAdded: () {
                   setState(() {});
                 },
