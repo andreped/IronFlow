@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import '../core/database.dart';
 import '../core/convert.dart';
 import 'package:confetti/confetti.dart';
+import '../core/theme.dart';
 
 class ExerciseSetter extends StatefulWidget {
   final Function() onExerciseAdded;
@@ -426,9 +427,9 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   if (_selectedLoggingType == 'Exercise') ...[
-                    _buildExerciseForm(),
+                    _buildExerciseForm(context),
                   ] else if (_selectedLoggingType == 'Fitness') ...[
-                    _buildFitnessForm(),
+                    _buildFitnessForm(context),
                   ],
                   SizedBox(height: 20),
                   if (!_isAddingNewExercise)
@@ -459,7 +460,9 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
     );
   }
 
-  Widget _buildExerciseForm() {
+  Widget _buildExerciseForm(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -492,7 +495,7 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
               ),
             if (!_isAddingNewExercise) ...[
               IconButton(
-                icon: Icon(Icons.add),
+                icon: Icon(Icons.add, color: theme.iconTheme.color),
                 onPressed: () {
                   setState(() {
                     _isAddingNewExercise = true;
@@ -500,7 +503,7 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
                 },
               ),
               IconButton(
-                icon: Icon(Icons.delete),
+                icon: Icon(Icons.delete, color: theme.iconTheme.color),
                 onPressed: () async {
                   if (_selectedExercise != null) {
                     bool confirmDelete = await showDialog(
@@ -577,7 +580,7 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
                 ),
               ),
               IconButton(
-                icon: Icon(Icons.cancel),
+                icon: Icon(Icons.cancel, color: theme.iconTheme.color),
                 onPressed: () {
                   setState(() {
                     _isAddingNewExercise = false;
@@ -675,7 +678,9 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
     );
   }
 
-  Widget _buildFitnessForm() {
+  Widget _buildFitnessForm(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
