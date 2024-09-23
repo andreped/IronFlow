@@ -329,19 +329,22 @@ class _VisualizationTabState extends State<VisualizationTab> {
               if (_selectedTable == 'Fitness') _buildDataTypeDropdown(theme),
               const SizedBox(height: 16.0),
               ConstrainedBox(
-                constraints: BoxConstraints(
-                  maxHeight: chartMaxHeight,
-                ),
-                child: _dataPoints.isEmpty
-                    ? Center(
-                        child: Text(
-                          'No Data Available',
-                          style: theme.textTheme.bodyMedium,
-                        ),
-                      )
-                    : _buildChart(
-                        theme, scatterColor, lineColor, axisTextColor),
-              ),
+                  constraints: BoxConstraints(
+                    maxHeight: chartMaxHeight,
+                  ),
+                  child: _dataPoints.isEmpty
+                      ? Center(
+                          child: Text(
+                            'No Data Available',
+                            style: theme.textTheme.bodyMedium,
+                          ),
+                        )
+                      : Container(
+                          padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
+                          child: _buildChart(
+                              theme, scatterColor, lineColor, axisTextColor),
+                        )),
+              const SizedBox(height: 16.0),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -515,237 +518,250 @@ class _VisualizationTabState extends State<VisualizationTab> {
       verticalInterval = 1;
     }
 
-    return _chartType == 'Line'
-        ? LineChart(
-            LineChartData(
-              lineBarsData: [
-                LineChartBarData(
-                  spots: _dataPoints,
-                  isCurved: false,
-                  color: lineColor,
-                  belowBarData: BarAreaData(show: false),
-                ),
-              ],
-              minX: _minX,
-              maxX: _maxX,
-              minY: _minY,
-              maxY: _maxY,
-              titlesData: FlTitlesData(
-                show: true,
-                bottomTitles: AxisTitles(
-                  sideTitles: SideTitles(
-                    showTitles: true,
-                    getTitlesWidget: (value, meta) =>
-                        _bottomTitleWidgets(value, meta, axisTextColor),
-                  ),
-                  axisNameWidget: Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: Text(
-                      'Days',
-                      style: TextStyle(
-                        color: axisTextColor,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ),
-                  axisNameSize: 30,
-                ),
-                leftTitles: AxisTitles(
-                  sideTitles: SideTitles(
-                    showTitles: true,
-                    getTitlesWidget: (value, meta) {
-                      final convertedValue =
-                          widget.isKg ? value : value * 2.20462;
-                      return Text(
-                        convertedValue.toStringAsFixed(1),
-                        style: TextStyle(
-                          color: axisTextColor,
-                          fontSize: 12,
-                        ),
-                      );
-                    },
-                    reservedSize:
-                        50, // Ensure enough space for the Y-axis labels
-                    interval: horizontalInterval,
-                  ),
-                  axisNameWidget: Padding(
-                    padding: const EdgeInsets.only(right: 8.0),
-                    child: Text(
-                      widget.isKg ? 'Weight [kg]' : 'Weight [lbs]',
-                      style: TextStyle(
-                        color: axisTextColor,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ),
-                  axisNameSize: 30,
-                ),
-                topTitles: AxisTitles(
-                  sideTitles: SideTitles(
-                    showTitles: false, // Hide top axis titles
-                  ),
-                ),
-                rightTitles: AxisTitles(
-                  sideTitles: SideTitles(
-                    showTitles: false, // Hide right axis titles
-                  ),
-                ),
-              ),
-              borderData: FlBorderData(
-                show: true,
-                border: Border.all(
-                  color: axisTextColor, // Set the color for the border
-                  width: 0.75, // Set the width for the border
-                ),
-              ),
-              gridData: FlGridData(
-                show: true,
-                drawHorizontalLine: true,
-                drawVerticalLine: true,
-                horizontalInterval: horizontalInterval,
-                verticalInterval: verticalInterval,
-                getDrawingHorizontalLine: (value) {
-                  return FlLine(
-                    color: Colors.grey,
-                    strokeWidth: 0.5,
-                  );
-                },
-                getDrawingVerticalLine: (value) {
-                  return FlLine(
-                    color: Colors.grey,
-                    strokeWidth: 0.5,
-                  );
-                },
-              ),
-              lineTouchData: LineTouchData(
-                enabled: true,
-                handleBuiltInTouches: true,
+    final chartData = LineChartData(
+      lineBarsData: [
+        LineChartBarData(
+          spots: _dataPoints,
+          isCurved: false,
+          color: lineColor,
+          belowBarData: BarAreaData(show: false),
+        ),
+      ],
+      minX: _minX,
+      maxX: _maxX,
+      minY: _minY,
+      maxY: _maxY,
+      titlesData: FlTitlesData(
+        show: true,
+        bottomTitles: AxisTitles(
+          sideTitles: SideTitles(
+            showTitles: true,
+            reservedSize: 35, // Consistent reserved size
+            getTitlesWidget: (value, meta) =>
+                _bottomTitleWidgets(value, meta, axisTextColor),
+          ),
+          axisNameWidget: Padding(
+            padding: const EdgeInsets.only(
+                top: 12.0), // Consistent padding for xlabel
+            child: Text(
+              'Days',
+              style: TextStyle(
+                color: axisTextColor,
+                fontSize: 14,
               ),
             ),
-          )
-        : ScatterChart(
-            ScatterChartData(
-              scatterSpots: _dataPoints,
-              minX: _minX,
-              maxX: _maxX,
-              minY: _minY,
-              maxY: _maxY,
-              titlesData: FlTitlesData(
-                show: true,
-                bottomTitles: AxisTitles(
-                  sideTitles: SideTitles(
-                    showTitles: true,
-                    getTitlesWidget: (value, meta) =>
-                        _bottomTitleWidgets(value, meta, axisTextColor),
-                  ),
-                  axisNameWidget: Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: Text(
-                      'Days',
-                      style: TextStyle(
-                        color: axisTextColor,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ),
-                  axisNameSize: 30,
+          ),
+          axisNameSize: 30,
+        ),
+        leftTitles: AxisTitles(
+          sideTitles: SideTitles(
+            showTitles: true,
+            getTitlesWidget: (value, meta) {
+              final convertedValue = widget.isKg ? value : value * 2.20462;
+              return Text(
+                convertedValue.toStringAsFixed(1),
+                style: TextStyle(
+                  color: axisTextColor,
+                  fontSize: 14,
                 ),
-                leftTitles: AxisTitles(
-                  sideTitles: SideTitles(
-                    showTitles: true,
-                    getTitlesWidget: (value, meta) {
-                      final convertedValue =
-                          widget.isKg ? value : value * 2.20462;
-                      return Text(
-                        convertedValue.toStringAsFixed(1),
-                        style: TextStyle(
-                          color: axisTextColor,
-                          fontSize: 12,
-                        ),
-                      );
-                    },
-                    reservedSize:
-                        50, // Ensure enough space for the Y-axis labels
-                    interval: horizontalInterval,
-                  ),
-                  axisNameWidget: Padding(
-                    padding: const EdgeInsets.only(right: 8.0),
-                    child: Text(
-                      widget.isKg ? 'Weight [kg]' : 'Weight [lbs]',
-                      style: TextStyle(
-                        color: axisTextColor,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ),
-                  axisNameSize: 30,
-                ),
-                topTitles: AxisTitles(
-                  sideTitles: SideTitles(
-                    showTitles: false, // Hide top axis titles
-                  ),
-                ),
-                rightTitles: AxisTitles(
-                  sideTitles: SideTitles(
-                    showTitles: false, // Hide right axis titles
-                  ),
-                ),
-              ),
-              borderData: FlBorderData(
-                show: true,
-                border: Border.all(
-                  color: axisTextColor, // Set the color for the border
-                  width: 0.75, // Set the width for the border
-                ),
-              ),
-              gridData: FlGridData(
-                show: true,
-                drawHorizontalLine: true,
-                drawVerticalLine: true,
-                horizontalInterval: horizontalInterval,
-                verticalInterval: verticalInterval,
-                getDrawingHorizontalLine: (value) {
-                  return FlLine(
-                    color: Colors.grey,
-                    strokeWidth: 0.5,
-                  );
-                },
-                getDrawingVerticalLine: (value) {
-                  return FlLine(
-                    color: Colors.grey,
-                    strokeWidth: 0.5,
-                  );
-                },
-              ),
-              scatterTouchData: ScatterTouchData(
-                enabled: true,
-                handleBuiltInTouches: true,
+              );
+            },
+            reservedSize: 50,
+            interval: horizontalInterval,
+          ),
+          axisNameWidget: Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: Text(
+              widget.isKg ? 'Weight [kg]' : 'Weight [lbs]',
+              style: TextStyle(
+                color: axisTextColor,
+                fontSize: 14,
               ),
             ),
+          ),
+          axisNameSize: 30,
+        ),
+        topTitles: AxisTitles(
+          sideTitles: SideTitles(
+            showTitles: false, // Hide top axis titles
+          ),
+        ),
+        rightTitles: AxisTitles(
+          sideTitles: SideTitles(
+            showTitles: false, // Hide right axis titles
+          ),
+        ),
+      ),
+      borderData: FlBorderData(
+        show: true,
+        border: Border.all(
+          color: axisTextColor, // Set the color for the border
+          width: 0.75, // Set the width for the border
+        ),
+      ),
+      gridData: FlGridData(
+        show: true,
+        drawHorizontalLine: true,
+        drawVerticalLine: true,
+        horizontalInterval: horizontalInterval,
+        verticalInterval: verticalInterval,
+        getDrawingHorizontalLine: (value) {
+          return FlLine(
+            color: Colors.grey,
+            strokeWidth: 0.5,
           );
+        },
+        getDrawingVerticalLine: (value) {
+          return FlLine(
+            color: Colors.grey,
+            strokeWidth: 0.5,
+          );
+        },
+      ),
+      lineTouchData: LineTouchData(
+        enabled: true,
+        handleBuiltInTouches: true,
+      ),
+    );
+
+    final scatterData = ScatterChartData(
+      scatterSpots: _dataPoints,
+      minX: _minX,
+      maxX: _maxX,
+      minY: _minY,
+      maxY: _maxY,
+      titlesData: FlTitlesData(
+        show: true,
+        bottomTitles: AxisTitles(
+          sideTitles: SideTitles(
+            showTitles: true,
+            reservedSize: 35, // Consistent reserved size
+            getTitlesWidget: (value, meta) =>
+                _bottomTitleWidgets(value, meta, axisTextColor),
+          ),
+          axisNameWidget: Padding(
+            padding: const EdgeInsets.only(
+                top: 12.0), // Consistent padding for xlabel
+            child: Text(
+              'Days',
+              style: TextStyle(
+                color: axisTextColor,
+                fontSize: 14,
+              ),
+            ),
+          ),
+          axisNameSize: 30,
+        ),
+        leftTitles: AxisTitles(
+          sideTitles: SideTitles(
+            showTitles: true,
+            getTitlesWidget: (value, meta) {
+              final convertedValue = widget.isKg ? value : value * 2.20462;
+              return Text(
+                convertedValue.toStringAsFixed(1),
+                style: TextStyle(
+                  color: axisTextColor,
+                  fontSize: 14,
+                ),
+              );
+            },
+            reservedSize: 50,
+            interval: horizontalInterval,
+          ),
+          axisNameWidget: Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: Text(
+              widget.isKg ? 'Weight [kg]' : 'Weight [lbs]',
+              style: TextStyle(
+                color: axisTextColor,
+                fontSize: 14,
+              ),
+            ),
+          ),
+          axisNameSize: 30,
+        ),
+        topTitles: AxisTitles(
+          sideTitles: SideTitles(
+            showTitles: false,
+          ),
+        ),
+        rightTitles: AxisTitles(
+          sideTitles: SideTitles(
+            showTitles: false, // Hide right axis titles
+          ),
+        ),
+      ),
+      borderData: FlBorderData(
+        show: true,
+        border: Border.all(
+          color: axisTextColor,
+          width: 0.75,
+        ),
+      ),
+      gridData: FlGridData(
+        show: true,
+        drawHorizontalLine: true,
+        drawVerticalLine: true,
+        horizontalInterval: horizontalInterval,
+        verticalInterval: verticalInterval,
+        getDrawingHorizontalLine: (value) {
+          return FlLine(
+            color: Colors.grey,
+            strokeWidth: 0.5,
+          );
+        },
+        getDrawingVerticalLine: (value) {
+          return FlLine(
+            color: Colors.grey,
+            strokeWidth: 0.5,
+          );
+        },
+      ),
+      scatterTouchData: ScatterTouchData(
+        enabled: true,
+        handleBuiltInTouches: true,
+      ),
+    );
+
+    return _chartType == 'Line'
+        ? LineChart(chartData)
+        : ScatterChart(scatterData);
   }
 
   Widget _bottomTitleWidgets(double value, TitleMeta meta, Color textColor) {
-    const double reservedSize = 50.0;
-
     // Convert the value back to a date
     final date = DateTime.now().add(Duration(days: value.toInt()));
     final formattedDate = DateFormat('MM/dd').format(date);
 
-    return SideTitleWidget(
-      axisSide: meta.axisSide,
-      child: SizedBox(
-        width: reservedSize,
-        child: Text(
-          formattedDate,
-          style: TextStyle(
-            color: textColor,
-            fontSize: 12,
+    // Determine the maximum value for the x-axis
+    final maxValue = meta.max;
+
+    // Only render the tick label if it is not the last one
+    if (value < maxValue) {
+      return SideTitleWidget(
+        axisSide: meta.axisSide,
+        space: 0,
+        child: Padding(
+          padding: const EdgeInsets.only(top: 5.0),
+          child: Transform.translate(
+            offset: Offset(0, 10),
+            child: Transform.rotate(
+              angle: 65 * 3.1415926535897932 / 180,
+              child: Text(
+                formattedDate,
+                style: TextStyle(
+                  color: textColor,
+                  fontSize: 12,
+                ),
+                textAlign: TextAlign.right,
+              ),
+            ),
           ),
-          textAlign: TextAlign.right,
         ),
-      ),
-    );
+      );
+    } else {
+      return Container(); // Return an empty container for the last tick
+    }
   }
 
   Widget _leftTitleWidgets(double value, TitleMeta meta, Color textColor) {
