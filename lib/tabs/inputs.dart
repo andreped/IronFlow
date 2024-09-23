@@ -6,8 +6,12 @@ import 'package:confetti/confetti.dart';
 
 class ExerciseSetter extends StatefulWidget {
   final Function() onExerciseAdded;
+  final bool isKg;
 
-  ExerciseSetter({required this.onExerciseAdded});
+  ExerciseSetter({
+    required this.onExerciseAdded,
+    required this.isKg,
+  });
 
   @override
   _ExerciseSetterState createState() => _ExerciseSetterState();
@@ -34,7 +38,6 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
   double? _lastWeight;
   int? _lastReps;
   int? _lastSets;
-  bool _isLbs = false; // State variable to track weight unit
 
   String _selectedLoggingType = 'Exercise'; // Default to 'Exercise'
 
@@ -66,6 +69,18 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
     });
   }
 
+  void _updateWeightController() {
+    if (_weightController.text.isNotEmpty) {
+      double weight = double.parse(_weightController.text);
+      if (widget.isKg) {
+        weight = convertLbsToKg(weight);
+      } else {
+        weight = convertKgToLbs(weight);
+      }
+      _weightController.text = weight.toStringAsFixed(2);
+    }
+  }
+
   Future<void> _loadLastLoggedExercise() async {
     if (_selectedLoggingType == 'Exercise' && _selectedExercise != null) {
       final lastLogged =
@@ -78,7 +93,7 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
           _lastReps = lastLogged['reps'] ?? 0;
           _lastSets = lastLogged['sets'] ?? 1;
 
-          _weightController.text = _isLbs
+          _weightController.text = !widget.isKg
               ? convertKgToLbs(_lastWeight ?? 0).toStringAsFixed(2)
               : _lastWeight?.toString() ?? '';
           _repsController.text = _lastReps?.toString() ?? '';
@@ -130,7 +145,7 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
 
         if (hasFullData) {
           // Parse and validate the input fields
-          final weight = _isLbs
+          final weight = !widget.isKg
               ? convertLbsToKg(double.tryParse(
                       _weightController.text.replaceAll(',', '.')) ??
                   0)
@@ -578,7 +593,7 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
           GestureDetector(
             onTap: () => _showNumberInputSheet(
               controller: _weightController,
-              label: 'Weight (${_isLbs ? 'lbs' : 'kg'})',
+              label: 'Weight (${widget.isKg ? 'kg' : 'lbs'})',
               initialValue: _weightController.text,
               isDouble: true,
             ),
@@ -586,7 +601,7 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
               child: TextFormField(
                 controller: _weightController,
                 decoration: InputDecoration(
-                  labelText: 'Weight (${_isLbs ? 'lbs' : 'kg'})',
+                  labelText: 'Weight (${widget.isKg ? 'kg' : 'lbs'})',
                   border: OutlineInputBorder(),
                 ),
                 validator: (value) {
@@ -668,7 +683,7 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
         GestureDetector(
           onTap: () => _showNumberInputSheet(
             controller: _userWeightController,
-            label: 'Weight (${_isLbs ? 'lbs' : 'kg'})',
+            label: 'Weight (${widget.isKg ? 'kg' : 'lbs'})',
             initialValue: _userWeightController.text,
             isDouble: true,
           ),
@@ -676,7 +691,7 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
             child: TextFormField(
               controller: _userWeightController,
               decoration: InputDecoration(
-                labelText: 'Weight (${_isLbs ? 'lbs' : 'kg'})',
+                labelText: 'Weight (${widget.isKg ? 'kg' : 'lbs'})',
                 border: OutlineInputBorder(),
               ),
               validator: (value) {
