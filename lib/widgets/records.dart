@@ -133,6 +133,7 @@ class _RecordsTabState extends State<RecordsTab> {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     final arrowColor = isDarkMode ? Colors.purple : null;
     final textColor = isDarkMode ? Colors.white : Colors.black;
+    final ThemeData theme = Theme.of(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -151,14 +152,14 @@ class _RecordsTabState extends State<RecordsTab> {
             : Text('Records'),
         leading: _isSearching
             ? IconButton(
-                icon: Icon(Icons.arrow_back),
+                icon: Icon(Icons.arrow_back, color: theme.iconTheme.color),
                 onPressed: _stopSearch,
               )
             : null,
         actions: _isSearching
             ? [
                 IconButton(
-                  icon: Icon(Icons.clear),
+                  icon: Icon(Icons.clear, color: theme.iconTheme.color),
                   onPressed: () {
                     _searchController.clear();
                     _filterRecords('');
@@ -167,7 +168,7 @@ class _RecordsTabState extends State<RecordsTab> {
               ]
             : [
                 IconButton(
-                  icon: Icon(Icons.search),
+                  icon: Icon(Icons.search, color: theme.iconTheme.color),
                   onPressed: _startSearch,
                 ),
               ],

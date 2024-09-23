@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'theme.dart';
 
 class ExerciseSearchDelegate extends SearchDelegate {
   final List<Map<String, dynamic>> records;
@@ -13,9 +14,10 @@ class ExerciseSearchDelegate extends SearchDelegate {
 
   @override
   List<Widget> buildActions(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
     return [
       IconButton(
-        icon: Icon(Icons.clear),
+        icon: Icon(Icons.clear, color: theme.iconTheme.color),
         onPressed: () {
           query = '';
         },
@@ -25,8 +27,9 @@ class ExerciseSearchDelegate extends SearchDelegate {
 
   @override
   Widget buildLeading(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
     return IconButton(
-      icon: Icon(Icons.arrow_back),
+      icon: Icon(Icons.arrow_back, color: theme.iconTheme.color),
       onPressed: () {
         close(context, null);
       },
