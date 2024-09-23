@@ -231,8 +231,8 @@ class _RecordsTabState extends State<RecordsTab> {
                                       child: GestureDetector(
                                         onTap: () => _toggleSorting(true),
                                         child: Row(
-                                          mainAxisAlignment: MainAxisAlignment
-                                              .end, // Align to the right
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
                                           children: [
                                             Text(
                                                 'Weight [${widget.isKg ? 'kg' : 'lbs'}]',
@@ -271,13 +271,12 @@ class _RecordsTabState extends State<RecordsTab> {
                                     DataCell(Text(exercise)),
                                     DataCell(
                                       Container(
-                                        alignment: Alignment
-                                            .centerRight, // Align to the right
-                                        padding: EdgeInsets.only(
-                                            right:
-                                                16.0), // Adjust padding as needed
+                                        alignment: Alignment.centerRight,
+                                        padding: EdgeInsets.only(right: 16.0),
                                         child: Text(
                                           '${displayWeight.toStringAsFixed(1)} x $reps reps',
+                                          softWrap: false,
+                                          overflow: TextOverflow.ellipsis,
                                         ),
                                       ),
                                     ),
