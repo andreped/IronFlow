@@ -3,6 +3,7 @@ name: Issue Assigner
 on:
   #issues:
   #  types: [opened, edited]
+  workflow_dispatch:
 
 permissions:
   contents: read
