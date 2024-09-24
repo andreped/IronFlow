@@ -1,8 +1,8 @@
 name: Issue Assigner
 
 on:
-  issues:
-    types: [opened, edited]
+  #issues:
+  #  types: [opened, edited]
 
 permissions:
   contents: read

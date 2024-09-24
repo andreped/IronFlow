@@ -3,7 +3,7 @@ name: Feature request
 about: A new feature to be added to the project
 title: 'feat: '
 labels: ["enhancement"]
-assignees: ''
+assignees: ["andreped"]
 
 ---
 
