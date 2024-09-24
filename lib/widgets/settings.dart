@@ -107,8 +107,8 @@ class _SettingsModalState extends State<SettingsModal> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('⚠️ Confirm Deletion'),
-          content: const Text(
-              '🚨 Clicking this button deletes all the recorded exercise data. Are you sure you want to do this?'),
+          content: Text(
+              '🚨 Clicking this button deletes all the recorded $tableName data. Are you sure you want to do this?'),
           actions: <Widget>[
             TextButton(
               child: const Text('No'),
