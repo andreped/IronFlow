@@ -1,0 +1,58 @@
+appId: "com.andreped.IronFlow"
+---
+- clearState:
+    appId: "com.andreped.IronFlow"
+- launchApp:
+    appId: "com.andreped.IronFlow"
+- tapOn: .*Select an exercise.*
+- tapOn: .*Deadlift.*
+- tapOn: .*Weight.*
+- inputText: "100"
+- tapOn:
+    point: 50%,23%
+- tapOn: .*Reps.*
+- inputText: "8"
+- tapOn:
+    point: 50%,23%
+- tapOn: .*Sets.*
+- inputText: "3"
+- tapOn: .*Done.*
+- tapOn: .*Save.*
+- assertVisible: .*Exercise Added Successfully.*
+
+- tapOn: .*Weight.*
+- inputText: "80"
+- tapOn: .*Done.*
+- tapOn: .*Save.*
+- assertVisible: .*Exercise Added Successfully.*
+
+- tapOn: .*Weight.*
+- inputText: "120"
+- tapOn: .*Done.*
+- tapOn: .*Save.*
+- assertVisible: .*high score.*
+
+- tapOn: .*Deadlift.*
+- tapOn: ".*Leg Extension.*"
+- assertVisible: .*Leg Extension.*
+- tapOn: .*Weight.*
+- inputText: "60"
+- tapOn: .*Done.*
+- tapOn: .*Save.*
+- assertVisible: .*Please enter the number of reps.*
+- tapOn: .*Reps.*
+- inputText: "12"
+- tapOn: Scrim
+- tapOn: .*Save.*
+- assertVisible: .*Exercise Added Successfully.*
+
+- tapOn: Tab 2 of 5
+- assertVisible: .*Deadlift.*
+- assertVisible: .*Leg Extension.*
+- assertVisible: .*Total Weight.* 7200.0 kg.*
+- assertVisible: .*Total Sets.* 9.*
+- assertVisible: .*Avg Weight.* 800.0 kg.*
+- tapOn: .*Deadlift.*
+- tapOn:
+    point: "38%,17%"
+- tapOn: Scrim

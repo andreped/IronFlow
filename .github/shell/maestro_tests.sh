@@ -5,6 +5,6 @@ i=0
 while [ $i -le 2 ]; do
 #pgrep -lf maestro | awk '{print $1}' | xargs -r kill
 #sleep 1
-$HOME/.maestro/bin/maestro test .maestro/ && break
+$HOME/.maestro/bin/maestro test .maestro/integration_tests.yml && break
 let i=i+1
 done

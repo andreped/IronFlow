@@ -54,7 +54,7 @@ Integration tests are performed for all pull requests and before releases using 
 
 To run integration tests, run the command:
 ```bash
-maestro test .maestro
+maestro test .maestro/integration_tests.yml
 ```
 
 ## [Getting Started](https://github.com/andreped/IronFlow#Getting-Started)
