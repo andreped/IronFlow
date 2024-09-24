@@ -106,7 +106,15 @@ class DatabaseHelper {
 
   Future<void> clearDatabase(String table) async {
     final db = await database;
-    await db.delete(table);
+    if (table == 'fitness') {
+      await db.execute('DROP TABLE IF EXISTS fitness');
+      await db.execute(
+        'CREATE TABLE fitness(id INTEGER PRIMARY KEY AUTOINCREMENT, weight TEXT, height INTEGER, age INTEGER, timestamp TEXT)',
+      );
+      print('Fitness table recreated successfully');
+    } else {
+      await db.delete(table);
+    }
   }
 
   Future<List<String>> getRecordedExercises() async {
