@@ -681,7 +681,7 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
               ),
               Expanded(
                 child: Text(
-                  'Include bodyweight in total weight',
+                  'Include bodyweight in weight calculations',
                   style: TextStyle(fontSize: 14),
                 ),
               ),
