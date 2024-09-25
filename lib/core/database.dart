@@ -68,8 +68,11 @@ class DatabaseHelper {
     // Insert predefined exercises into the database if they do not exist
     Batch batch = db.batch();
     // @TODO: predefinedExercises does not exist within this scope!
-    for (String exercise in predefinedExercises) {
-      batch.insert('predefined_exercises', {'name': exercise});
+    for (var exercise in predefinedExercises) {
+      exercise.forEach((name, bodyweightEnabled) {
+        batch.insert('predefined_exercises',
+            {'name': name, 'bodyweight_enabled': bodyweightEnabled});
+      });
     }
     await batch.commit(noResult: true);
   }
