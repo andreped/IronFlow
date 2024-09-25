@@ -150,10 +150,10 @@ class _SettingsModalState extends State<SettingsModal> {
 
         // Show success SnackBar
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text('✅ Database cleared successfully!'),
+          const SnackBar(
+            content: Text('✅ Database cleared successfully!'),
             backgroundColor: Colors.green,
-            duration: const Duration(seconds: 2),
+            duration: Duration(seconds: 2),
           ),
         );
       }
@@ -163,8 +163,6 @@ class _SettingsModalState extends State<SettingsModal> {
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    final textColor =
-        Theme.of(context).textTheme.bodyMedium?.color ?? Colors.black;
 
     return AlertDialog(
       title: Row(
@@ -224,7 +222,7 @@ class _SettingsModalState extends State<SettingsModal> {
                       ? Colors.purple // Use primary color for dark mode
                       : Colors.black, // Set text color for light mode
                 ),
-                items: [
+                items: const [
                   DropdownMenuItem(
                     value: AppTheme.system,
                     child: Text('System Default'),
@@ -286,7 +284,7 @@ class _SettingsModalState extends State<SettingsModal> {
                       ? Colors.purple // Use primary color for dark mode
                       : Colors.black, // Set text color for light mode
                 ),
-                items: [
+                items: const [
                   DropdownMenuItem(
                     value: 'Total',
                     child: Text('Total'),
@@ -302,6 +300,10 @@ class _SettingsModalState extends State<SettingsModal> {
                   DropdownMenuItem(
                     value: 'Top3Avg',
                     child: Text('Top3Avg'),
+                  ),
+                  DropdownMenuItem(
+                    value: 'Top3Tot',
+                    child: Text('Top3Tot'),
                   ),
                 ],
                 onChanged: _handleAggregationMethodChange,
@@ -324,7 +326,7 @@ class _SettingsModalState extends State<SettingsModal> {
                       ? Colors.purple // Use primary color for dark mode
                       : Colors.black, // Set text color for light mode
                 ),
-                items: [
+                items: const [
                   DropdownMenuItem(
                     value: 'Line',
                     child: Text('Line'),

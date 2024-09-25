@@ -205,6 +205,19 @@ class _VisualizationTabState extends State<VisualizationTab> {
           value = totalRepsSets > 0 ? totalWeight / totalRepsSets : 0.0;
           break;
 
+        case 'Total':
+          value = recordsForDay.fold(0.0, (sum, record) {
+            final sets = double.tryParse(record['sets'].toString()) ?? 1.0;
+            final reps = double.tryParse(record['reps'].toString()) ?? 1.0;
+            final weight = double.tryParse(record['weight'].toString()) ?? 0.0;
+
+            // aggregate and include body weight, if relevant
+            final currTotal =
+                (sets * reps * weight) + bodyweight * bodyweightEnabled;
+            return sum + currTotal;
+          });
+          break;
+
         case 'Top3Avg':
           // Sort records by weight in descending order
           final sortedRecords = recordsForDay
@@ -239,8 +252,23 @@ class _VisualizationTabState extends State<VisualizationTab> {
               top3TotalRepsSets > 0 ? top3TotalWeight / top3TotalRepsSets : 0.0;
           break;
 
-        case 'Total':
-          value = recordsForDay.fold(0.0, (sum, record) {
+        case 'Top3Tot':
+          // Sort records by weight in descending order
+          final sortedRecords = recordsForDay
+              .map((record) => {
+                    'weight':
+                        double.tryParse(record['weight'].toString()) ?? 0.0,
+                    'reps': double.tryParse(record['reps'].toString()) ?? 1.0,
+                    'sets': double.tryParse(record['sets'].toString()) ?? 1.0,
+                  })
+              .toList()
+            ..sort(
+                (a, b) => (b['weight'] ?? 0.0).compareTo(a['weight'] ?? 0.0));
+
+          // Take the top 3 records with the highest weights
+          final top3Records = sortedRecords.take(3).toList();
+
+          value = top3Records.fold(0.0, (sum, record) {
             final sets = double.tryParse(record['sets'].toString()) ?? 1.0;
             final reps = double.tryParse(record['reps'].toString()) ?? 1.0;
             final weight = double.tryParse(record['weight'].toString()) ?? 0.0;
@@ -480,7 +508,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
           });
         }
       },
-      items: ['Max', 'Average', 'Top3Avg', 'Total'].map((method) {
+      items: ['Max', 'Average', 'Total', 'Top3Avg', 'Top3Tot'].map((method) {
         return DropdownMenuItem<String>(
           value: method,
           child: Text(method,
