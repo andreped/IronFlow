@@ -12,7 +12,7 @@ class DatabaseHelper {
   DatabaseHelper._internal();
 
   static Database? _database;
-  static const int _databaseVersion = 1; // Increment version if schema changes
+  static const int _databaseVersion = 2; // Increment version if schema changes
 
   Future<Database> get database async {
     if (_database != null) return _database!;
@@ -45,7 +45,7 @@ class DatabaseHelper {
       'CREATE TABLE exercises(id INTEGER PRIMARY KEY AUTOINCREMENT, exercise TEXT, weight TEXT, reps INTEGER, sets INTEGER, timestamp TEXT)',
     );
     await db.execute(
-      'CREATE TABLE IF NOT EXISTS predefined_exercises(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT)',
+      'CREATE TABLE IF NOT EXISTS predefined_exercises(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, bodyweight_enabled INTEGER DEFAULT 0)',
     );
     await db.execute(
       'CREATE TABLE fitness(id INTEGER PRIMARY KEY AUTOINCREMENT, weight TEXT, height INTEGER, age INTEGER, timestamp TEXT)',
@@ -56,12 +56,10 @@ class DatabaseHelper {
   Future<void> _upgradeDatabase(
       Database db, int oldVersion, int newVersion) async {
     if (oldVersion < newVersion) {
-      if (oldVersion < 1) {
-        //await db.execute("DROP TABLE IF EXISTS fitness");
-
-        //await db.execute(
-        //  'CREATE TABLE fitness(id INTEGER PRIMARY KEY AUTOINCREMENT, weight TEXT, height INTEGER, age INTEGER, timestamp TEXT)',
-        //);
+      if (oldVersion < 2) {
+        // Add the new column to the predefined_exercises table
+        await db.execute(
+            'ALTER TABLE predefined_exercises ADD COLUMN bodyweight_enabled INTEGER DEFAULT 0');
       }
     }
   }
@@ -69,6 +67,7 @@ class DatabaseHelper {
   Future<void> _initializePredefinedExercises(Database db) async {
     // Insert predefined exercises into the database if they do not exist
     Batch batch = db.batch();
+    // @TODO: predefinedExercises does not exist within this scope!
     for (String exercise in predefinedExercises) {
       batch.insert('predefined_exercises', {'name': exercise});
     }
@@ -255,6 +254,9 @@ class DatabaseHelper {
       whereArgs: [day.toIso8601String().split('T')[0]],
     );
 
+    // @TODO: Should instead find the closest weight based on timestamp
+    final double bodyweight = await getMostRecentBodyWeight();
+
     Map<String, dynamic> summary = {};
 
     for (var exercise in exercises) {
@@ -262,6 +264,13 @@ class DatabaseHelper {
       double weight = double.parse(exercise['weight']);
       int reps = exercise['reps'];
       int sets = exercise['sets'];
+
+      int bodyweightEnabled =
+          await isBodyWeightEnabledForExercise(exerciseName);
+
+      // @TODO: dynamically fetch bodyweight value
+      weight += bodyweight * bodyweightEnabled;
+
       double totalWeight = weight * reps * sets;
 
       if (summary.containsKey(exerciseName)) {
@@ -355,11 +364,21 @@ class DatabaseHelper {
     return exercises.map((e) => e['name'] as String).toList();
   }
 
-  Future<void> addPredefinedExercise(String exerciseName) async {
+  Future<int> isBodyWeightEnabledForExercise(String exerciseName) async {
+    final db = await database;
+    final List<Map<String, dynamic>> results = await db.rawQuery(
+      'SELECT bodyweight_enabled FROM predefined_exercises WHERE name = ?',
+      [exerciseName],
+    );
+    return results.isNotEmpty ? results.first['bodyweight_enabled'] as int : 0;
+  }
+
+  Future<void> addPredefinedExercise(
+      String exerciseName, bool bodyweightEnabled) async {
     final db = await database;
     await db.insert(
       'predefined_exercises',
-      {'name': exerciseName},
+      {'name': exerciseName, 'bodyweight_enabled': bodyweightEnabled ? 1 : 0},
       conflictAlgorithm: ConflictAlgorithm.ignore,
     );
   }
@@ -433,7 +452,19 @@ class DatabaseHelper {
     return results.isNotEmpty ? results.first : null;
   }
 
-  // Methods for fitness table
+  Future<double> getMostRecentBodyWeight() async {
+    final db = await database;
+    final List<Map<String, dynamic>> results = await db.rawQuery(
+      '''
+      SELECT weight FROM fitness
+      ORDER BY timestamp DESC
+      LIMIT 1
+      ''',
+    );
+
+    return results.isNotEmpty ? double.parse(results.first['weight']) : 0.0;
+  }
+
   Future<void> insertFitness({
     required double weight,
     required int height,

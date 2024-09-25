@@ -39,6 +39,7 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
   double? _lastWeight;
   int? _lastReps;
   int? _lastSets;
+  bool _bodyweightEnabled = false;
 
   String _selectedLoggingType = 'Exercise'; // Default to 'Exercise'
 
@@ -269,7 +270,7 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
       return;
     }
 
-    await _dbHelper.addPredefinedExercise(exerciseName);
+    await _dbHelper.addPredefinedExercise(exerciseName, _bodyweightEnabled);
 
     setState(() {
       _predefinedExercises.add(exerciseName);
@@ -668,6 +669,24 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
           ),
           SizedBox(height: 20),
         ] else ...[
+          Row(
+            children: [
+              Checkbox(
+                value: _bodyweightEnabled,
+                onChanged: (bool? value) {
+                  setState(() {
+                    _bodyweightEnabled = value ?? false;
+                  });
+                },
+              ),
+              Expanded(
+                child: Text(
+                  'Include bodyweight in weight calculations',
+                  style: TextStyle(fontSize: 14),
+                ),
+              ),
+            ],
+          ),
           // Save New Exercise Name Button (Only when adding a new exercise)
           ElevatedButton(
             onPressed: _saveNewExerciseName,
