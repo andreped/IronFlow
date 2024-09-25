@@ -11,7 +11,9 @@ class ExerciseStoreApp extends StatelessWidget {
   final AppTheme appTheme;
   final ValueChanged<AppTheme> updateTheme;
   final bool isKg;
+  final bool bodyweightEnabledGlobal;
   final ValueChanged<bool> toggleUnit;
+  final ValueChanged<bool> toggleBodyweightEnabledGlobal;
   final String aggregationMethod;
   final ValueChanged<String> setAggregationMethod;
   final String plotType;
@@ -22,7 +24,9 @@ class ExerciseStoreApp extends StatelessWidget {
     required this.appTheme,
     required this.updateTheme,
     required this.isKg,
+    required this.bodyweightEnabledGlobal,
     required this.toggleUnit,
+    required this.toggleBodyweightEnabledGlobal,
     required this.aggregationMethod,
     required this.setAggregationMethod,
     required this.plotType,
@@ -45,7 +49,9 @@ class ExerciseStoreApp extends StatelessWidget {
         appTheme: appTheme,
         updateTheme: updateTheme,
         isKg: isKg,
+        bodyweightEnabledGlobal: bodyweightEnabledGlobal,
         toggleUnit: toggleUnit,
+        toggleBodyweightEnabledGlobal: toggleBodyweightEnabledGlobal,
         aggregationMethod: aggregationMethod,
         setAggregationMethod: setAggregationMethod,
         plotType: plotType,
@@ -59,18 +65,22 @@ class ExerciseStoreHomePage extends StatefulWidget {
   final AppTheme appTheme;
   final ValueChanged<AppTheme> updateTheme;
   final bool isKg;
+  final bool bodyweightEnabledGlobal;
   final ValueChanged<bool> toggleUnit;
   final String aggregationMethod;
   final ValueChanged<String> setAggregationMethod;
   final String plotType;
   final ValueChanged<String> setPlotType;
+  final ValueChanged<bool> toggleBodyweightEnabledGlobal;
 
   const ExerciseStoreHomePage({
     Key? key,
     required this.appTheme,
     required this.updateTheme,
     required this.isKg,
+    required this.bodyweightEnabledGlobal,
     required this.toggleUnit,
+    required this.toggleBodyweightEnabledGlobal,
     required this.aggregationMethod,
     required this.setAggregationMethod,
     required this.plotType,
@@ -124,8 +134,11 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage>
         return SettingsModal(
           appTheme: widget.appTheme,
           onThemeChanged: widget.updateTheme,
+          bodyweightEnabledGlobal: widget.bodyweightEnabledGlobal,
           isKg: widget.isKg,
           onUnitChanged: widget.toggleUnit,
+          onBodyweightEnabledGlobalChanged:
+              widget.toggleBodyweightEnabledGlobal,
         );
       },
     );
@@ -159,11 +172,14 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage>
             _tabController.animateTo(index);
           },
           children: [
-            RecordsTab(isKg: widget.isKg),
+            RecordsTab(
+                isKg: widget.isKg,
+                bodyweightEnabledGlobal: widget.bodyweightEnabledGlobal),
             SummaryTab(
               selectedDay: _selectedDay,
               onDateSelected: _onDateSelected,
               isKg: widget.isKg,
+              bodyweightEnabledGlobal: widget.bodyweightEnabledGlobal,
             ),
             Padding(
               padding: const EdgeInsets.all(16.0),
@@ -179,6 +195,7 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage>
               child: VisualizationTab(
                 key: PageStorageKey('visualizationTab'),
                 isKg: widget.isKg,
+                bodyweightEnabledGlobal: widget.bodyweightEnabledGlobal,
                 defaultAggregationMethod: widget.aggregationMethod,
                 defaultChartType: widget.plotType,
               ),
