@@ -65,6 +65,7 @@ class DatabaseHelper {
   Future<void> _initializePredefinedExercises(Database db) async {
     // Insert predefined exercises into the database if they do not exist
     Batch batch = db.batch();
+    // @TODO: predefinedExercises does not exist within this scope!
     for (String exercise in predefinedExercises) {
       batch.insert('predefined_exercises', {'name': exercise});
     }
@@ -251,6 +252,9 @@ class DatabaseHelper {
       whereArgs: [day.toIso8601String().split('T')[0]],
     );
 
+    // @TODO: Should instead find the closest weight based on timestamp
+    final double bodyweight = await getMostRecentBodyWeight();
+
     Map<String, dynamic> summary = {};
 
     for (var exercise in exercises) {
@@ -258,6 +262,12 @@ class DatabaseHelper {
       double weight = double.parse(exercise['weight']);
       int reps = exercise['reps'];
       int sets = exercise['sets'];
+
+      int bodyweightEnabled = await isBodyWeightEnabledForExercise(exerciseName);
+
+      // @TODO: dynamically fetch bodyweight value
+      weight += bodyweight * bodyweightEnabled;
+
       double totalWeight = weight * reps * sets;
 
       if (summary.containsKey(exerciseName)) {
@@ -351,6 +361,15 @@ class DatabaseHelper {
     return exercises.map((e) => e['name'] as String).toList();
   }
 
+  Future<int> isBodyWeightEnabledForExercise(String exerciseName) async {
+    final db = await database;
+    final List<Map<String, dynamic>> results = await db.rawQuery(
+      'SELECT bodyweight_enabled FROM predefined_exercises WHERE name = ?',
+      [exerciseName],
+    );
+    return results.isNotEmpty ? results.first['bodyweight_enabled'] as int : 0;
+  }
+
   Future<void> addPredefinedExercise(String exerciseName, bool bodyweightEnabled) async {
     final db = await database;
     await db.insert(
@@ -429,7 +448,19 @@ class DatabaseHelper {
     return results.isNotEmpty ? results.first : null;
   }
 
-  // Methods for fitness table
+  Future<double> getMostRecentBodyWeight() async {
+    final db = await database;
+    final List<Map<String, dynamic>> results = await db.rawQuery(
+      '''
+      SELECT weight FROM fitness
+      ORDER BY timestamp DESC
+      LIMIT 1
+      ''',
+    );
+  
+    return results.isNotEmpty ? double.parse(results.first['weight']) : 0.0;
+  }
+
   Future<void> insertFitness({
     required double weight,
     required int height,
