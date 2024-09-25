@@ -166,6 +166,11 @@ class _VisualizationTabState extends State<VisualizationTab> {
     final earliestDate =
         DateUtils.dateOnly(DateTime.parse(filteredRecords.last['timestamp']));
 
+    final double bodyweight = await _dbHelper.getMostRecentBodyWeight();
+    int bodyweightEnabled = 1;
+    if (exerciseName != null) {
+      bodyweightEnabled = await _dbHelper.isBodyWeightEnabledForExercise(exerciseName);
+    }
     double? minValue;
     double? maxValue;
 
@@ -178,6 +183,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
                   double.tryParse(record[_dataType.toLowerCase()].toString()) ??
                   0.0)
               .reduce((a, b) => a > b ? a : b);
+          value += bodyweight * bodyweightEnabled;
           break;
 
         case 'Average':
@@ -190,7 +196,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
             final reps = double.tryParse(record['reps'].toString()) ?? 1.0;
             final sets = double.tryParse(record['sets'].toString()) ?? 1.0;
 
-            totalWeight += sets * reps * weight;
+            totalWeight += (sets * reps) * (weight + bodyweight * bodyweightEnabled);
             totalRepsSets += sets * reps;
           }
 
@@ -218,12 +224,12 @@ class _VisualizationTabState extends State<VisualizationTab> {
           double top3TotalRepsSets = 0.0;
 
           for (var record in top3Records) {
-            final weight = record['weight'];
-            final reps = record['reps'];
-            final sets = record['sets'];
+            final weight = record['weight'] ?? 0.0;
+            final reps = record['reps'] ?? 1.0;
+            final sets = record['sets'] ?? 1.0;
 
-            top3TotalWeight += (sets ?? 1.0) * (reps ?? 1.0) * (weight ?? 0.0);
-            top3TotalRepsSets += (sets ?? 1.0) * (reps ?? 1.0);
+            top3TotalWeight += (sets * reps) * (weight + bodyweight * bodyweightEnabled);
+            top3TotalRepsSets += sets * reps;
           }
 
           value =
@@ -235,7 +241,10 @@ class _VisualizationTabState extends State<VisualizationTab> {
             final sets = double.tryParse(record['sets'].toString()) ?? 1.0;
             final reps = double.tryParse(record['reps'].toString()) ?? 1.0;
             final weight = double.tryParse(record['weight'].toString()) ?? 0.0;
-            return sum + (sets * reps * weight);
+
+            // aggregate and include body weight, if relevant
+            final currTotal = (sets * reps * weight) + bodyweight * bodyweightEnabled;
+            return sum + currTotal;
           });
           break;
 
