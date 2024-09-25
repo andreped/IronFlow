@@ -6,12 +6,14 @@ import '../core/theme.dart';
 
 class VisualizationTab extends StatefulWidget {
   final bool isKg;
+  final bool bodyweightEnabledGlobal;
   final String defaultAggregationMethod;
   final String defaultChartType;
 
   const VisualizationTab({
     Key? key,
     required this.isKg,
+    required this.bodyweightEnabledGlobal,
     required this.defaultAggregationMethod,
     required this.defaultChartType,
   }) : super(key: key);
@@ -184,7 +186,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
                   double.tryParse(record[_dataType.toLowerCase()].toString()) ??
                   0.0)
               .reduce((a, b) => a > b ? a : b);
-          value += bodyweight * bodyweightEnabled;
+          value += bodyweight * bodyweightEnabled * (widget.bodyweightEnabledGlobal ? 1.0 : 0.0);
           break;
 
         case 'Average':
@@ -198,7 +200,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
             final sets = double.tryParse(record['sets'].toString()) ?? 1.0;
 
             totalWeight +=
-                (sets * reps) * (weight + bodyweight * bodyweightEnabled);
+                (sets * reps) * (weight + bodyweight * (widget.bodyweightEnabledGlobal ? 1.0 : 0.0));
             totalRepsSets += sets * reps;
           }
 
@@ -213,7 +215,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
 
             // aggregate and include body weight, if relevant
             final currTotal =
-                (sets * reps * weight) + bodyweight * bodyweightEnabled;
+                (sets * reps * weight) + bodyweight * (widget.bodyweightEnabledGlobal ? 1.0 : 0.0);
             return sum + currTotal;
           });
           break;
@@ -244,7 +246,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
             final sets = record['sets'] ?? 1.0;
 
             top3TotalWeight +=
-                (sets * reps) * (weight + bodyweight * bodyweightEnabled);
+                (sets * reps) * (weight + bodyweight * (widget.bodyweightEnabledGlobal ? 1.0 : 0.0));
             top3TotalRepsSets += sets * reps;
           }
 
@@ -275,7 +277,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
 
             // aggregate and include body weight, if relevant
             final currTotal =
-                (sets * reps * weight) + bodyweight * bodyweightEnabled;
+                (sets * reps * weight) + bodyweight * (widget.bodyweightEnabledGlobal ? 1.0 : 0.0);
             return sum + currTotal;
           });
           break;

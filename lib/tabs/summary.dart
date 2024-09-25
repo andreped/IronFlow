@@ -6,12 +6,14 @@ class SummaryTab extends StatefulWidget {
   final DateTime selectedDay;
   final Function(DateTime) onDateSelected;
   final bool isKg;
+  final bool bodyweightEnabledGlobal;
 
   const SummaryTab({
     Key? key,
     required this.selectedDay,
     required this.onDateSelected,
     required this.isKg,
+    required this.bodyweightEnabledGlobal,
   }) : super(key: key);
 
   @override

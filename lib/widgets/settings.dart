@@ -8,13 +8,17 @@ class SettingsModal extends StatefulWidget {
   final AppTheme appTheme;
   final ValueChanged<AppTheme> onThemeChanged;
   final bool isKg;
+  final bool bodyweightEnabledGlobal;
   final ValueChanged<bool> onUnitChanged;
+  final ValueChanged<bool> onBodyweightEnabledGlobalChanged;
 
   const SettingsModal({
     Key? key,
     required this.appTheme,
     required this.onThemeChanged,
     required this.isKg,
+    required this.bodyweightEnabledGlobal,
+    required this.onBodyweightEnabledGlobalChanged,
     required this.onUnitChanged,
   }) : super(key: key);
 
@@ -26,6 +30,7 @@ class _SettingsModalState extends State<SettingsModal> {
   final DatabaseHelper _dbHelper = DatabaseHelper();
   late AppTheme _appTheme;
   late bool _isKg;
+  late bool _bodyweightEnabledGlobal;
   late String _aggregationMethod;
   late String _plotType;
   late Future<String> _appVersion;
@@ -35,6 +40,7 @@ class _SettingsModalState extends State<SettingsModal> {
     super.initState();
     _appTheme = widget.appTheme;
     _isKg = widget.isKg;
+    _bodyweightEnabledGlobal = widget.bodyweightEnabledGlobal;
     _aggregationMethod = 'Top3Avg'; // Default value
     _plotType = 'Line'; // Default value
     _appVersion = _getAppVersion();
@@ -56,6 +62,7 @@ class _SettingsModalState extends State<SettingsModal> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt('appTheme', _appTheme.index);
     await prefs.setBool('isKg', _isKg);
+    await prefs.setBool('bodyweightEnabledGlobal', _bodyweightEnabledGlobal);
     await prefs.setString('aggregationMethod', _aggregationMethod);
     await prefs.setString('plotType', _plotType);
   }
@@ -80,6 +87,14 @@ class _SettingsModalState extends State<SettingsModal> {
       _isKg = newValue;
     });
     widget.onUnitChanged(newValue);
+    _saveSettings();
+  }
+
+  void _handleBodyweightEnabledGlobalChange(bool newValue) {
+    setState(() {
+      _bodyweightEnabledGlobal = newValue;
+    });
+    widget.onBodyweightEnabledGlobalChanged(newValue);
     _saveSettings();
   }
 
@@ -265,6 +280,22 @@ class _SettingsModalState extends State<SettingsModal> {
                     fontSize: 16,
                   ),
                 ),
+              ),
+            ),
+            // Bodyweight flag
+            ListTile(
+              title: Text(
+                'Include bodyweight',
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyMedium
+                    ?.copyWith(fontSize: 14),
+              ),
+              trailing: Checkbox(
+                value: _bodyweightEnabledGlobal,
+                onChanged: (bool? value) {
+                  _handleBodyweightEnabledGlobalChange(value ?? false);
+                },
               ),
             ),
             // Aggregation method selection
