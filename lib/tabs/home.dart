@@ -137,7 +137,8 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage>
           bodyweightEnabledGlobal: widget.bodyweightEnabledGlobal,
           isKg: widget.isKg,
           onUnitChanged: widget.toggleUnit,
-          onBodyweightEnabledGlobalChanged: widget.toggleBodyweightEnabledGlobal,
+          onBodyweightEnabledGlobalChanged:
+              widget.toggleBodyweightEnabledGlobal,
         );
       },
     );
@@ -171,7 +172,9 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage>
             _tabController.animateTo(index);
           },
           children: [
-            RecordsTab(isKg: widget.isKg, bodyweightEnabledGlobal: widget.bodyweightEnabledGlobal),
+            RecordsTab(
+                isKg: widget.isKg,
+                bodyweightEnabledGlobal: widget.bodyweightEnabledGlobal),
             SummaryTab(
               selectedDay: _selectedDay,
               onDateSelected: _onDateSelected,

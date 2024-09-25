@@ -6,7 +6,9 @@ class RecordsTab extends StatefulWidget {
   final bool isKg;
   final bool bodyweightEnabledGlobal;
 
-  const RecordsTab({Key? key, required this.isKg, required this.bodyweightEnabledGlobal}) : super(key: key);
+  const RecordsTab(
+      {Key? key, required this.isKg, required this.bodyweightEnabledGlobal})
+      : super(key: key);
 
   @override
   _RecordsTabState createState() => _RecordsTabState();

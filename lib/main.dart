@@ -32,7 +32,8 @@ class _MyAppState extends State<MyApp> {
     setState(() {
       _appTheme = AppTheme.values[prefs.getInt('appTheme') ?? _appTheme.index];
       _isKg = prefs.getBool('isKg') ?? _isKg;
-      _bodyweightEnabledGlobal = prefs.getBool('bodyweightEnabledGlobal') ?? _bodyweightEnabledGlobal;
+      _bodyweightEnabledGlobal =
+          prefs.getBool('bodyweightEnabledGlobal') ?? _bodyweightEnabledGlobal;
       _aggregationMethod =
           prefs.getString('aggregationMethod') ?? _aggregationMethod;
       _plotType = prefs.getString('plotType') ?? _plotType;
@@ -62,7 +63,7 @@ class _MyAppState extends State<MyApp> {
     _saveSettings();
   }
 
-    void _toggleBodyweightEnabledGlobal(bool newValue) {
+  void _toggleBodyweightEnabledGlobal(bool newValue) {
     setState(() {
       _bodyweightEnabledGlobal = newValue;
     });
