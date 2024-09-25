@@ -15,8 +15,11 @@ class DatabaseHelper {
   static const int _databaseVersion = 2; // Increment version if schema changes
 
   Future<Database> get database async {
-    if (_database != null) return _database!;
+    if (_database != null) {
+      return _database!;
+    }
     _database = await _initDatabase();
+    _initializePredefinedExercises(_database!);
     return _database!;
   }
 
@@ -45,7 +48,7 @@ class DatabaseHelper {
       'CREATE TABLE exercises(id INTEGER PRIMARY KEY AUTOINCREMENT, exercise TEXT, weight TEXT, reps INTEGER, sets INTEGER, timestamp TEXT)',
     );
     await db.execute(
-      'CREATE TABLE IF NOT EXISTS predefined_exercises(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, bodyweight_enabled INTEGER DEFAULT 0)',
+      'CREATE TABLE predefined_exercises(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, bodyweight_enabled INTEGER DEFAULT 0)',
     );
     await db.execute(
       'CREATE TABLE fitness(id INTEGER PRIMARY KEY AUTOINCREMENT, weight TEXT, height INTEGER, age INTEGER, timestamp TEXT)',
@@ -67,14 +70,13 @@ class DatabaseHelper {
   Future<void> _initializePredefinedExercises(Database db) async {
     // Insert predefined exercises into the database if they do not exist
     Batch batch = db.batch();
-    // @TODO: predefinedExercises does not exist within this scope!
     for (var exercise in predefinedExercises) {
       exercise.forEach((name, bodyweightEnabled) {
         batch.insert('predefined_exercises',
-            {'name': name, 'bodyweight_enabled': bodyweightEnabled});
+            {'name': name, 'bodyweight_enabled': bodyweightEnabled == 1});
       });
     }
-    await batch.commit(noResult: true);
+    await batch.commit(noResult: true); // Execute the batch
   }
 
   Future<void> insertExercise({
@@ -381,7 +383,7 @@ class DatabaseHelper {
     final db = await database;
     await db.insert(
       'predefined_exercises',
-      {'name': exerciseName, 'bodyweight_enabled': bodyweightEnabled ? 1 : 0},
+      {'name': exerciseName, 'bodyweight_enabled': bodyweightEnabled},
       conflictAlgorithm: ConflictAlgorithm.ignore,
     );
   }
