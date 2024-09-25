@@ -53,11 +53,13 @@ class DatabaseHelper {
     await _initializePredefinedExercises(db);
   }
 
-  Future<void> _upgradeDatabase(Database db, int oldVersion, int newVersion) async {
+  Future<void> _upgradeDatabase(
+      Database db, int oldVersion, int newVersion) async {
     if (oldVersion < newVersion) {
       if (oldVersion < 2) {
         // Add the new column to the predefined_exercises table
-        await db.execute('ALTER TABLE predefined_exercises ADD COLUMN bodyweight_enabled INTEGER DEFAULT 0');
+        await db.execute(
+            'ALTER TABLE predefined_exercises ADD COLUMN bodyweight_enabled INTEGER DEFAULT 0');
       }
     }
   }
@@ -263,7 +265,8 @@ class DatabaseHelper {
       int reps = exercise['reps'];
       int sets = exercise['sets'];
 
-      int bodyweightEnabled = await isBodyWeightEnabledForExercise(exerciseName);
+      int bodyweightEnabled =
+          await isBodyWeightEnabledForExercise(exerciseName);
 
       // @TODO: dynamically fetch bodyweight value
       weight += bodyweight * bodyweightEnabled;
@@ -370,7 +373,8 @@ class DatabaseHelper {
     return results.isNotEmpty ? results.first['bodyweight_enabled'] as int : 0;
   }
 
-  Future<void> addPredefinedExercise(String exerciseName, bool bodyweightEnabled) async {
+  Future<void> addPredefinedExercise(
+      String exerciseName, bool bodyweightEnabled) async {
     final db = await database;
     await db.insert(
       'predefined_exercises',
@@ -457,7 +461,7 @@ class DatabaseHelper {
       LIMIT 1
       ''',
     );
-  
+
     return results.isNotEmpty ? double.parse(results.first['weight']) : 0.0;
   }
 
