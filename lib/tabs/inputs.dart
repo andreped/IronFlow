@@ -128,11 +128,11 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
       if (_selectedLoggingType == 'Exercise') {
         final exerciseName = _isAddingNewExercise
             ? _newExerciseController.text.trim()
-            : _selectedExercise!;
+            : (_selectedExercise ?? '');
 
         // Check if we have a valid exercise name
         if (exerciseName.isEmpty) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             content: Text('Please enter a valid exercise name'),
             duration: Duration(seconds: 2),
             backgroundColor: Colors.red,
