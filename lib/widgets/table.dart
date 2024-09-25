@@ -27,7 +27,7 @@ class _TableTabState extends State<TableTab> {
         actions: [
           DropdownButton<String>(
             value: _selectedTable,
-            items: [
+            items: const [
               DropdownMenuItem(
                 value: 'exercises',
                 child: Text('Exercises'),
