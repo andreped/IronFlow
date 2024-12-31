@@ -156,7 +156,11 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
           final reps = int.tryParse(_repsController.text);
           final sets = int.tryParse(_setsController.text);
 
-          if (weight == null || reps == null || sets == null) {
+          if (weight == null ||
+              reps == null ||
+              sets == null ||
+              reps < 1 ||
+              sets < 1) {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content:
                   Text('Please enter valid values for weight, reps, and sets'),
