@@ -56,10 +56,11 @@ class _SummaryTabState extends State<SummaryTab> {
 
     if (records != null) {
       for (var entry in records.entries) {
-        final exerciseRecords = entry.value['records'] as List<Map<String, dynamic>>;
+        final exerciseRecords =
+            entry.value['records'] as List<Map<String, dynamic>>;
         for (var record in exerciseRecords) {
           final timestampStr = record['timestamp'] as String?;
-          
+
           if (timestampStr != null) {
             final timestamp = DateTime.parse(timestampStr);
             timestamps.add(timestamp);
