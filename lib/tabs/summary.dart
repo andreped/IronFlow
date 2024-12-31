@@ -215,7 +215,8 @@ class _SummaryTabState extends State<SummaryTab> {
                     }
                   },
                 ),
-                if (!_isExerciseView && !isSameDay(widget.selectedDay, DateTime.now()))
+                if (!_isExerciseView &&
+                    !isSameDay(widget.selectedDay, DateTime.now()))
                   IconButton(
                     icon: Icon(
                       Icons.restore,
