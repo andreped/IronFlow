@@ -40,6 +40,13 @@ class _SummaryTabState extends State<SummaryTab> {
     });
   }
 
+  void _resetToToday() {
+    setState(() {
+      widget.onDateSelected(DateTime.now());
+      _isExerciseView = false;
+    });
+  }
+
   Future<void> _showCalendarModal(BuildContext context) async {
     await showModalBottomSheet(
       context: context,
@@ -208,6 +215,14 @@ class _SummaryTabState extends State<SummaryTab> {
                     }
                   },
                 ),
+                if (!_isExerciseView && !isSameDay(widget.selectedDay, DateTime.now()))
+                  IconButton(
+                    icon: Icon(
+                      Icons.restore,
+                      color: theme.colorScheme.primary,
+                    ),
+                    onPressed: _resetToToday,
+                  ),
               ],
             ),
             const SizedBox(height: 20),
