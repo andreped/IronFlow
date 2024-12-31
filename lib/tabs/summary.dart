@@ -26,11 +26,13 @@ class _SummaryTabState extends State<SummaryTab> {
   bool _isExerciseView = false;
   String? _selectedExercise;
   Map<DateTime, List<Map<String, dynamic>>> _dailyRecords = {};
+  Duration _totalTrainingTime = Duration.zero;
 
   @override
   void initState() {
     super.initState();
     _loadTrainedDates();
+    _calculateTotalTrainingTime(widget.selectedDay);
   }
 
   Future<void> _loadTrainedDates() async {
@@ -44,7 +46,43 @@ class _SummaryTabState extends State<SummaryTab> {
     setState(() {
       widget.onDateSelected(DateTime.now());
       _isExerciseView = false;
+      _calculateTotalTrainingTime(DateTime.now());
     });
+  }
+
+  Future<void> _calculateTotalTrainingTime(DateTime date) async {
+    final records = await _dbHelper.getSummaryForDay(date);
+    List<DateTime> timestamps = [];
+
+    if (records != null) {
+      for (var entry in records.entries) {
+        final exerciseRecords =
+            entry.value['records'] as List<Map<String, dynamic>>;
+        for (var record in exerciseRecords) {
+          final timestampStr = record['timestamp'] as String?;
+
+          if (timestampStr != null) {
+            final timestamp = DateTime.parse(timestampStr);
+            timestamps.add(timestamp);
+          }
+        }
+      }
+    }
+
+    if (timestamps.isNotEmpty) {
+      timestamps.sort();
+      final earliest = timestamps.first;
+      final latest = timestamps.last;
+      final totalDuration = latest.difference(earliest);
+
+      setState(() {
+        _totalTrainingTime = totalDuration;
+      });
+    } else {
+      setState(() {
+        _totalTrainingTime = Duration.zero;
+      });
+    }
   }
 
   Future<void> _showCalendarModal(BuildContext context) async {
@@ -62,6 +100,7 @@ class _SummaryTabState extends State<SummaryTab> {
             setState(() {
               widget.onDateSelected(selectedDay);
               _isExerciseView = false;
+              _calculateTotalTrainingTime(selectedDay);
             });
             Navigator.of(context).pop();
           },
@@ -171,6 +210,9 @@ class _SummaryTabState extends State<SummaryTab> {
     final primaryColor = theme.colorScheme.primary;
     final textColor = theme.textTheme.bodyLarge?.color ?? Colors.black;
 
+    final hours = _totalTrainingTime.inHours;
+    final minutes = _totalTrainingTime.inMinutes.remainder(60);
+
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: SingleChildScrollView(
@@ -226,6 +268,23 @@ class _SummaryTabState extends State<SummaryTab> {
                   ),
               ],
             ),
+            const SizedBox(height: 20),
+            // only show widget if select day is enabled
+            if (!_isExerciseView)
+              Row(
+                children: [
+                  Icon(Icons.timer, color: theme.colorScheme.primary),
+                  const SizedBox(width: 8),
+                  Text(
+                    '${hours}h ${minutes}m',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: textColor,
+                    ),
+                  ),
+                ],
+              ),
             const SizedBox(height: 20),
             _isExerciseView && _selectedExercise != null
                 ? _dailyRecords.isEmpty
