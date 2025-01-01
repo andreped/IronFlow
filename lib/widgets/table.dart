@@ -508,7 +508,8 @@ class _TableWidgetState extends State<TableWidget> {
                                           icon: Icon(Icons.edit,
                                               size: 18.0,
                                               color: Theme.of(context)
-                                                  .iconTheme.color),
+                                                  .iconTheme
+                                                  .color),
                                           onPressed: () {
                                             _showEditDialog(item);
                                           },
@@ -518,7 +519,8 @@ class _TableWidgetState extends State<TableWidget> {
                                           icon: Icon(Icons.delete,
                                               size: 18.0,
                                               color: Theme.of(context)
-                                                  .iconTheme.color),
+                                                  .iconTheme
+                                                  .color),
                                           onPressed: () async {
                                             await _deleteRow(
                                                 'exercises', item['id'] ?? 0);
