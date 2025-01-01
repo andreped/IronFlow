@@ -8,7 +8,7 @@ on:
       - lib/**
       - '.github/workflows/linting.yml'
   workflow_dispatch:
-
+ 
 jobs:
   build:
     name: Linting checks
