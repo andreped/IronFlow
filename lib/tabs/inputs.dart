@@ -91,7 +91,7 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
     }
   }
 
-    Future<void> _fetchLastExerciseTime() async {
+  Future<void> _fetchLastExerciseTime() async {
     final lastExercise = await _dbHelper.getLastLoggedExerciseTime();
     if (lastExercise != null) {
       setState(() {
@@ -118,7 +118,8 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
         _timer?.cancel();
       } else {
         setState(() {
-          _timeSinceLastExercise = '${difference.inHours}h ${difference.inMinutes.remainder(60)}m ${difference.inSeconds.remainder(60)}s';
+          _timeSinceLastExercise =
+              '${difference.inHours}h ${difference.inMinutes.remainder(60)}m ${difference.inSeconds.remainder(60)}s';
         });
       }
     }
@@ -495,14 +496,19 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
                         ),
                         if (_timeSinceLastExercise.isNotEmpty) ...[
                           SizedBox(width: 10),
-                          Icon(Icons.timer, color: Theme.of(context).colorScheme.primary),
+                          Icon(Icons.timer,
+                              color: Theme.of(context).colorScheme.primary),
                           SizedBox(width: 5),
                           Text(
                             _timeSinceLastExercise,
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
-                              color: Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black,
+                              color: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.color ??
+                                  Colors.black,
                             ),
                           ),
                         ],
