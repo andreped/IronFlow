@@ -4,6 +4,27 @@ import 'exercise_edit_dialog.dart';
 import 'fitness_edit_dialog.dart';
 import 'package:intl/intl.dart';
 
+class ClampingScrollController extends ScrollController {
+  @override
+  void jumpTo(double value) {
+    final double maxScrollExtent = position.maxScrollExtent;
+    final double minScrollExtent = position.minScrollExtent;
+    final double clampedValue = value.clamp(minScrollExtent, maxScrollExtent);
+    super.jumpTo(clampedValue);
+  }
+
+  @override
+  Future<void> animateTo(double offset, {
+    required Duration duration,
+    required Curve curve,
+  }) {
+    final double maxScrollExtent = position.maxScrollExtent;
+    final double minScrollExtent = position.minScrollExtent;
+    final double clampedOffset = offset.clamp(minScrollExtent, maxScrollExtent);
+    return super.animateTo(clampedOffset, duration: duration, curve: curve);
+  }
+}
+
 class TableTab extends StatefulWidget {
   final bool isKg;
 
@@ -77,7 +98,7 @@ class _TableWidgetState extends State<TableWidget> {
   bool _sortAscending = false;
   List<Map<String, dynamic>> _data = [];
   final ScrollController _verticalScrollController = ScrollController();
-  final ScrollController _horizontalScrollController = ScrollController();
+  final ScrollController _horizontalScrollController = ClampingScrollController();
   int _offset = 0;
   final int _limit = 20;
   bool _isLoading = false;
@@ -337,6 +358,7 @@ class _TableWidgetState extends State<TableWidget> {
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             controller: _horizontalScrollController,
+            physics: ClampingScrollPhysics(),
             child: Table(
               columnWidths: widget.selectedTable == 'exercises'
                   ? {
@@ -401,6 +423,7 @@ class _TableWidgetState extends State<TableWidget> {
         Expanded(
           child: ListView.builder(
             controller: _verticalScrollController,
+            physics: BouncingScrollPhysics(),
             itemCount: _data.length + (_isLoading ? 1 : 0),
             itemBuilder: (context, index) {
               if (index == _data.length) {
@@ -413,7 +436,7 @@ class _TableWidgetState extends State<TableWidget> {
               }
 
               final item = _data[index];
-              final rowController = ScrollController();
+              final rowController = ClampingScrollController();
               _rowControllers.add(rowController);
 
               return NotificationListener<ScrollNotification>(
@@ -428,6 +451,7 @@ class _TableWidgetState extends State<TableWidget> {
                 child: SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   controller: rowController,
+                  physics: ClampingScrollPhysics(),
                   child: Table(
                     columnWidths: widget.selectedTable == 'exercises'
                         ? {
