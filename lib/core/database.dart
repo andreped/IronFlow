@@ -410,6 +410,16 @@ class DatabaseHelper {
     };
   }
 
+  Future<DateTime?> getLastLoggedExerciseTime() async {
+    final db = await database;
+    final result =
+        await db.rawQuery('SELECT MAX(timestamp) as lastTime FROM exercises');
+    if (result.isNotEmpty && result.first['lastTime'] != null) {
+      return DateTime.parse(result.first['lastTime'] as String);
+    }
+    return null;
+  }
+
   Future<List<String>> getPredefinedExercises() async {
     final db = await database;
     final List<Map<String, dynamic>> exercises =

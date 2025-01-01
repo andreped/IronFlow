@@ -4,6 +4,7 @@ import '../core/database.dart';
 import '../core/convert.dart';
 import 'package:confetti/confetti.dart';
 import '../core/theme.dart';
+import 'dart:async';
 
 class ExerciseSetter extends StatefulWidget {
   final Function() onExerciseAdded;
@@ -45,17 +46,24 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
 
   List<String> _predefinedExercises = [];
 
+  DateTime? _lastExerciseTime;
+  String _timeSinceLastExercise = '';
+  Timer? _timer;
+
   @override
   void initState() {
     super.initState();
     _loadPredefinedExercises();
     _confettiController =
         ConfettiController(duration: const Duration(seconds: 4));
+    _fetchLastExerciseTime();
+    _startTimer();
   }
 
   @override
   void dispose() {
     _confettiController.dispose();
+    _timer?.cancel();
     super.dispose();
   }
 
@@ -80,6 +88,51 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
         weight = convertKgToLbs(weight);
       }
       _weightController.text = weight.toStringAsFixed(2);
+    }
+  }
+
+  Future<void> _fetchLastExerciseTime() async {
+    final lastExercise = await _dbHelper.getLastLoggedExerciseTime();
+    if (lastExercise != null) {
+      setState(() {
+        _lastExerciseTime = lastExercise;
+        _updateTimeSinceLastExercise();
+      });
+    } else {
+      setState(() {
+        _lastExerciseTime = null;
+        _timeSinceLastExercise = '';
+      });
+    }
+  }
+
+  void _startTimer() {
+    if (_lastExerciseTime != null) {
+      _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+        _updateTimeSinceLastExercise();
+      });
+    }
+  }
+
+  void _updateTimeSinceLastExercise() {
+    if (_lastExerciseTime != null) {
+      final now = DateTime.now();
+      final difference = now.difference(_lastExerciseTime!);
+      if (difference.inHours >= 1) {
+        setState(() {
+          _timeSinceLastExercise = '';
+        });
+        _timer?.cancel();
+      } else {
+        setState(() {
+          _timeSinceLastExercise =
+              '${difference.inHours}h ${difference.inMinutes.remainder(60)}m ${difference.inSeconds.remainder(60)}s';
+        });
+      }
+    } else {
+      setState(() {
+        _timeSinceLastExercise = '';
+      });
     }
   }
 
@@ -184,6 +237,14 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
             reps: reps,
             sets: sets,
           );
+
+          // Update the last exercise time and reset the timer
+          setState(() {
+            _lastExerciseTime = DateTime.now();
+            _updateTimeSinceLastExercise();
+            _timer?.cancel();
+            _startTimer();
+          });
 
           // Show appropriate message
           if (isNewHighScore) {
@@ -438,9 +499,31 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
                   ],
                   SizedBox(height: 20),
                   if (!_isAddingNewExercise)
-                    ElevatedButton(
-                      onPressed: _addOrUpdateExercise,
-                      child: Text('Save'),
+                    Row(
+                      children: [
+                        ElevatedButton(
+                          onPressed: _addOrUpdateExercise,
+                          child: Text('Save'),
+                        ),
+                        if (_timeSinceLastExercise.isNotEmpty) ...[
+                          SizedBox(width: 10),
+                          Icon(Icons.timer,
+                              color: Theme.of(context).colorScheme.primary),
+                          SizedBox(width: 5),
+                          Text(
+                            _timeSinceLastExercise,
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.color ??
+                                  Colors.black,
+                            ),
+                          ),
+                        ],
+                      ],
                     ),
                 ],
               ),
@@ -702,8 +785,6 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
   }
 
   Widget _buildFitnessForm(BuildContext context) {
-    final ThemeData theme = Theme.of(context);
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
