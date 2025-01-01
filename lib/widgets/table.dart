@@ -315,7 +315,7 @@ class _TableWidgetState extends State<TableWidget> {
                 Icon(
                   _sortAscending ? Icons.arrow_upward : Icons.arrow_downward,
                   size: 16,
-                  color: Theme.of(context).colorScheme.secondary,
+                  color: Theme.of(context).iconTheme.color,
                 ),
             ],
           ),
@@ -508,8 +508,7 @@ class _TableWidgetState extends State<TableWidget> {
                                           icon: Icon(Icons.edit,
                                               size: 18.0,
                                               color: Theme.of(context)
-                                                  .colorScheme
-                                                  .secondary),
+                                                  .iconTheme.color),
                                           onPressed: () {
                                             _showEditDialog(item);
                                           },
@@ -519,8 +518,7 @@ class _TableWidgetState extends State<TableWidget> {
                                           icon: Icon(Icons.delete,
                                               size: 18.0,
                                               color: Theme.of(context)
-                                                  .colorScheme
-                                                  .secondary),
+                                                  .iconTheme.color),
                                           onPressed: () async {
                                             await _deleteRow(
                                                 'exercises', item['id'] ?? 0);
