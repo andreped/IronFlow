@@ -350,7 +350,7 @@ class _TableWidgetState extends State<TableWidget> {
       children: [
         NotificationListener<ScrollNotification>(
           onNotification: (ScrollNotification scrollInfo) {
-            if (scrollInfo.metrics.axis == Axis.horizontal) {
+            if (scrollInfo.metrics.axis == Axis.horizontal && !_isSyncing) {
               _horizontalScrollController.jumpTo(scrollInfo.metrics.pixels);
             }
             return false;
@@ -358,7 +358,7 @@ class _TableWidgetState extends State<TableWidget> {
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             controller: _horizontalScrollController,
-            physics: ClampingScrollPhysics(),
+            physics: NeverScrollableScrollPhysics(), // disable manual scrolling of header
             child: Table(
               columnWidths: widget.selectedTable == 'exercises'
                   ? {
