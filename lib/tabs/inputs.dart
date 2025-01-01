@@ -235,7 +235,7 @@ class ExerciseSetterState extends State<ExerciseSetter> {
           if (isNewHighScore) {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: Text('🚀🎉 New high score for $exerciseName!'),
-              duration: Duration(seconds: 4),
+              duration: const Duration(seconds: 4),
               backgroundColor: Colors.green,
             ));
 
@@ -256,7 +256,7 @@ class ExerciseSetterState extends State<ExerciseSetter> {
 
           widget.onExerciseAdded();
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             content: Text(
                 'Please fill in weight, reps, and sets or save the exercise name separately'),
             duration: Duration(seconds: 2),
@@ -271,7 +271,7 @@ class ExerciseSetterState extends State<ExerciseSetter> {
         final age = int.tryParse(_ageController.text);
 
         if (userWeight == null || height == null || age == null) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             content: Text('Please enter valid values'),
             duration: Duration(seconds: 2),
             backgroundColor: Colors.red,
@@ -302,7 +302,7 @@ class ExerciseSetterState extends State<ExerciseSetter> {
     final exerciseName = _newExerciseController.text.trim();
 
     if (exerciseName.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text('Please enter a valid exercise name'),
         duration: Duration(seconds: 2),
         backgroundColor: Colors.red,
@@ -312,7 +312,7 @@ class ExerciseSetterState extends State<ExerciseSetter> {
 
     // disallow adding predefined exercises if they already exist
     if (_predefinedExercises.contains(exerciseName)) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text('⛔ Exercise already exists in database'),
         duration: Duration(seconds: 2),
         backgroundColor: Colors.red,
@@ -328,7 +328,7 @@ class ExerciseSetterState extends State<ExerciseSetter> {
       _selectedExercise = exerciseName;
     });
 
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
       content: Text('🎉 New exercise saved successfully'),
       duration: Duration(seconds: 2),
       backgroundColor: Colors.blue,
@@ -391,12 +391,12 @@ class ExerciseSetterState extends State<ExerciseSetter> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(label, style: TextStyle(fontSize: 18)),
+                      Text(label, style: const TextStyle(fontSize: 18)),
                       TextField(
                         focusNode: focusNode,
                         controller: localController,
                         keyboardType: isDouble
-                            ? TextInputType.numberWithOptions(decimal: true)
+                            ? const TextInputType.numberWithOptions(decimal: true)
                             : TextInputType.number,
                         inputFormatters: [
                           FilteringTextInputFormatter.allow(
@@ -404,7 +404,7 @@ class ExerciseSetterState extends State<ExerciseSetter> {
                         ],
                         decoration: InputDecoration(
                           labelText: label,
-                          border: OutlineInputBorder(),
+                          border: const OutlineInputBorder(),
                         ),
                       ),
                       const SizedBox(height: 10),
@@ -413,7 +413,7 @@ class ExerciseSetterState extends State<ExerciseSetter> {
                           _updateValueAndClose(
                               context, localController, controller, isDouble);
                         },
-                        child: Text('Done'),
+                        child: const Text('Done'),
                       ),
                     ],
                   ),
@@ -482,19 +482,19 @@ class ExerciseSetterState extends State<ExerciseSetter> {
                   ] else if (_selectedLoggingType == 'Fitness') ...[
                     _buildFitnessForm(context),
                   ],
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   if (!_isAddingNewExercise)
                     Row(
                       children: [
                         ElevatedButton(
                           onPressed: _addOrUpdateExercise,
-                          child: Text('Save'),
+                          child: const Text('Save'),
                         ),
                         if (_timeSinceLastExercise.isNotEmpty) ...[
-                          SizedBox(width: 10),
+                          const SizedBox(width: 10),
                           Icon(Icons.timer,
                               color: Theme.of(context).colorScheme.primary),
-                          SizedBox(width: 5),
+                          const SizedBox(width: 5),
                           Text(
                             _timeSinceLastExercise,
                             style: TextStyle(
@@ -546,7 +546,7 @@ class ExerciseSetterState extends State<ExerciseSetter> {
               Expanded(
                 child: DropdownButtonFormField<String>(
                   value: _selectedExercise,
-                  hint: Text('Select an exercise'),
+                  hint: const Text('Select an exercise'),
                   items: _predefinedExercises.map((exercise) {
                     return DropdownMenuItem<String>(
                       value: exercise,
@@ -560,7 +560,7 @@ class ExerciseSetterState extends State<ExerciseSetter> {
                       _loadLastLoggedExercise();
                     });
                   },
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: 'Exercise',
                     border: OutlineInputBorder(),
                   ),
@@ -583,18 +583,18 @@ class ExerciseSetterState extends State<ExerciseSetter> {
                       context: context,
                       builder: (BuildContext context) {
                         return AlertDialog(
-                          title: Text('Confirm Delete'),
-                          content: Text(
+                          title: const Text('Confirm Delete'),
+                          content: const Text(
                               'Are you sure you want to delete this exercise?'),
                           actions: <Widget>[
                             TextButton(
-                              child: Text('Cancel'),
+                              child: const Text('Cancel'),
                               onPressed: () {
                                 Navigator.of(context).pop(false);
                               },
                             ),
                             TextButton(
-                              child: Text('Delete'),
+                              child: const Text('Delete'),
                               onPressed: () {
                                 Navigator.of(context).pop(true);
                               },
@@ -614,13 +614,13 @@ class ExerciseSetterState extends State<ExerciseSetter> {
                           _selectedExercise = null;
                         });
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
+                          const SnackBar(
                               content: Text('✅ Exercise successfully deleted.'),
                               duration: Duration(seconds: 2)),
                         );
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
+                          const SnackBar(
                               content: Text(
                                   '🚫 Cannot delete exercise that is in use!'),
                               duration: Duration(seconds: 2)),
@@ -629,7 +629,7 @@ class ExerciseSetterState extends State<ExerciseSetter> {
                     }
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
+                      const SnackBar(
                           content: Text('❗ No exercise selected to delete.'),
                           duration: Duration(seconds: 2)),
                     );
@@ -640,7 +640,7 @@ class ExerciseSetterState extends State<ExerciseSetter> {
               Expanded(
                 child: TextFormField(
                   controller: _newExerciseController,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: 'New Exercise Name',
                     border: OutlineInputBorder(),
                   ),
@@ -663,7 +663,7 @@ class ExerciseSetterState extends State<ExerciseSetter> {
             ],
           ],
         ),
-        SizedBox(height: 20),
+        const SizedBox(height: 20),
         if (!_isAddingNewExercise) ...[
           // Weight Input
           GestureDetector(
@@ -678,7 +678,7 @@ class ExerciseSetterState extends State<ExerciseSetter> {
                 controller: _weightController,
                 decoration: InputDecoration(
                   labelText: 'Weight (${widget.isKg ? 'kg' : 'lbs'})',
-                  border: OutlineInputBorder(),
+                  border: const OutlineInputBorder(),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -689,7 +689,7 @@ class ExerciseSetterState extends State<ExerciseSetter> {
               ),
             ),
           ),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           // Reps Input
           GestureDetector(
             onTap: () => _showNumberInputSheet(
@@ -701,7 +701,7 @@ class ExerciseSetterState extends State<ExerciseSetter> {
             child: AbsorbPointer(
               child: TextFormField(
                 controller: _repsController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Reps',
                   border: OutlineInputBorder(),
                 ),
@@ -714,7 +714,7 @@ class ExerciseSetterState extends State<ExerciseSetter> {
               ),
             ),
           ),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           // Sets Input
           GestureDetector(
             onTap: () => _showNumberInputSheet(
@@ -726,7 +726,7 @@ class ExerciseSetterState extends State<ExerciseSetter> {
             child: AbsorbPointer(
               child: TextFormField(
                 controller: _setsController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Sets',
                   border: OutlineInputBorder(),
                 ),
@@ -739,7 +739,7 @@ class ExerciseSetterState extends State<ExerciseSetter> {
               ),
             ),
           ),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
         ] else ...[
           Row(
             children: [
@@ -751,7 +751,7 @@ class ExerciseSetterState extends State<ExerciseSetter> {
                   });
                 },
               ),
-              Expanded(
+              const Expanded(
                 child: Text(
                   'Include bodyweight in weight calculations',
                   style: TextStyle(fontSize: 14),
@@ -762,7 +762,7 @@ class ExerciseSetterState extends State<ExerciseSetter> {
           // Save New Exercise Name Button (Only when adding a new exercise)
           ElevatedButton(
             onPressed: _saveNewExerciseName,
-            child: Text('Save New Exercise'),
+            child: const Text('Save New Exercise'),
           ),
         ],
       ],
@@ -786,7 +786,7 @@ class ExerciseSetterState extends State<ExerciseSetter> {
               controller: _userWeightController,
               decoration: InputDecoration(
                 labelText: 'Weight (${widget.isKg ? 'kg' : 'lbs'})',
-                border: OutlineInputBorder(),
+                border: const OutlineInputBorder(),
               ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -800,7 +800,7 @@ class ExerciseSetterState extends State<ExerciseSetter> {
             ),
           ),
         ),
-        SizedBox(height: 20),
+        const SizedBox(height: 20),
         // Height Input
         GestureDetector(
           onTap: () => _showNumberInputSheet(
@@ -812,7 +812,7 @@ class ExerciseSetterState extends State<ExerciseSetter> {
           child: AbsorbPointer(
             child: TextFormField(
               controller: _heightController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Height (cm)',
                 border: OutlineInputBorder(),
               ),
@@ -828,7 +828,7 @@ class ExerciseSetterState extends State<ExerciseSetter> {
             ),
           ),
         ),
-        SizedBox(height: 20),
+        const SizedBox(height: 20),
         // Age Input
         GestureDetector(
           onTap: () => _showNumberInputSheet(
@@ -840,7 +840,7 @@ class ExerciseSetterState extends State<ExerciseSetter> {
           child: AbsorbPointer(
             child: TextFormField(
               controller: _ageController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Age',
                 border: OutlineInputBorder(),
               ),
