@@ -109,11 +109,13 @@ class _TableWidgetState extends State<TableWidget> {
       _data = [];
       _offset = 0;
       _hasMoreData = true;
+      _sortColumn = 'timestamp';
+      _sortAscending = false;
     });
-    await _loadNextChunk();
+    await _loadNextChunk(selectedTable);
   }
 
-  Future<void> _loadNextChunk() async {
+  Future<void> _loadNextChunk(String selectedTable) async {
     if (_isLoading || !_hasMoreData) return;
 
     setState(() {
@@ -121,7 +123,7 @@ class _TableWidgetState extends State<TableWidget> {
     });
 
     List<Map<String, dynamic>> data;
-    if (widget.selectedTable == 'exercises') {
+    if (selectedTable == 'exercises') {
       data = await widget.dbHelper.getExercisesChunk(
         sortColumn: _sortColumn,
         ascending: _sortAscending,
@@ -130,7 +132,7 @@ class _TableWidgetState extends State<TableWidget> {
         isNumeric: _sortColumn == 'weight',
         isDateTime: _sortColumn == 'timestamp',
       );
-    } else if (widget.selectedTable == 'fitness') {
+    } else if (selectedTable == 'fitness') {
       data = await widget.dbHelper.getFitnessDataChunk(
         sortColumn: _sortColumn,
         ascending: _sortAscending,
@@ -156,7 +158,7 @@ class _TableWidgetState extends State<TableWidget> {
   void _onScroll() {
     if (_verticalScrollController.position.pixels >=
         _verticalScrollController.position.maxScrollExtent - 200) {
-      _loadNextChunk();
+      _loadNextChunk(widget.selectedTable);
     }
   }
 
@@ -292,7 +294,7 @@ class _TableWidgetState extends State<TableWidget> {
       _hasMoreData = true;
 
       // Reload data with the new sort order
-      _loadNextChunk();
+      _loadNextChunk(widget.selectedTable);
     });
   }
 
