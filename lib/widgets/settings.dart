@@ -13,20 +13,20 @@ class SettingsModal extends StatefulWidget {
   final ValueChanged<bool> onBodyweightEnabledGlobalChanged;
 
   const SettingsModal({
-    Key? key,
+    super.key,
     required this.appTheme,
     required this.onThemeChanged,
     required this.isKg,
     required this.bodyweightEnabledGlobal,
     required this.onBodyweightEnabledGlobalChanged,
     required this.onUnitChanged,
-  }) : super(key: key);
+  });
 
   @override
-  _SettingsModalState createState() => _SettingsModalState();
+  SettingsModalState createState() => SettingsModalState();
 }
 
-class _SettingsModalState extends State<SettingsModal> {
+class SettingsModalState extends State<SettingsModal> {
   final DatabaseHelper _dbHelper = DatabaseHelper();
   late AppTheme _appTheme;
   late bool _isKg;
@@ -192,7 +192,7 @@ class _SettingsModalState extends State<SettingsModal> {
             future: _appVersion,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return CircularProgressIndicator();
+                return const CircularProgressIndicator();
               } else if (snapshot.hasData) {
                 return Text(
                   'v${snapshot.data}',
@@ -382,7 +382,7 @@ class _SettingsModalState extends State<SettingsModal> {
                 onChanged: _handlePlotTypeChange,
               ),
             ),
-            Divider(),
+            const Divider(),
             // Clear exercises database
             ListTile(
               title: Text(
@@ -393,7 +393,7 @@ class _SettingsModalState extends State<SettingsModal> {
                     ?.copyWith(fontSize: 14),
               ),
               trailing: IconButton(
-                icon: Icon(Icons.delete_sweep, color: Colors.redAccent),
+                icon: const Icon(Icons.delete_sweep, color: Colors.redAccent),
                 onPressed: () async {
                   await _showConfirmationDialogs("exercises");
                 },
@@ -409,13 +409,13 @@ class _SettingsModalState extends State<SettingsModal> {
                     ?.copyWith(fontSize: 14),
               ),
               trailing: IconButton(
-                icon: Icon(Icons.delete_sweep, color: Colors.redAccent),
+                icon: const Icon(Icons.delete_sweep, color: Colors.redAccent),
                 onPressed: () async {
                   await _showConfirmationDialogs("fitness");
                 },
               ),
             ),
-            Divider(),
+            const Divider(),
             ListTile(
               title: Text(
                 'Backup Database',
@@ -425,7 +425,7 @@ class _SettingsModalState extends State<SettingsModal> {
                     ?.copyWith(fontSize: 14),
               ),
               trailing: IconButton(
-                icon: Icon(Icons.backup, color: Colors.blueAccent),
+                icon: const Icon(Icons.backup, color: Colors.blueAccent),
                 onPressed: () async {
                   await _dbHelper.backupDatabase();
                 },
@@ -440,7 +440,7 @@ class _SettingsModalState extends State<SettingsModal> {
                     ?.copyWith(fontSize: 14),
               ),
               trailing: IconButton(
-                icon: Icon(Icons.restore, color: Colors.greenAccent),
+                icon: const Icon(Icons.restore, color: Colors.greenAccent),
                 onPressed: () async {
                   await _dbHelper.restoreDatabase();
                 },

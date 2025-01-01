@@ -8,23 +8,23 @@ import '../core/controllers.dart';
 class TableTab extends StatefulWidget {
   final bool isKg;
 
-  TableTab({required this.isKg});
+  const TableTab({super.key, required this.isKg});
 
   @override
-  _TableTabState createState() => _TableTabState();
+  TableTabState createState() => TableTabState();
 }
 
-class _TableTabState extends State<TableTab> {
+class TableTabState extends State<TableTab> {
   final DatabaseHelper _dbHelper = DatabaseHelper();
   String _selectedTable = 'exercises';
-  final GlobalKey<_TableWidgetState> _tableWidgetKey =
-      GlobalKey<_TableWidgetState>();
+  final GlobalKey<TableWidgetState> _tableWidgetKey =
+      GlobalKey<TableWidgetState>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Table View'),
+        title: const Text('Table View'),
         actions: [
           DropdownButton<String>(
             value: _selectedTable,
@@ -62,7 +62,7 @@ class TableWidget extends StatefulWidget {
   final bool isKg;
   final DatabaseHelper dbHelper;
 
-  TableWidget({
+  const TableWidget({
     required Key key,
     required this.selectedTable,
     required this.isKg,
@@ -70,10 +70,10 @@ class TableWidget extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _TableWidgetState createState() => _TableWidgetState();
+  TableWidgetState createState() => TableWidgetState();
 }
 
-class _TableWidgetState extends State<TableWidget> {
+class TableWidgetState extends State<TableWidget> {
   String _sortColumn = 'timestamp';
   bool _sortAscending = false;
   List<Map<String, dynamic>> _data = [];
@@ -311,7 +311,7 @@ class _TableWidgetState extends State<TableWidget> {
             children: [
               Text(
                 title,
-                style: TextStyle(fontWeight: FontWeight.bold),
+                style: const TextStyle(fontWeight: FontWeight.bold),
               ),
               if (_sortColumn == column.toLowerCase())
                 Icon(
@@ -343,23 +343,23 @@ class _TableWidgetState extends State<TableWidget> {
             scrollDirection: Axis.horizontal,
             controller: _horizontalScrollController,
             physics:
-                NeverScrollableScrollPhysics(), // disable manual scrolling of header
+                const NeverScrollableScrollPhysics(), // disable manual scrolling of header
             child: Table(
               columnWidths: widget.selectedTable == 'exercises'
                   ? {
-                      0: FixedColumnWidth(150.0),
-                      1: FixedColumnWidth(120.0),
-                      2: FixedColumnWidth(70.0),
-                      3: FixedColumnWidth(70.0),
-                      4: FixedColumnWidth(120.0),
-                      5: FixedColumnWidth(130.0),
+                      0: const FixedColumnWidth(150.0),
+                      1: const FixedColumnWidth(120.0),
+                      2: const FixedColumnWidth(70.0),
+                      3: const FixedColumnWidth(70.0),
+                      4: const FixedColumnWidth(120.0),
+                      5: const FixedColumnWidth(130.0),
                     }
                   : {
-                      0: FixedColumnWidth(120.0),
-                      1: FixedColumnWidth(90.0),
-                      2: FixedColumnWidth(70.0),
-                      3: FixedColumnWidth(120.0),
-                      4: FixedColumnWidth(130.0),
+                      0: const FixedColumnWidth(120.0),
+                      1: const FixedColumnWidth(90.0),
+                      2: const FixedColumnWidth(70.0),
+                      3: const FixedColumnWidth(120.0),
+                      4: const FixedColumnWidth(130.0),
                     },
               border: TableBorder(
                 horizontalInside: BorderSide(
@@ -379,9 +379,9 @@ class _TableWidgetState extends State<TableWidget> {
                           _buildHeader('Reps'),
                           _buildHeader('Sets'),
                           _buildHeader('Timestamp'),
-                          TableCell(
+                          const TableCell(
                             child: Padding(
-                              padding: const EdgeInsets.all(8.0),
+                              padding: EdgeInsets.all(8.0),
                               child: Text('Actions',
                                   style:
                                       TextStyle(fontWeight: FontWeight.bold)),
@@ -393,9 +393,9 @@ class _TableWidgetState extends State<TableWidget> {
                           _buildHeader('Height'),
                           _buildHeader('Age'),
                           _buildHeader('Timestamp'),
-                          TableCell(
+                          const TableCell(
                             child: Padding(
-                              padding: const EdgeInsets.all(8.0),
+                              padding: EdgeInsets.all(8.0),
                               child: Text('Actions',
                                   style:
                                       TextStyle(fontWeight: FontWeight.bold)),
@@ -410,13 +410,13 @@ class _TableWidgetState extends State<TableWidget> {
         Expanded(
           child: ListView.builder(
             controller: _verticalScrollController,
-            physics: BouncingScrollPhysics(),
+            physics: const BouncingScrollPhysics(),
             itemCount: _data.length + (_isLoading ? 1 : 0),
             itemBuilder: (context, index) {
               if (index == _data.length) {
-                return Center(
+                return const Center(
                   child: Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: EdgeInsets.all(8.0),
                     child: CircularProgressIndicator(),
                   ),
                 );
@@ -440,23 +440,23 @@ class _TableWidgetState extends State<TableWidget> {
                 child: SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   controller: rowController,
-                  physics: ClampingScrollPhysics(),
+                  physics: const ClampingScrollPhysics(),
                   child: Table(
                     columnWidths: widget.selectedTable == 'exercises'
                         ? {
-                            0: FixedColumnWidth(150.0),
-                            1: FixedColumnWidth(120.0),
-                            2: FixedColumnWidth(70.0),
-                            3: FixedColumnWidth(70.0),
-                            4: FixedColumnWidth(120.0),
-                            5: FixedColumnWidth(130.0),
+                            0: const FixedColumnWidth(150.0),
+                            1: const FixedColumnWidth(120.0),
+                            2: const FixedColumnWidth(70.0),
+                            3: const FixedColumnWidth(70.0),
+                            4: const FixedColumnWidth(120.0),
+                            5: const FixedColumnWidth(130.0),
                           }
                         : {
-                            0: FixedColumnWidth(120.0),
-                            1: FixedColumnWidth(90.0),
-                            2: FixedColumnWidth(70.0),
-                            3: FixedColumnWidth(120.0),
-                            4: FixedColumnWidth(130.0),
+                            0: const FixedColumnWidth(120.0),
+                            1: const FixedColumnWidth(90.0),
+                            2: const FixedColumnWidth(70.0),
+                            3: const FixedColumnWidth(120.0),
+                            4: const FixedColumnWidth(130.0),
                           },
                     border: TableBorder(
                       horizontalInside: BorderSide(
@@ -516,7 +516,7 @@ class _TableWidgetState extends State<TableWidget> {
                                             _showEditDialog(item);
                                           },
                                         ),
-                                        SizedBox(width: 0.0),
+                                        const SizedBox(width: 0.0),
                                         IconButton(
                                           icon: Icon(Icons.delete,
                                               size: 18.0,
@@ -574,7 +574,7 @@ class _TableWidgetState extends State<TableWidget> {
                                             _showFitnessEditDialog(item);
                                           },
                                         ),
-                                        SizedBox(width: 0.0),
+                                        const SizedBox(width: 0.0),
                                         IconButton(
                                           icon: Icon(Icons.delete,
                                               size: 18.0,

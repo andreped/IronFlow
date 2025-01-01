@@ -1,20 +1,18 @@
 import 'package:flutter/material.dart';
 import '../core/database.dart';
-import '../core/theme.dart';
 
 class RecordsTab extends StatefulWidget {
   final bool isKg;
   final bool bodyweightEnabledGlobal;
 
   const RecordsTab(
-      {Key? key, required this.isKg, required this.bodyweightEnabledGlobal})
-      : super(key: key);
+      {super.key, required this.isKg, required this.bodyweightEnabledGlobal});
 
   @override
-  _RecordsTabState createState() => _RecordsTabState();
+  RecordsTabState createState() => RecordsTabState();
 }
 
-class _RecordsTabState extends State<RecordsTab> {
+class RecordsTabState extends State<RecordsTab> {
   final DatabaseHelper _dbHelper = DatabaseHelper();
   List<Map<String, dynamic>> _maxWeights = [];
   List<Map<String, dynamic>> _filteredWeights = [];
@@ -152,7 +150,7 @@ class _RecordsTabState extends State<RecordsTab> {
                 style: TextStyle(color: textColor),
                 onChanged: _filterRecords,
               )
-            : Text('Records'),
+            : const Text('Records'),
         leading: _isSearching
             ? IconButton(
                 icon: Icon(Icons.arrow_back, color: theme.iconTheme.color),
@@ -183,7 +181,7 @@ class _RecordsTabState extends State<RecordsTab> {
             : _errorMessage != null
                 ? Center(
                     child: Text(_errorMessage!,
-                        style: TextStyle(color: Colors.red)),
+                        style: const TextStyle(color: Colors.red)),
                   )
                 : _filteredWeights.isEmpty
                     ? const Center(child: Text('No data available'))
@@ -208,14 +206,14 @@ class _RecordsTabState extends State<RecordsTab> {
                                           mainAxisAlignment:
                                               MainAxisAlignment.start,
                                           children: [
-                                            Text('Exercise',
+                                            const Text('Exercise',
                                                 style: TextStyle(
                                                     fontWeight:
                                                         FontWeight.bold)),
                                             if (!_isSortedByWeight)
                                               Row(
                                                 children: [
-                                                  SizedBox(width: 4.0),
+                                                  const SizedBox(width: 4.0),
                                                   Icon(
                                                     _isAscending
                                                         ? Icons.arrow_upward
@@ -240,13 +238,13 @@ class _RecordsTabState extends State<RecordsTab> {
                                           children: [
                                             Text(
                                                 'Weight [${widget.isKg ? 'kg' : 'lbs'}]',
-                                                style: TextStyle(
+                                                style: const TextStyle(
                                                     fontWeight:
                                                         FontWeight.bold)),
                                             if (_isSortedByWeight)
                                               Row(
                                                 children: [
-                                                  SizedBox(width: 4.0),
+                                                  const SizedBox(width: 4.0),
                                                   Icon(
                                                     _isAscending
                                                         ? Icons.arrow_upward
@@ -276,7 +274,8 @@ class _RecordsTabState extends State<RecordsTab> {
                                     DataCell(
                                       Container(
                                         alignment: Alignment.centerRight,
-                                        padding: EdgeInsets.only(right: 16.0),
+                                        padding:
+                                            const EdgeInsets.only(right: 16.0),
                                         child: Text(
                                           '${displayWeight.toStringAsFixed(1)} x $reps reps',
                                           softWrap: false,

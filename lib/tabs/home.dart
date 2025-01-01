@@ -20,7 +20,7 @@ class ExerciseStoreApp extends StatelessWidget {
   final ValueChanged<String> setPlotType;
 
   const ExerciseStoreApp({
-    Key? key,
+    super.key,
     required this.appTheme,
     required this.updateTheme,
     required this.isKg,
@@ -31,7 +31,7 @@ class ExerciseStoreApp extends StatelessWidget {
     required this.setAggregationMethod,
     required this.plotType,
     required this.setPlotType,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -74,7 +74,7 @@ class ExerciseStoreHomePage extends StatefulWidget {
   final ValueChanged<bool> toggleBodyweightEnabledGlobal;
 
   const ExerciseStoreHomePage({
-    Key? key,
+    super.key,
     required this.appTheme,
     required this.updateTheme,
     required this.isKg,
@@ -85,13 +85,13 @@ class ExerciseStoreHomePage extends StatefulWidget {
     required this.setAggregationMethod,
     required this.plotType,
     required this.setPlotType,
-  }) : super(key: key);
+  });
 
   @override
-  _ExerciseStoreHomePageState createState() => _ExerciseStoreHomePageState();
+  ExerciseStoreHomePageState createState() => ExerciseStoreHomePageState();
 }
 
-class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage>
+class ExerciseStoreHomePageState extends State<ExerciseStoreHomePage>
     with SingleTickerProviderStateMixin {
   DateTime _selectedDay = DateTime.now();
   late TabController _tabController;
@@ -193,7 +193,7 @@ class _ExerciseStoreHomePageState extends State<ExerciseStoreHomePage>
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: VisualizationTab(
-                key: PageStorageKey('visualizationTab'),
+                key: const PageStorageKey('visualizationTab'),
                 isKg: widget.isKg,
                 bodyweightEnabledGlobal: widget.bodyweightEnabledGlobal,
                 defaultAggregationMethod: widget.aggregationMethod,

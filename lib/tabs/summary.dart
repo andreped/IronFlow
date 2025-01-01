@@ -9,18 +9,18 @@ class SummaryTab extends StatefulWidget {
   final bool bodyweightEnabledGlobal;
 
   const SummaryTab({
-    Key? key,
+    super.key,
     required this.selectedDay,
     required this.onDateSelected,
     required this.isKg,
     required this.bodyweightEnabledGlobal,
-  }) : super(key: key);
+  });
 
   @override
-  _SummaryTabState createState() => _SummaryTabState();
+  SummaryTabState createState() => SummaryTabState();
 }
 
-class _SummaryTabState extends State<SummaryTab> {
+class SummaryTabState extends State<SummaryTab> {
   final DatabaseHelper _dbHelper = DatabaseHelper();
   List<DateTime> _trainedDates = [];
   bool _isExerciseView = false;
@@ -54,17 +54,15 @@ class _SummaryTabState extends State<SummaryTab> {
     final records = await _dbHelper.getSummaryForDay(date);
     List<DateTime> timestamps = [];
 
-    if (records != null) {
-      for (var entry in records.entries) {
-        final exerciseRecords =
-            entry.value['records'] as List<Map<String, dynamic>>;
-        for (var record in exerciseRecords) {
-          final timestampStr = record['timestamp'] as String?;
+    for (var entry in records.entries) {
+      final exerciseRecords =
+          entry.value['records'] as List<Map<String, dynamic>>;
+      for (var record in exerciseRecords) {
+        final timestampStr = record['timestamp'] as String?;
 
-          if (timestampStr != null) {
-            final timestamp = DateTime.parse(timestampStr);
-            timestamps.add(timestamp);
-          }
+        if (timestampStr != null) {
+          final timestamp = DateTime.parse(timestampStr);
+          timestamps.add(timestamp);
         }
       }
     }
@@ -142,7 +140,7 @@ class _SummaryTabState extends State<SummaryTab> {
                   ),
                 );
               }
-              return SizedBox.shrink();
+              return const SizedBox.shrink();
             },
           ),
         );
@@ -157,7 +155,7 @@ class _SummaryTabState extends State<SummaryTab> {
       context: context,
       builder: (BuildContext context) {
         if (exercises.isEmpty) {
-          return Center(
+          return const Center(
             child: Text('No exercises recorded yet.'),
           );
         } else {
@@ -236,7 +234,7 @@ class _SummaryTabState extends State<SummaryTab> {
                             '${widget.selectedDay.year}-${widget.selectedDay.month}-${widget.selectedDay.day}',
                             style: TextStyle(color: textColor)),
                       ),
-                SizedBox(width: 8), // Add space between button and icon
+                const SizedBox(width: 8), // Add space between button and icon
                 IconButton(
                   icon: Icon(
                     _isExerciseView
