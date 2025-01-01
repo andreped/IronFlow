@@ -80,7 +80,10 @@ dev_dependencies:
 flutter_icons:
   android: true
   ios: true
-  image_path: "assets/icon/wave_app_icon.png"  # Path to your icon file
+  image_path: "assets/icon/wave_app_icon.png"
+  android_adaptive_icon:
+    foreground_image: "assets/icon/wave_app_icon_transparent.png"
+    background_image: "assets/icon/background_image.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
