@@ -254,6 +254,18 @@ class _SettingsModalState extends State<SettingsModal> {
                     value: AppTheme.pink,
                     child: Text('Pink'),
                   ),
+                  DropdownMenuItem(
+                    value: AppTheme.green,
+                    child: Text('Green'),
+                  ),
+                  DropdownMenuItem(
+                    value: AppTheme.red,
+                    child: Text('Red'),
+                  ),
+                  DropdownMenuItem(
+                    value: AppTheme.orange,
+                    child: Text('Orange'),
+                  ),
                 ],
                 onChanged: _handleThemeChange,
               ),

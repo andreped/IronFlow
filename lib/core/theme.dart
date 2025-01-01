@@ -17,24 +17,21 @@ class AppThemes {
         shadowColor: MaterialStateProperty.all(Colors.black.withOpacity(0.2)),
       ),
     ),
-    // Add button themes for light mode
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ButtonStyle(
-        backgroundColor:
-            MaterialStateProperty.all(Colors.blue), // Background color
-        foregroundColor: MaterialStateProperty.all(Colors.white), // Text color
+        backgroundColor: MaterialStateProperty.all(Colors.blue),
+        foregroundColor: MaterialStateProperty.all(Colors.white),
       ),
     ),
     textButtonTheme: TextButtonThemeData(
       style: ButtonStyle(
-        foregroundColor: MaterialStateProperty.all(Colors.blue), // Text color
+        foregroundColor: MaterialStateProperty.all(Colors.blue),
       ),
     ),
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: ButtonStyle(
-        foregroundColor: MaterialStateProperty.all(Colors.blue), // Text color
-        side: MaterialStateProperty.all(
-            BorderSide(color: Colors.blue)), // Border color
+        foregroundColor: MaterialStateProperty.all(Colors.blue),
+        side: MaterialStateProperty.all(BorderSide(color: Colors.blue)),
       ),
     ),
   );
@@ -52,24 +49,21 @@ class AppThemes {
         shadowColor: MaterialStateProperty.all(Colors.black.withOpacity(0.5)),
       ),
     ),
-    // Add button themes for dark mode
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ButtonStyle(
-        backgroundColor:
-            MaterialStateProperty.all(Colors.purple), // Background color
-        foregroundColor: MaterialStateProperty.all(Colors.white), // Text color
+        backgroundColor: MaterialStateProperty.all(Colors.purple),
+        foregroundColor: MaterialStateProperty.all(Colors.white),
       ),
     ),
     textButtonTheme: TextButtonThemeData(
       style: ButtonStyle(
-        foregroundColor: MaterialStateProperty.all(Colors.purple), // Text color
+        foregroundColor: MaterialStateProperty.all(Colors.purple),
       ),
     ),
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: ButtonStyle(
-        foregroundColor: MaterialStateProperty.all(Colors.purple), // Text color
-        side: MaterialStateProperty.all(
-            BorderSide(color: Colors.purple)), // Border color
+        foregroundColor: MaterialStateProperty.all(Colors.purple),
+        side: MaterialStateProperty.all(BorderSide(color: Colors.purple)),
       ),
     ),
   );
@@ -90,24 +84,126 @@ class AppThemes {
         shadowColor: MaterialStateProperty.all(Colors.pink.withOpacity(0.5)),
       ),
     ),
-    // Add button themes for pink mode
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ButtonStyle(
-        backgroundColor:
-            MaterialStateProperty.all(Colors.pink), // Background color
-        foregroundColor: MaterialStateProperty.all(Colors.white), // Text color
+        backgroundColor: MaterialStateProperty.all(Colors.pink),
+        foregroundColor: MaterialStateProperty.all(Colors.white),
       ),
     ),
     textButtonTheme: TextButtonThemeData(
       style: ButtonStyle(
-        foregroundColor: MaterialStateProperty.all(Colors.pink), // Text color
+        foregroundColor: MaterialStateProperty.all(Colors.pink),
       ),
     ),
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: ButtonStyle(
-        foregroundColor: MaterialStateProperty.all(Colors.pink), // Text color
-        side: MaterialStateProperty.all(
-            BorderSide(color: Colors.pink)), // Border color
+        foregroundColor: MaterialStateProperty.all(Colors.pink),
+        side: MaterialStateProperty.all(BorderSide(color: Colors.pink)),
+      ),
+    ),
+  );
+
+  static ThemeData greenTheme = ThemeData(
+    brightness: Brightness.light,
+    primarySwatch: Colors.green,
+    iconTheme: IconThemeData(color: Colors.green),
+    colorScheme: ColorScheme.fromSeed(
+      seedColor: Colors.green,
+      primary: Colors.green,
+      secondary: Colors.greenAccent,
+    ),
+    dropdownMenuTheme: DropdownMenuThemeData(
+      menuStyle: MenuStyle(
+        backgroundColor: MaterialStateProperty.all(Colors.green.shade50),
+        elevation: MaterialStateProperty.all(8.0),
+        shadowColor: MaterialStateProperty.all(Colors.green.withOpacity(0.5)),
+      ),
+    ),
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ButtonStyle(
+        backgroundColor: MaterialStateProperty.all(Colors.green),
+        foregroundColor: MaterialStateProperty.all(Colors.white),
+      ),
+    ),
+    textButtonTheme: TextButtonThemeData(
+      style: ButtonStyle(
+        foregroundColor: MaterialStateProperty.all(Colors.green),
+      ),
+    ),
+    outlinedButtonTheme: OutlinedButtonThemeData(
+      style: ButtonStyle(
+        foregroundColor: MaterialStateProperty.all(Colors.green),
+        side: MaterialStateProperty.all(BorderSide(color: Colors.green)),
+      ),
+    ),
+  );
+
+  static ThemeData orangeTheme = ThemeData(
+    brightness: Brightness.light,
+    primarySwatch: Colors.orange,
+    iconTheme: IconThemeData(color: Colors.orange),
+    colorScheme: ColorScheme.fromSeed(
+      seedColor: Colors.orange,
+      primary: Colors.orange,
+      secondary: Colors.orangeAccent,
+    ),
+    dropdownMenuTheme: DropdownMenuThemeData(
+      menuStyle: MenuStyle(
+        backgroundColor: MaterialStateProperty.all(Colors.orange.shade50),
+        elevation: MaterialStateProperty.all(8.0),
+        shadowColor: MaterialStateProperty.all(Colors.orange.withOpacity(0.5)),
+      ),
+    ),
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ButtonStyle(
+        backgroundColor: MaterialStateProperty.all(Colors.orange),
+        foregroundColor: MaterialStateProperty.all(Colors.white),
+      ),
+    ),
+    textButtonTheme: TextButtonThemeData(
+      style: ButtonStyle(
+        foregroundColor: MaterialStateProperty.all(Colors.orange),
+      ),
+    ),
+    outlinedButtonTheme: OutlinedButtonThemeData(
+      style: ButtonStyle(
+        foregroundColor: MaterialStateProperty.all(Colors.orange),
+        side: MaterialStateProperty.all(BorderSide(color: Colors.orange)),
+      ),
+    ),
+  );
+
+  static ThemeData redTheme = ThemeData(
+    brightness: Brightness.light,
+    primarySwatch: Colors.red,
+    iconTheme: IconThemeData(color: Colors.red),
+    colorScheme: ColorScheme.fromSeed(
+      seedColor: Colors.red,
+      primary: Colors.red,
+      secondary: Colors.redAccent,
+    ),
+    dropdownMenuTheme: DropdownMenuThemeData(
+      menuStyle: MenuStyle(
+        backgroundColor: MaterialStateProperty.all(Colors.red.shade50),
+        elevation: MaterialStateProperty.all(8.0),
+        shadowColor: MaterialStateProperty.all(Colors.red.withOpacity(0.5)),
+      ),
+    ),
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ButtonStyle(
+        backgroundColor: MaterialStateProperty.all(Colors.red),
+        foregroundColor: MaterialStateProperty.all(Colors.white),
+      ),
+    ),
+    textButtonTheme: TextButtonThemeData(
+      style: ButtonStyle(
+        foregroundColor: MaterialStateProperty.all(Colors.red),
+      ),
+    ),
+    outlinedButtonTheme: OutlinedButtonThemeData(
+      style: ButtonStyle(
+        foregroundColor: MaterialStateProperty.all(Colors.red),
+        side: MaterialStateProperty.all(BorderSide(color: Colors.red)),
       ),
     ),
   );
@@ -120,6 +216,12 @@ class AppThemes {
         return darkTheme;
       case AppTheme.pink:
         return pinkTheme;
+      case AppTheme.green:
+        return greenTheme;
+      case AppTheme.orange:
+        return orangeTheme;
+      case AppTheme.red:
+        return redTheme;
       case AppTheme.system:
       default:
         return brightness == Brightness.dark ? darkTheme : lightTheme;
@@ -127,18 +229,23 @@ class AppThemes {
   }
 }
 
-enum AppTheme { system, light, dark, pink }
+enum AppTheme { system, light, dark, pink, green, orange, red }
 
 // Extension on ThemeData to include the primaryChartColor
 extension ChartColors on ThemeData {
   Color get primaryChartColor {
-    // Use primary color or fallback to specific colors based on brightness
     if (brightness == Brightness.dark) {
-      return colorScheme.primary; // Typically purple in dark mode
+      return colorScheme.primary;
     } else if (colorScheme.primary == Colors.pink) {
-      return Colors.pink; // Pink theme case
+      return Colors.pink;
+    } else if (colorScheme.primary == Colors.green) {
+      return Colors.green;
+    } else if (colorScheme.primary == Colors.orange) {
+      return Colors.orange;
+    } else if (colorScheme.primary == Colors.red) {
+      return Colors.red;
     } else {
-      return Colors.blue; // Default to blue in light mode
+      return Colors.blue;
     }
   }
 }
