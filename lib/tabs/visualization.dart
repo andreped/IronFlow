@@ -11,18 +11,18 @@ class VisualizationTab extends StatefulWidget {
   final String defaultChartType;
 
   const VisualizationTab({
-    Key? key,
+    super.key,
     required this.isKg,
     required this.bodyweightEnabledGlobal,
     required this.defaultAggregationMethod,
     required this.defaultChartType,
-  }) : super(key: key);
+  });
 
   @override
-  _VisualizationTabState createState() => _VisualizationTabState();
+  VisualizationTabState createState() => VisualizationTabState();
 }
 
-class _VisualizationTabState extends State<VisualizationTab> {
+class VisualizationTabState extends State<VisualizationTab> {
   String? _selectedExercise;
   String _selectedTable = 'Exercise'; // Default selected table
   late String _aggregationMethod;
@@ -153,9 +153,9 @@ class _VisualizationTabState extends State<VisualizationTab> {
 
       if (_selectedDateRange == null ||
           (dateTime.isAfter(
-                  _selectedDateRange!.start.subtract(Duration(days: 1))) &&
+                  _selectedDateRange!.start.subtract(const Duration(days: 1))) &&
               dateTime
-                  .isBefore(_selectedDateRange!.end.add(Duration(days: 1))))) {
+                  .isBefore(_selectedDateRange!.end.add(const Duration(days: 1))))) {
         if (groupedByDate.containsKey(dateTime)) {
           groupedByDate[dateTime]!.add(record);
         } else {
@@ -387,7 +387,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
                           ),
                         )
                       : Container(
-                          padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
+                          padding: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
                           child: _buildChart(
                               theme, scatterColor, lineColor, axisTextColor),
                         )),
@@ -628,12 +628,12 @@ class _VisualizationTabState extends State<VisualizationTab> {
           ),
           axisNameSize: 30,
         ),
-        topTitles: AxisTitles(
+        topTitles: const AxisTitles(
           sideTitles: SideTitles(
             showTitles: false, // Hide top axis titles
           ),
         ),
-        rightTitles: AxisTitles(
+        rightTitles: const AxisTitles(
           sideTitles: SideTitles(
             showTitles: false, // Hide right axis titles
           ),
@@ -653,19 +653,19 @@ class _VisualizationTabState extends State<VisualizationTab> {
         horizontalInterval: horizontalInterval,
         verticalInterval: verticalInterval,
         getDrawingHorizontalLine: (value) {
-          return FlLine(
+          return const FlLine(
             color: Colors.grey,
             strokeWidth: 0.5,
           );
         },
         getDrawingVerticalLine: (value) {
-          return FlLine(
+          return const FlLine(
             color: Colors.grey,
             strokeWidth: 0.5,
           );
         },
       ),
-      lineTouchData: LineTouchData(
+      lineTouchData: const LineTouchData(
         enabled: true,
         handleBuiltInTouches: true,
       ),
@@ -727,12 +727,12 @@ class _VisualizationTabState extends State<VisualizationTab> {
           ),
           axisNameSize: 30,
         ),
-        topTitles: AxisTitles(
+        topTitles: const AxisTitles(
           sideTitles: SideTitles(
             showTitles: false,
           ),
         ),
-        rightTitles: AxisTitles(
+        rightTitles: const AxisTitles(
           sideTitles: SideTitles(
             showTitles: false, // Hide right axis titles
           ),
@@ -752,13 +752,13 @@ class _VisualizationTabState extends State<VisualizationTab> {
         horizontalInterval: horizontalInterval,
         verticalInterval: verticalInterval,
         getDrawingHorizontalLine: (value) {
-          return FlLine(
+          return const FlLine(
             color: Colors.grey,
             strokeWidth: 0.5,
           );
         },
         getDrawingVerticalLine: (value) {
-          return FlLine(
+          return const FlLine(
             color: Colors.grey,
             strokeWidth: 0.5,
           );
@@ -786,7 +786,7 @@ class _VisualizationTabState extends State<VisualizationTab> {
       child: Padding(
         padding: const EdgeInsets.only(top: 5.0),
         child: Transform.translate(
-          offset: Offset(0, 10),
+          offset: const Offset(0, 10),
           child: Transform.rotate(
             angle: 65 * 3.1415926535897932 / 180,
             child: Text(
