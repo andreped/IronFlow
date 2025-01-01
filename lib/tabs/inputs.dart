@@ -77,18 +77,6 @@ class ExerciseSetterState extends State<ExerciseSetter> {
     });
   }
 
-  void _updateWeightController() {
-    if (_weightController.text.isNotEmpty) {
-      double weight = double.parse(_weightController.text);
-      if (widget.isKg) {
-        weight = convertLbsToKg(weight);
-      } else {
-        weight = convertKgToLbs(weight);
-      }
-      _weightController.text = weight.toStringAsFixed(2);
-    }
-  }
-
   Future<void> _fetchLastExerciseTime() async {
     final lastExercise = await _dbHelper.getLastLoggedExerciseTime();
     if (lastExercise != null) {
