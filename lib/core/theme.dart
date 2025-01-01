@@ -138,6 +138,41 @@ class AppThemes {
     ),
   );
 
+  static ThemeData orangeTheme = ThemeData(
+    brightness: Brightness.light,
+    primarySwatch: Colors.orange,
+    iconTheme: IconThemeData(color: Colors.orange),
+    colorScheme: ColorScheme.fromSeed(
+      seedColor: Colors.orange,
+      primary: Colors.orange,
+      secondary: Colors.orangeAccent,
+    ),
+    dropdownMenuTheme: DropdownMenuThemeData(
+      menuStyle: MenuStyle(
+        backgroundColor: MaterialStateProperty.all(Colors.orange.shade50),
+        elevation: MaterialStateProperty.all(8.0),
+        shadowColor: MaterialStateProperty.all(Colors.orange.withOpacity(0.5)),
+      ),
+    ),
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ButtonStyle(
+        backgroundColor: MaterialStateProperty.all(Colors.orange),
+        foregroundColor: MaterialStateProperty.all(Colors.white),
+      ),
+    ),
+    textButtonTheme: TextButtonThemeData(
+      style: ButtonStyle(
+        foregroundColor: MaterialStateProperty.all(Colors.orange),
+      ),
+    ),
+    outlinedButtonTheme: OutlinedButtonThemeData(
+      style: ButtonStyle(
+        foregroundColor: MaterialStateProperty.all(Colors.orange),
+        side: MaterialStateProperty.all(BorderSide(color: Colors.orange)),
+      ),
+    ),
+  );
+
   static ThemeData getTheme(AppTheme appTheme, Brightness brightness) {
     switch (appTheme) {
       case AppTheme.light:
@@ -148,6 +183,8 @@ class AppThemes {
         return pinkTheme;
       case AppTheme.green:
         return greenTheme;
+      case AppTheme.orange:
+        return orangeTheme;
       case AppTheme.system:
       default:
         return brightness == Brightness.dark ? darkTheme : lightTheme;
@@ -155,7 +192,7 @@ class AppThemes {
   }
 }
 
-enum AppTheme { system, light, dark, pink, green }
+enum AppTheme { system, light, dark, pink, green, orange }
 
 // Extension on ThemeData to include the primaryChartColor
 extension ChartColors on ThemeData {
@@ -166,6 +203,8 @@ extension ChartColors on ThemeData {
       return Colors.pink;
     } else if (colorScheme.primary == Colors.green) {
       return Colors.green;
+    } else if (colorScheme.primary == Colors.orange) {
+      return Colors.orange;
     } else {
       return Colors.blue;
     }
