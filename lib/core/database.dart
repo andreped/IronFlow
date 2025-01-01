@@ -157,6 +157,38 @@ class DatabaseHelper {
     );
   }
 
+  Future<List<Map<String, dynamic>>> getExercisesChunk({
+    required String sortColumn,
+    required bool ascending,
+    int offset = 0,
+    int limit = 20,
+  }) async {
+    final db = await database;
+    final orderBy = '$sortColumn ${ascending ? 'ASC' : 'DESC'}';
+    return await db.query(
+      'exercises',
+      orderBy: orderBy,
+      limit: limit,
+      offset: offset,
+    );
+  }
+
+  Future<List<Map<String, dynamic>>> getFitnessDataChunk({
+    required String sortColumn,
+    required bool ascending,
+    int offset = 0,
+    int limit = 20,
+  }) async {
+    final db = await database;
+    final orderBy = '$sortColumn ${ascending ? 'ASC' : 'DESC'}';
+    return await db.query(
+      'fitness',
+      orderBy: orderBy,
+      limit: limit,
+      offset: offset,
+    );
+  }
+
   Future<List<DateTime>> getExerciseDates() async {
     final db = await database;
     final List<Map<String, dynamic>> datesResult = await db
