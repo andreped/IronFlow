@@ -14,7 +14,8 @@ class ClampingScrollController extends ScrollController {
   }
 
   @override
-  Future<void> animateTo(double offset, {
+  Future<void> animateTo(
+    double offset, {
     required Duration duration,
     required Curve curve,
   }) {
@@ -98,7 +99,8 @@ class _TableWidgetState extends State<TableWidget> {
   bool _sortAscending = false;
   List<Map<String, dynamic>> _data = [];
   final ScrollController _verticalScrollController = ScrollController();
-  final ScrollController _horizontalScrollController = ClampingScrollController();
+  final ScrollController _horizontalScrollController =
+      ClampingScrollController();
   int _offset = 0;
   final int _limit = 20;
   bool _isLoading = false;
@@ -358,7 +360,8 @@ class _TableWidgetState extends State<TableWidget> {
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             controller: _horizontalScrollController,
-            physics: NeverScrollableScrollPhysics(), // disable manual scrolling of header
+            physics:
+                NeverScrollableScrollPhysics(), // disable manual scrolling of header
             child: Table(
               columnWidths: widget.selectedTable == 'exercises'
                   ? {
@@ -398,7 +401,8 @@ class _TableWidgetState extends State<TableWidget> {
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Text('Actions',
-                                  style: TextStyle(fontWeight: FontWeight.bold)),
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.bold)),
                             ),
                           ),
                         ]
@@ -411,7 +415,8 @@ class _TableWidgetState extends State<TableWidget> {
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Text('Actions',
-                                  style: TextStyle(fontWeight: FontWeight.bold)),
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.bold)),
                             ),
                           ),
                         ],
@@ -441,9 +446,11 @@ class _TableWidgetState extends State<TableWidget> {
 
               return NotificationListener<ScrollNotification>(
                 onNotification: (ScrollNotification scrollInfo) {
-                  if (scrollInfo.metrics.axis == Axis.horizontal && !_isSyncing) {
+                  if (scrollInfo.metrics.axis == Axis.horizontal &&
+                      !_isSyncing) {
                     _activeRowController = rowController;
-                    _horizontalScrollController.jumpTo(scrollInfo.metrics.pixels);
+                    _horizontalScrollController
+                        .jumpTo(scrollInfo.metrics.pixels);
                     _activeRowController = null;
                   }
                   return false;
