@@ -5,7 +5,8 @@ class FitnessEditDialog extends StatefulWidget {
   final Map<String, dynamic> fitnessData;
   final bool isKg; // Add this parameter to manage unit selection
 
-  const FitnessEditDialog({super.key, required this.fitnessData, required this.isKg});
+  const FitnessEditDialog(
+      {super.key, required this.fitnessData, required this.isKg});
 
   @override
   FitnessEditDialogState createState() => FitnessEditDialogState();

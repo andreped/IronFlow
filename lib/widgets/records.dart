@@ -274,7 +274,8 @@ class RecordsTabState extends State<RecordsTab> {
                                     DataCell(
                                       Container(
                                         alignment: Alignment.centerRight,
-                                        padding: const EdgeInsets.only(right: 16.0),
+                                        padding:
+                                            const EdgeInsets.only(right: 16.0),
                                         child: Text(
                                           '${displayWeight.toStringAsFixed(1)} x $reps reps',
                                           softWrap: false,

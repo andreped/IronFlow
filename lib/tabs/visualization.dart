@@ -152,10 +152,10 @@ class VisualizationTabState extends State<VisualizationTab> {
       final dateTime = DateUtils.dateOnly(DateTime.parse(record['timestamp']));
 
       if (_selectedDateRange == null ||
-          (dateTime.isAfter(
-                  _selectedDateRange!.start.subtract(const Duration(days: 1))) &&
-              dateTime
-                  .isBefore(_selectedDateRange!.end.add(const Duration(days: 1))))) {
+          (dateTime.isAfter(_selectedDateRange!.start
+                  .subtract(const Duration(days: 1))) &&
+              dateTime.isBefore(
+                  _selectedDateRange!.end.add(const Duration(days: 1))))) {
         if (groupedByDate.containsKey(dateTime)) {
           groupedByDate[dateTime]!.add(record);
         } else {
@@ -387,7 +387,8 @@ class VisualizationTabState extends State<VisualizationTab> {
                           ),
                         )
                       : Container(
-                          padding: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
+                          padding:
+                              const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
                           child: _buildChart(
                               theme, scatterColor, lineColor, axisTextColor),
                         )),

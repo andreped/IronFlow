@@ -9,7 +9,8 @@ class ExerciseSetter extends StatefulWidget {
   final Function() onExerciseAdded;
   final bool isKg;
 
-  const ExerciseSetter({super.key, 
+  const ExerciseSetter({
+    super.key,
     required this.onExerciseAdded,
     required this.isKg,
   });
@@ -396,7 +397,8 @@ class ExerciseSetterState extends State<ExerciseSetter> {
                         focusNode: focusNode,
                         controller: localController,
                         keyboardType: isDouble
-                            ? const TextInputType.numberWithOptions(decimal: true)
+                            ? const TextInputType.numberWithOptions(
+                                decimal: true)
                             : TextInputType.number,
                         inputFormatters: [
                           FilteringTextInputFormatter.allow(
