@@ -9,16 +9,16 @@ class ExerciseSetter extends StatefulWidget {
   final Function() onExerciseAdded;
   final bool isKg;
 
-  const ExerciseSetter({
+  const ExerciseSetter({super.key, 
     required this.onExerciseAdded,
     required this.isKg,
   });
 
   @override
-  _ExerciseSetterState createState() => _ExerciseSetterState();
+  ExerciseSetterState createState() => ExerciseSetterState();
 }
 
-class _ExerciseSetterState extends State<ExerciseSetter> {
+class ExerciseSetterState extends State<ExerciseSetter> {
   final _formKey = GlobalKey<FormState>();
   final _newExerciseController = TextEditingController();
   final _weightController = TextEditingController();
