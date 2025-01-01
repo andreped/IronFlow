@@ -82,11 +82,14 @@ class _TableWidgetState extends State<TableWidget> {
   final int _limit = 20;
   bool _isLoading = false;
   bool _hasMoreData = true;
+  bool _isSyncing = false;
+  ScrollController? _activeRowController;
 
   @override
   void initState() {
     super.initState();
     _verticalScrollController.addListener(_onScroll);
+    _horizontalScrollController.addListener(_onHorizontalScroll);
     _loadData(widget.selectedTable);
   }
 
@@ -94,6 +97,7 @@ class _TableWidgetState extends State<TableWidget> {
   void dispose() {
     _verticalScrollController.removeListener(_onScroll);
     _verticalScrollController.dispose();
+    _horizontalScrollController.removeListener(_onHorizontalScroll);
     _horizontalScrollController.dispose();
     super.dispose();
   }
@@ -148,6 +152,21 @@ class _TableWidgetState extends State<TableWidget> {
         _verticalScrollController.position.maxScrollExtent - 200) {
       _loadNextChunk();
     }
+  }
+
+  void _onHorizontalScroll() {
+    if (_isSyncing) return;
+    setState(() {
+      _isSyncing = true;
+    });
+    for (var rowController in _rowControllers) {
+      if (rowController != _activeRowController && rowController.hasClients) {
+        rowController.jumpTo(_horizontalScrollController.offset);
+      }
+    }
+    setState(() {
+      _isSyncing = false;
+    });
   }
 
   Future<void> _deleteRow(String table, int id) async {
@@ -302,6 +321,8 @@ class _TableWidgetState extends State<TableWidget> {
     );
   }
 
+  final List<ScrollController> _rowControllers = [];
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -392,15 +413,21 @@ class _TableWidgetState extends State<TableWidget> {
               }
 
               final item = _data[index];
+              final rowController = ScrollController();
+              _rowControllers.add(rowController);
+
               return NotificationListener<ScrollNotification>(
                 onNotification: (ScrollNotification scrollInfo) {
-                  if (scrollInfo.metrics.axis == Axis.horizontal) {
+                  if (scrollInfo.metrics.axis == Axis.horizontal && !_isSyncing) {
+                    _activeRowController = rowController;
                     _horizontalScrollController.jumpTo(scrollInfo.metrics.pixels);
+                    _activeRowController = null;
                   }
                   return false;
                 },
                 child: SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
+                  controller: rowController,
                   child: Table(
                     columnWidths: widget.selectedTable == 'exercises'
                         ? {
