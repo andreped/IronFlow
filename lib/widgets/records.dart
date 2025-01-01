@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import '../core/database.dart';
+import 'package:logging/logging.dart';
+
+// Initialize the logger
+final Logger _logger = Logger('RecordsLogger');
 
 class RecordsTab extends StatefulWidget {
   final bool isKg;
@@ -43,7 +47,7 @@ class RecordsTabState extends State<RecordsTab> {
         _errorMessage =
             'Failed to load data. Please try again later.'; // Set error message
       });
-      print('Error fetching records: $e'); // Log error for debugging
+      _logger.severe('Error fetching records: $e');
     }
   }
 

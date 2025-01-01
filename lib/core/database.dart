@@ -5,6 +5,10 @@ import 'dart:io';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import '../common/constants.dart';
+import 'package:logging/logging.dart';
+
+// Initialize the logger
+final Logger _logger = Logger('DatabaseLogger');
 
 class DatabaseHelper {
   static final DatabaseHelper _instance = DatabaseHelper._internal();
@@ -25,7 +29,7 @@ class DatabaseHelper {
 
   Future<Database> _initDatabase() async {
     String path = await _databasePath();
-    print("Database is located at: $path");
+    _logger.info("Database is located at: $path");
     return await openDatabase(
       path,
       version: _databaseVersion,
@@ -115,7 +119,7 @@ class DatabaseHelper {
       await db.execute(
         'CREATE TABLE fitness(id INTEGER PRIMARY KEY AUTOINCREMENT, weight TEXT, height INTEGER, age INTEGER, timestamp TEXT)',
       );
-      print('Fitness table recreated successfully');
+      _logger.info('Fitness table recreated successfully');
     } else {
       await db.delete(table);
     }
@@ -581,15 +585,15 @@ class DatabaseHelper {
           String backupPath = '$selectedDirectory/backup_database.db';
           await databaseFile.copy(backupPath);
 
-          print('Database backed up successfully to $backupPath');
+          _logger.info('Database backed up successfully to $backupPath');
         } else {
-          print('Backup operation cancelled');
+          _logger.info('Backup operation cancelled');
         }
       } else {
-        print('Storage permission denied');
+        _logger.severe('Storage permission denied');
       }
     } catch (e) {
-      print('Failed to back up database: $e');
+      _logger.severe('Failed to back up database: $e');
     }
   }
 
@@ -612,15 +616,15 @@ class DatabaseHelper {
           File selectedFile = File(selectedFilePath);
           await selectedFile.copy(dbPath);
 
-          print('Database restored successfully from $selectedFilePath');
+          _logger.info('Database restored successfully from $selectedFilePath');
         } else {
-          print('Restore operation cancelled');
+          _logger.info('Restore operation cancelled');
         }
       } else {
-        print('Storage permission denied');
+        _logger.severe('Storage permission denied');
       }
     } catch (e) {
-      print('Failed to restore database: $e');
+      _logger.severe('Failed to restore database: $e');
     }
   }
 }

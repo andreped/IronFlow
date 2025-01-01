@@ -3,6 +3,10 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
 import '../core/database.dart';
 import '../core/theme.dart';
+import 'package:logging/logging.dart';
+
+// Initialize the logger
+final Logger _logger = Logger('VisualizationLogger');
 
 class VisualizationTab extends StatefulWidget {
   final bool isKg;
@@ -71,7 +75,7 @@ class VisualizationTabState extends State<VisualizationTab> {
   }
 
   Future<void> _fetchExerciseNames() async {
-    print('Fetching names from $_selectedTable table...');
+    _logger.info('Fetching names from $_selectedTable table...');
     try {
       List<String> names;
       if (_selectedTable == 'Exercise') {
@@ -99,7 +103,7 @@ class VisualizationTabState extends State<VisualizationTab> {
         }
       });
     } catch (e) {
-      print('Error fetching names: $e');
+      _logger.severe('Error fetching names: $e');
     }
 
     // render last recorded exercise by default if any
@@ -114,7 +118,7 @@ class VisualizationTabState extends State<VisualizationTab> {
           });
         }
       } catch (e) {
-        print('Error fetching last recorded exercise: $e');
+        _logger.severe('Error fetching last recorded exercise: $e');
       }
     }
 
@@ -129,7 +133,7 @@ class VisualizationTabState extends State<VisualizationTab> {
   }
 
   Future<void> _fetchDataPoints(String? exerciseName) async {
-    print('Fetching data points for: $exerciseName');
+    _logger.info('Fetching data points for: $exerciseName');
     String currAggregationMethod = _aggregationMethod;
     List<Map<String, dynamic>> records;
     if (_selectedTable == 'Exercise') {
