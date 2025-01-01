@@ -98,13 +98,20 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
         _lastExerciseTime = lastExercise;
         _updateTimeSinceLastExercise();
       });
+    } else {
+      setState(() {
+        _lastExerciseTime = null;
+        _timeSinceLastExercise = '';
+      });
     }
   }
 
   void _startTimer() {
-    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
-      _updateTimeSinceLastExercise();
-    });
+    if (_lastExerciseTime != null) {
+      _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+        _updateTimeSinceLastExercise();
+      });
+    }
   }
 
   void _updateTimeSinceLastExercise() {
@@ -122,6 +129,10 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
               '${difference.inHours}h ${difference.inMinutes.remainder(60)}m ${difference.inSeconds.remainder(60)}s';
         });
       }
+    } else {
+      setState(() {
+        _timeSinceLastExercise = '';
+      });
     }
   }
 
