@@ -3,28 +3,7 @@ import '../core/database.dart';
 import 'exercise_edit_dialog.dart';
 import 'fitness_edit_dialog.dart';
 import 'package:intl/intl.dart';
-
-class ClampingScrollController extends ScrollController {
-  @override
-  void jumpTo(double value) {
-    final double maxScrollExtent = position.maxScrollExtent;
-    final double minScrollExtent = position.minScrollExtent;
-    final double clampedValue = value.clamp(minScrollExtent, maxScrollExtent);
-    super.jumpTo(clampedValue);
-  }
-
-  @override
-  Future<void> animateTo(
-    double offset, {
-    required Duration duration,
-    required Curve curve,
-  }) {
-    final double maxScrollExtent = position.maxScrollExtent;
-    final double minScrollExtent = position.minScrollExtent;
-    final double clampedOffset = offset.clamp(minScrollExtent, maxScrollExtent);
-    return super.animateTo(clampedOffset, duration: duration, curve: curve);
-  }
-}
+import '../core/controllers.dart';
 
 class TableTab extends StatefulWidget {
   final bool isKg;
