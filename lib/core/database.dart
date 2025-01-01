@@ -160,33 +160,49 @@ class DatabaseHelper {
   Future<List<Map<String, dynamic>>> getExercisesChunk({
     required String sortColumn,
     required bool ascending,
-    int offset = 0,
-    int limit = 20,
+    required int offset,
+    required int limit,
+    bool isNumeric = false,
+    bool isDateTime = false,
   }) async {
-    final db = await database;
-    final orderBy = '$sortColumn ${ascending ? 'ASC' : 'DESC'}';
-    return await db.query(
-      'exercises',
-      orderBy: orderBy,
-      limit: limit,
-      offset: offset,
-    );
-  }
+    final orderBy = isNumeric
+        ? 'CAST($sortColumn AS REAL) ${ascending ? 'ASC' : 'DESC'}'
+        : isDateTime
+            ? 'DATETIME($sortColumn) ${ascending ? 'ASC' : 'DESC'}'
+            : '$sortColumn ${ascending ? 'ASC' : 'DESC'}';
 
+    final db = await database;
+    final List<Map<String, dynamic>> result = await db.rawQuery('''
+      SELECT * FROM exercises
+      ORDER BY $orderBy
+      LIMIT $limit OFFSET $offset
+    ''');
+  
+    return result;
+  }
+  
   Future<List<Map<String, dynamic>>> getFitnessDataChunk({
     required String sortColumn,
     required bool ascending,
-    int offset = 0,
-    int limit = 20,
+    required int offset,
+    required int limit,
+    bool isNumeric = false,
+    bool isDateTime = false,
   }) async {
+    final orderBy = isNumeric
+        ? 'CAST($sortColumn AS REAL) ${ascending ? 'ASC' : 'DESC'}'
+        : isDateTime
+            ? 'DATETIME($sortColumn) ${ascending ? 'ASC' : 'DESC'}'
+            : '$sortColumn ${ascending ? 'ASC' : 'DESC'}';
+
     final db = await database;
-    final orderBy = '$sortColumn ${ascending ? 'ASC' : 'DESC'}';
-    return await db.query(
-      'fitness',
-      orderBy: orderBy,
-      limit: limit,
-      offset: offset,
-    );
+    final List<Map<String, dynamic>> result = await db.rawQuery('''
+      SELECT * FROM fitness
+      ORDER BY $orderBy
+      LIMIT $limit OFFSET $offset
+    ''');
+  
+    return result;
   }
 
   Future<List<DateTime>> getExerciseDates() async {

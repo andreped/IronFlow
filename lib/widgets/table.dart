@@ -127,6 +127,8 @@ class _TableWidgetState extends State<TableWidget> {
         ascending: _sortAscending,
         offset: _offset,
         limit: _limit,
+        isNumeric: _sortColumn == 'weight',
+        isDateTime: _sortColumn == 'timestamp',
       );
     } else if (widget.selectedTable == 'fitness') {
       data = await widget.dbHelper.getFitnessDataChunk(
@@ -134,6 +136,8 @@ class _TableWidgetState extends State<TableWidget> {
         ascending: _sortAscending,
         offset: _offset,
         limit: _limit,
+        isNumeric: _sortColumn == 'weight',
+        isDateTime: _sortColumn == 'timestamp',
       );
     } else {
       data = [];
@@ -282,16 +286,13 @@ class _TableWidgetState extends State<TableWidget> {
         _sortAscending = true;
       }
 
-      _data.sort((a, b) {
-        int compareResult;
-        if (column == 'exercise' || column == 'timestamp') {
-          compareResult = a[column].compareTo(b[column]);
-        } else {
-          compareResult = double.parse(a[column].toString())
-              .compareTo(double.parse(b[column].toString()));
-        }
-        return _sortAscending ? compareResult : -compareResult;
-      });
+      // Reset the offset and data
+      _offset = 0;
+      _data = [];
+      _hasMoreData = true;
+
+      // Reload data with the new sort order
+      _loadNextChunk();
     });
   }
 
