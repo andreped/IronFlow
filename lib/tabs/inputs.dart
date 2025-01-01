@@ -3,14 +3,13 @@ import 'package:flutter/services.dart';
 import '../core/database.dart';
 import '../core/convert.dart';
 import 'package:confetti/confetti.dart';
-import '../core/theme.dart';
 import 'dart:async';
 
 class ExerciseSetter extends StatefulWidget {
   final Function() onExerciseAdded;
   final bool isKg;
 
-  ExerciseSetter({
+  const ExerciseSetter({
     required this.onExerciseAdded,
     required this.isKg,
   });
@@ -36,7 +35,6 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
 
   String? _selectedExercise;
   bool _isAddingNewExercise = false;
-  String? _lastExerciseName;
   double? _lastWeight;
   int? _lastReps;
   int? _lastSets;
@@ -140,9 +138,8 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
     if (_selectedLoggingType == 'Exercise' && _selectedExercise != null) {
       final lastLogged =
           await _dbHelper.getLastLoggedExercise(_selectedExercise!);
-      if (lastLogged != null && lastLogged.isNotEmpty) {
+      if (lastLogged.isNotEmpty) {
         setState(() {
-          _lastExerciseName = lastLogged['exercise'] ?? '';
           _lastWeight =
               double.tryParse(lastLogged['weight']?.toString() ?? '0');
           _lastReps = lastLogged['reps'] ?? 0;
