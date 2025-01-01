@@ -177,10 +177,10 @@ class DatabaseHelper {
       ORDER BY $orderBy
       LIMIT $limit OFFSET $offset
     ''');
-  
+
     return result;
   }
-  
+
   Future<List<Map<String, dynamic>>> getFitnessDataChunk({
     required String sortColumn,
     required bool ascending,
@@ -201,7 +201,7 @@ class DatabaseHelper {
       ORDER BY $orderBy
       LIMIT $limit OFFSET $offset
     ''');
-  
+
     return result;
   }
 
