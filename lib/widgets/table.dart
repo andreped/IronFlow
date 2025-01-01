@@ -306,67 +306,75 @@ class _TableWidgetState extends State<TableWidget> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          controller: _horizontalScrollController,
-          child: Table(
-            columnWidths: widget.selectedTable == 'exercises'
-                ? {
-                    0: FixedColumnWidth(150.0),
-                    1: FixedColumnWidth(120.0),
-                    2: FixedColumnWidth(70.0),
-                    3: FixedColumnWidth(70.0),
-                    4: FixedColumnWidth(120.0),
-                    5: FixedColumnWidth(130.0),
-                  }
-                : {
-                    0: FixedColumnWidth(120.0),
-                    1: FixedColumnWidth(90.0),
-                    2: FixedColumnWidth(70.0),
-                    3: FixedColumnWidth(120.0),
-                    4: FixedColumnWidth(130.0),
-                  },
-            border: TableBorder(
-              horizontalInside: BorderSide(
-                color: Colors.grey.shade300,
-                width: 0.5,
+        NotificationListener<ScrollNotification>(
+          onNotification: (ScrollNotification scrollInfo) {
+            if (scrollInfo.metrics.axis == Axis.horizontal) {
+              _horizontalScrollController.jumpTo(scrollInfo.metrics.pixels);
+            }
+            return false;
+          },
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            controller: _horizontalScrollController,
+            child: Table(
+              columnWidths: widget.selectedTable == 'exercises'
+                  ? {
+                      0: FixedColumnWidth(150.0),
+                      1: FixedColumnWidth(120.0),
+                      2: FixedColumnWidth(70.0),
+                      3: FixedColumnWidth(70.0),
+                      4: FixedColumnWidth(120.0),
+                      5: FixedColumnWidth(130.0),
+                    }
+                  : {
+                      0: FixedColumnWidth(120.0),
+                      1: FixedColumnWidth(90.0),
+                      2: FixedColumnWidth(70.0),
+                      3: FixedColumnWidth(120.0),
+                      4: FixedColumnWidth(130.0),
+                    },
+              border: TableBorder(
+                horizontalInside: BorderSide(
+                  color: Colors.grey.shade300,
+                  width: 0.5,
+                ),
+                verticalInside: BorderSide.none,
+                top: BorderSide.none,
+                bottom: BorderSide.none,
               ),
-              verticalInside: BorderSide.none,
-              top: BorderSide.none,
-              bottom: BorderSide.none,
+              children: [
+                TableRow(
+                  children: widget.selectedTable == 'exercises'
+                      ? [
+                          _buildHeader('Exercise'),
+                          _buildHeader('Weight'),
+                          _buildHeader('Reps'),
+                          _buildHeader('Sets'),
+                          _buildHeader('Timestamp'),
+                          TableCell(
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text('Actions',
+                                  style: TextStyle(fontWeight: FontWeight.bold)),
+                            ),
+                          ),
+                        ]
+                      : [
+                          _buildHeader('Weight'),
+                          _buildHeader('Height'),
+                          _buildHeader('Age'),
+                          _buildHeader('Timestamp'),
+                          TableCell(
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text('Actions',
+                                  style: TextStyle(fontWeight: FontWeight.bold)),
+                            ),
+                          ),
+                        ],
+                ),
+              ],
             ),
-            children: [
-              TableRow(
-                children: widget.selectedTable == 'exercises'
-                    ? [
-                        _buildHeader('Exercise'),
-                        _buildHeader('Weight'),
-                        _buildHeader('Reps'),
-                        _buildHeader('Sets'),
-                        _buildHeader('Timestamp'),
-                        TableCell(
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text('Actions',
-                                style: TextStyle(fontWeight: FontWeight.bold)),
-                          ),
-                        ),
-                      ]
-                    : [
-                        _buildHeader('Weight'),
-                        _buildHeader('Height'),
-                        _buildHeader('Age'),
-                        _buildHeader('Timestamp'),
-                        TableCell(
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text('Actions',
-                                style: TextStyle(fontWeight: FontWeight.bold)),
-                          ),
-                        ),
-                      ],
-              ),
-            ],
           ),
         ),
         Expanded(
@@ -384,161 +392,168 @@ class _TableWidgetState extends State<TableWidget> {
               }
 
               final item = _data[index];
-              return SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                controller: _horizontalScrollController,
-                child: Table(
-                  columnWidths: widget.selectedTable == 'exercises'
-                      ? {
-                          0: FixedColumnWidth(150.0),
-                          1: FixedColumnWidth(120.0),
-                          2: FixedColumnWidth(70.0),
-                          3: FixedColumnWidth(70.0),
-                          4: FixedColumnWidth(120.0),
-                          5: FixedColumnWidth(130.0),
-                        }
-                      : {
-                          0: FixedColumnWidth(120.0),
-                          1: FixedColumnWidth(90.0),
-                          2: FixedColumnWidth(70.0),
-                          3: FixedColumnWidth(120.0),
-                          4: FixedColumnWidth(130.0),
-                        },
-                  border: TableBorder(
-                    horizontalInside: BorderSide(
-                      color: Colors.grey.shade300,
-                      width: 0.5,
+              return NotificationListener<ScrollNotification>(
+                onNotification: (ScrollNotification scrollInfo) {
+                  if (scrollInfo.metrics.axis == Axis.horizontal) {
+                    _horizontalScrollController.jumpTo(scrollInfo.metrics.pixels);
+                  }
+                  return false;
+                },
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Table(
+                    columnWidths: widget.selectedTable == 'exercises'
+                        ? {
+                            0: FixedColumnWidth(150.0),
+                            1: FixedColumnWidth(120.0),
+                            2: FixedColumnWidth(70.0),
+                            3: FixedColumnWidth(70.0),
+                            4: FixedColumnWidth(120.0),
+                            5: FixedColumnWidth(130.0),
+                          }
+                        : {
+                            0: FixedColumnWidth(120.0),
+                            1: FixedColumnWidth(90.0),
+                            2: FixedColumnWidth(70.0),
+                            3: FixedColumnWidth(120.0),
+                            4: FixedColumnWidth(130.0),
+                          },
+                    border: TableBorder(
+                      horizontalInside: BorderSide(
+                        color: Colors.grey.shade300,
+                        width: 0.5,
+                      ),
+                      verticalInside: BorderSide.none,
+                      top: BorderSide.none,
+                      bottom: BorderSide.none,
                     ),
-                    verticalInside: BorderSide.none,
-                    top: BorderSide.none,
-                    bottom: BorderSide.none,
+                    children: [
+                      TableRow(
+                        children: widget.selectedTable == 'exercises'
+                            ? [
+                                TableCell(
+                                    child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 8, vertical: 14.0),
+                                        child: Text(item['exercise'] ?? ''))),
+                                TableCell(
+                                    child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 8, vertical: 14.0),
+                                        child: Text(_formatWeight(
+                                            item['weight'] ?? '')))),
+                                TableCell(
+                                    child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 8, vertical: 14.0),
+                                        child: Text(
+                                            (item['reps'] ?? 0).toString()))),
+                                TableCell(
+                                    child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 8, vertical: 14.0),
+                                        child: Text(
+                                            (item['sets'] ?? 0).toString()))),
+                                TableCell(
+                                    child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 8, vertical: 14.0),
+                                        child: Text(_formatDate(
+                                            item['timestamp'] ?? '')))),
+                                TableCell(
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 0.0),
+                                    child: Row(
+                                      children: [
+                                        IconButton(
+                                          icon: Icon(Icons.edit,
+                                              size: 18.0,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .secondary),
+                                          onPressed: () {
+                                            _showEditDialog(item);
+                                          },
+                                        ),
+                                        SizedBox(width: 0.0),
+                                        IconButton(
+                                          icon: Icon(Icons.delete,
+                                              size: 18.0,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .secondary),
+                                          onPressed: () async {
+                                            await _deleteRow(
+                                                'exercises', item['id'] ?? 0);
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ]
+                            : [
+                                TableCell(
+                                    child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 8, vertical: 14.0),
+                                        child: Text(_formatWeight(
+                                            item['weight'] ?? '')))),
+                                TableCell(
+                                    child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 8, vertical: 14.0),
+                                        child: Text(
+                                            (item['height'] ?? 0).toString()))),
+                                TableCell(
+                                    child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 8, vertical: 14.0),
+                                        child: Text(
+                                            (item['age'] ?? 0).toString()))),
+                                TableCell(
+                                    child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 8, vertical: 14.0),
+                                        child: Text(_formatDate(
+                                            item['timestamp'] ?? '')))),
+                                TableCell(
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 0.0),
+                                    child: Row(
+                                      children: [
+                                        IconButton(
+                                          icon: Icon(Icons.edit,
+                                              size: 18.0,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .secondary),
+                                          onPressed: () {
+                                            _showFitnessEditDialog(item);
+                                          },
+                                        ),
+                                        SizedBox(width: 0.0),
+                                        IconButton(
+                                          icon: Icon(Icons.delete,
+                                              size: 18.0,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .secondary),
+                                          onPressed: () async {
+                                            await _deleteRow(
+                                                'fitness', item['id'] ?? 0);
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                      ),
+                    ],
                   ),
-                  children: [
-                    TableRow(
-                      children: widget.selectedTable == 'exercises'
-                          ? [
-                              TableCell(
-                                  child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 8, vertical: 14.0),
-                                      child: Text(item['exercise'] ?? ''))),
-                              TableCell(
-                                  child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 8, vertical: 14.0),
-                                      child: Text(_formatWeight(
-                                          item['weight'] ?? '')))),
-                              TableCell(
-                                  child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 8, vertical: 14.0),
-                                      child: Text(
-                                          (item['reps'] ?? 0).toString()))),
-                              TableCell(
-                                  child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 8, vertical: 14.0),
-                                      child: Text(
-                                          (item['sets'] ?? 0).toString()))),
-                              TableCell(
-                                  child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 8, vertical: 14.0),
-                                      child: Text(_formatDate(
-                                          item['timestamp'] ?? '')))),
-                              TableCell(
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 8, vertical: 0.0),
-                                  child: Row(
-                                    children: [
-                                      IconButton(
-                                        icon: Icon(Icons.edit,
-                                            size: 18.0,
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .secondary),
-                                        onPressed: () {
-                                          _showEditDialog(item);
-                                        },
-                                      ),
-                                      SizedBox(width: 0.0),
-                                      IconButton(
-                                        icon: Icon(Icons.delete,
-                                            size: 18.0,
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .secondary),
-                                        onPressed: () async {
-                                          await _deleteRow(
-                                              'exercises', item['id'] ?? 0);
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ]
-                          : [
-                              TableCell(
-                                  child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 8, vertical: 14.0),
-                                      child: Text(_formatWeight(
-                                          item['weight'] ?? '')))),
-                              TableCell(
-                                  child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 8, vertical: 14.0),
-                                      child: Text(
-                                          (item['height'] ?? 0).toString()))),
-                              TableCell(
-                                  child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 8, vertical: 14.0),
-                                      child:
-                                          Text((item['age'] ?? 0).toString()))),
-                              TableCell(
-                                  child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 8, vertical: 14.0),
-                                      child: Text(_formatDate(
-                                          item['timestamp'] ?? '')))),
-                              TableCell(
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 8, vertical: 0.0),
-                                  child: Row(
-                                    children: [
-                                      IconButton(
-                                        icon: Icon(Icons.edit,
-                                            size: 18.0,
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .secondary),
-                                        onPressed: () {
-                                          _showFitnessEditDialog(item);
-                                        },
-                                      ),
-                                      SizedBox(width: 0.0),
-                                      IconButton(
-                                        icon: Icon(Icons.delete,
-                                            size: 18.0,
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .secondary),
-                                        onPressed: () async {
-                                          await _deleteRow(
-                                              'fitness', item['id'] ?? 0);
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
-                    ),
-                  ],
                 ),
               );
             },
