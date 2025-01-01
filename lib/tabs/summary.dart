@@ -54,17 +54,15 @@ class _SummaryTabState extends State<SummaryTab> {
     final records = await _dbHelper.getSummaryForDay(date);
     List<DateTime> timestamps = [];
 
-    if (records != null) {
-      for (var entry in records.entries) {
-        final exerciseRecords =
-            entry.value['records'] as List<Map<String, dynamic>>;
-        for (var record in exerciseRecords) {
-          final timestampStr = record['timestamp'] as String?;
+    for (var entry in records.entries) {
+      final exerciseRecords =
+          entry.value['records'] as List<Map<String, dynamic>>;
+      for (var record in exerciseRecords) {
+        final timestampStr = record['timestamp'] as String?;
 
-          if (timestampStr != null) {
-            final timestamp = DateTime.parse(timestampStr);
-            timestamps.add(timestamp);
-          }
+        if (timestampStr != null) {
+          final timestamp = DateTime.parse(timestampStr);
+          timestamps.add(timestamp);
         }
       }
     }
