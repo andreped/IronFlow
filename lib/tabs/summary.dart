@@ -9,18 +9,18 @@ class SummaryTab extends StatefulWidget {
   final bool bodyweightEnabledGlobal;
 
   const SummaryTab({
-    Key? key,
+    super.key,
     required this.selectedDay,
     required this.onDateSelected,
     required this.isKg,
     required this.bodyweightEnabledGlobal,
-  }) : super(key: key);
+  });
 
   @override
-  _SummaryTabState createState() => _SummaryTabState();
+  SummaryTabState createState() => SummaryTabState();
 }
 
-class _SummaryTabState extends State<SummaryTab> {
+class SummaryTabState extends State<SummaryTab> {
   final DatabaseHelper _dbHelper = DatabaseHelper();
   List<DateTime> _trainedDates = [];
   bool _isExerciseView = false;
