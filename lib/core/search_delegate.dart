@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'theme.dart';
 
 class ExerciseSearchDelegate extends SearchDelegate {
   final List<Map<String, dynamic>> records;
