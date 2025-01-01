@@ -12,26 +12,26 @@ class AppThemes {
     ),
     dropdownMenuTheme: DropdownMenuThemeData(
       menuStyle: MenuStyle(
-        backgroundColor: MaterialStateProperty.all(Colors.white),
-        elevation: MaterialStateProperty.all(8.0),
-        shadowColor: MaterialStateProperty.all(Colors.black.withOpacity(0.2)),
+        backgroundColor: WidgetStateProperty.all(Colors.white),
+        elevation: WidgetStateProperty.all(8.0),
+        shadowColor: WidgetStateProperty.all(Colors.black.withOpacity(0.2)),
       ),
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ButtonStyle(
-        backgroundColor: MaterialStateProperty.all(Colors.blue),
-        foregroundColor: MaterialStateProperty.all(Colors.white),
+        backgroundColor: WidgetStateProperty.all(Colors.blue),
+        foregroundColor: WidgetStateProperty.all(Colors.white),
       ),
     ),
     textButtonTheme: TextButtonThemeData(
       style: ButtonStyle(
-        foregroundColor: MaterialStateProperty.all(Colors.blue),
+        foregroundColor: WidgetStateProperty.all(Colors.blue),
       ),
     ),
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: ButtonStyle(
-        foregroundColor: MaterialStateProperty.all(Colors.blue),
-        side: MaterialStateProperty.all(const BorderSide(color: Colors.blue)),
+        foregroundColor: WidgetStateProperty.all(Colors.blue),
+        side: WidgetStateProperty.all(const BorderSide(color: Colors.blue)),
       ),
     ),
   );
@@ -44,26 +44,26 @@ class AppThemes {
     ),
     dropdownMenuTheme: DropdownMenuThemeData(
       menuStyle: MenuStyle(
-        backgroundColor: MaterialStateProperty.all(Colors.grey[850]),
-        elevation: MaterialStateProperty.all(8.0),
-        shadowColor: MaterialStateProperty.all(Colors.black.withOpacity(0.5)),
+        backgroundColor: WidgetStateProperty.all(Colors.grey[850]),
+        elevation: WidgetStateProperty.all(8.0),
+        shadowColor: WidgetStateProperty.all(Colors.black.withOpacity(0.5)),
       ),
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ButtonStyle(
-        backgroundColor: MaterialStateProperty.all(Colors.purple),
-        foregroundColor: MaterialStateProperty.all(Colors.white),
+        backgroundColor: WidgetStateProperty.all(Colors.purple),
+        foregroundColor: WidgetStateProperty.all(Colors.white),
       ),
     ),
     textButtonTheme: TextButtonThemeData(
       style: ButtonStyle(
-        foregroundColor: MaterialStateProperty.all(Colors.purple),
+        foregroundColor: WidgetStateProperty.all(Colors.purple),
       ),
     ),
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: ButtonStyle(
-        foregroundColor: MaterialStateProperty.all(Colors.purple),
-        side: MaterialStateProperty.all(const BorderSide(color: Colors.purple)),
+        foregroundColor: WidgetStateProperty.all(Colors.purple),
+        side: WidgetStateProperty.all(const BorderSide(color: Colors.purple)),
       ),
     ),
   );
@@ -79,26 +79,26 @@ class AppThemes {
     ),
     dropdownMenuTheme: DropdownMenuThemeData(
       menuStyle: MenuStyle(
-        backgroundColor: MaterialStateProperty.all(Colors.pink.shade50),
-        elevation: MaterialStateProperty.all(8.0),
-        shadowColor: MaterialStateProperty.all(Colors.pink.withOpacity(0.5)),
+        backgroundColor: WidgetStateProperty.all(Colors.pink.shade50),
+        elevation: WidgetStateProperty.all(8.0),
+        shadowColor: WidgetStateProperty.all(Colors.pink.withOpacity(0.5)),
       ),
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ButtonStyle(
-        backgroundColor: MaterialStateProperty.all(Colors.pink),
-        foregroundColor: MaterialStateProperty.all(Colors.white),
+        backgroundColor: WidgetStateProperty.all(Colors.pink),
+        foregroundColor: WidgetStateProperty.all(Colors.white),
       ),
     ),
     textButtonTheme: TextButtonThemeData(
       style: ButtonStyle(
-        foregroundColor: MaterialStateProperty.all(Colors.pink),
+        foregroundColor: WidgetStateProperty.all(Colors.pink),
       ),
     ),
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: ButtonStyle(
-        foregroundColor: MaterialStateProperty.all(Colors.pink),
-        side: MaterialStateProperty.all(const BorderSide(color: Colors.pink)),
+        foregroundColor: WidgetStateProperty.all(Colors.pink),
+        side: WidgetStateProperty.all(const BorderSide(color: Colors.pink)),
       ),
     ),
   );
@@ -114,26 +114,26 @@ class AppThemes {
     ),
     dropdownMenuTheme: DropdownMenuThemeData(
       menuStyle: MenuStyle(
-        backgroundColor: MaterialStateProperty.all(Colors.green.shade50),
-        elevation: MaterialStateProperty.all(8.0),
-        shadowColor: MaterialStateProperty.all(Colors.green.withOpacity(0.5)),
+        backgroundColor: WidgetStateProperty.all(Colors.green.shade50),
+        elevation: WidgetStateProperty.all(8.0),
+        shadowColor: WidgetStateProperty.all(Colors.green.withOpacity(0.5)),
       ),
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ButtonStyle(
-        backgroundColor: MaterialStateProperty.all(Colors.green),
-        foregroundColor: MaterialStateProperty.all(Colors.white),
+        backgroundColor: WidgetStateProperty.all(Colors.green),
+        foregroundColor: WidgetStateProperty.all(Colors.white),
       ),
     ),
     textButtonTheme: TextButtonThemeData(
       style: ButtonStyle(
-        foregroundColor: MaterialStateProperty.all(Colors.green),
+        foregroundColor: WidgetStateProperty.all(Colors.green),
       ),
     ),
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: ButtonStyle(
-        foregroundColor: MaterialStateProperty.all(Colors.green),
-        side: MaterialStateProperty.all(const BorderSide(color: Colors.green)),
+        foregroundColor: WidgetStateProperty.all(Colors.green),
+        side: WidgetStateProperty.all(const BorderSide(color: Colors.green)),
       ),
     ),
   );
@@ -149,26 +149,26 @@ class AppThemes {
     ),
     dropdownMenuTheme: DropdownMenuThemeData(
       menuStyle: MenuStyle(
-        backgroundColor: MaterialStateProperty.all(Colors.orange.shade50),
-        elevation: MaterialStateProperty.all(8.0),
-        shadowColor: MaterialStateProperty.all(Colors.orange.withOpacity(0.5)),
+        backgroundColor: WidgetStateProperty.all(Colors.orange.shade50),
+        elevation: WidgetStateProperty.all(8.0),
+        shadowColor: WidgetStateProperty.all(Colors.orange.withOpacity(0.5)),
       ),
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ButtonStyle(
-        backgroundColor: MaterialStateProperty.all(Colors.orange),
-        foregroundColor: MaterialStateProperty.all(Colors.white),
+        backgroundColor: WidgetStateProperty.all(Colors.orange),
+        foregroundColor: WidgetStateProperty.all(Colors.white),
       ),
     ),
     textButtonTheme: TextButtonThemeData(
       style: ButtonStyle(
-        foregroundColor: MaterialStateProperty.all(Colors.orange),
+        foregroundColor: WidgetStateProperty.all(Colors.orange),
       ),
     ),
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: ButtonStyle(
-        foregroundColor: MaterialStateProperty.all(Colors.orange),
-        side: MaterialStateProperty.all(const BorderSide(color: Colors.orange)),
+        foregroundColor: WidgetStateProperty.all(Colors.orange),
+        side: WidgetStateProperty.all(const BorderSide(color: Colors.orange)),
       ),
     ),
   );
@@ -184,26 +184,26 @@ class AppThemes {
     ),
     dropdownMenuTheme: DropdownMenuThemeData(
       menuStyle: MenuStyle(
-        backgroundColor: MaterialStateProperty.all(Colors.red.shade50),
-        elevation: MaterialStateProperty.all(8.0),
-        shadowColor: MaterialStateProperty.all(Colors.red.withOpacity(0.5)),
+        backgroundColor: WidgetStateProperty.all(Colors.red.shade50),
+        elevation: WidgetStateProperty.all(8.0),
+        shadowColor: WidgetStateProperty.all(Colors.red.withOpacity(0.5)),
       ),
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ButtonStyle(
-        backgroundColor: MaterialStateProperty.all(Colors.red),
-        foregroundColor: MaterialStateProperty.all(Colors.white),
+        backgroundColor: WidgetStateProperty.all(Colors.red),
+        foregroundColor: WidgetStateProperty.all(Colors.white),
       ),
     ),
     textButtonTheme: TextButtonThemeData(
       style: ButtonStyle(
-        foregroundColor: MaterialStateProperty.all(Colors.red),
+        foregroundColor: WidgetStateProperty.all(Colors.red),
       ),
     ),
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: ButtonStyle(
-        foregroundColor: MaterialStateProperty.all(Colors.red),
-        side: MaterialStateProperty.all(const BorderSide(color: Colors.red)),
+        foregroundColor: WidgetStateProperty.all(Colors.red),
+        side: WidgetStateProperty.all(const BorderSide(color: Colors.red)),
       ),
     ),
   );
