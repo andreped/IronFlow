@@ -157,6 +157,54 @@ class DatabaseHelper {
     );
   }
 
+  Future<List<Map<String, dynamic>>> getExercisesChunk({
+    required String sortColumn,
+    required bool ascending,
+    required int offset,
+    required int limit,
+    bool isNumeric = false,
+    bool isDateTime = false,
+  }) async {
+    final orderBy = isNumeric
+        ? 'CAST($sortColumn AS REAL) ${ascending ? 'ASC' : 'DESC'}'
+        : isDateTime
+            ? 'DATETIME($sortColumn) ${ascending ? 'ASC' : 'DESC'}'
+            : '$sortColumn ${ascending ? 'ASC' : 'DESC'}';
+
+    final db = await database;
+    final List<Map<String, dynamic>> result = await db.rawQuery('''
+      SELECT * FROM exercises
+      ORDER BY $orderBy
+      LIMIT $limit OFFSET $offset
+    ''');
+
+    return result;
+  }
+
+  Future<List<Map<String, dynamic>>> getFitnessDataChunk({
+    required String sortColumn,
+    required bool ascending,
+    required int offset,
+    required int limit,
+    bool isNumeric = false,
+    bool isDateTime = false,
+  }) async {
+    final orderBy = isNumeric
+        ? 'CAST($sortColumn AS REAL) ${ascending ? 'ASC' : 'DESC'}'
+        : isDateTime
+            ? 'DATETIME($sortColumn) ${ascending ? 'ASC' : 'DESC'}'
+            : '$sortColumn ${ascending ? 'ASC' : 'DESC'}';
+
+    final db = await database;
+    final List<Map<String, dynamic>> result = await db.rawQuery('''
+      SELECT * FROM fitness
+      ORDER BY $orderBy
+      LIMIT $limit OFFSET $offset
+    ''');
+
+    return result;
+  }
+
   Future<List<DateTime>> getExerciseDates() async {
     final db = await database;
     final List<Map<String, dynamic>> datesResult = await db
