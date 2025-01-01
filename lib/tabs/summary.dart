@@ -140,7 +140,7 @@ class SummaryTabState extends State<SummaryTab> {
                   ),
                 );
               }
-              return SizedBox.shrink();
+              return const SizedBox.shrink();
             },
           ),
         );
@@ -155,7 +155,7 @@ class SummaryTabState extends State<SummaryTab> {
       context: context,
       builder: (BuildContext context) {
         if (exercises.isEmpty) {
-          return Center(
+          return const Center(
             child: Text('No exercises recorded yet.'),
           );
         } else {
@@ -234,7 +234,7 @@ class SummaryTabState extends State<SummaryTab> {
                             '${widget.selectedDay.year}-${widget.selectedDay.month}-${widget.selectedDay.day}',
                             style: TextStyle(color: textColor)),
                       ),
-                SizedBox(width: 8), // Add space between button and icon
+                const SizedBox(width: 8), // Add space between button and icon
                 IconButton(
                   icon: Icon(
                     _isExerciseView
