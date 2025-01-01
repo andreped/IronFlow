@@ -807,6 +807,9 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
                 if (value == null || value.isEmpty) {
                   return 'Please enter your weight';
                 }
+                if (value == '0.0') {
+                  return 'Weight cannot be 0';
+                }
                 return null;
               },
             ),
@@ -832,6 +835,9 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
                 if (value == null || value.isEmpty) {
                   return 'Please enter your height';
                 }
+                if (value == '0') {
+                  return 'Height cannot be 0';
+                }
                 return null;
               },
             ),
@@ -856,6 +862,9 @@ class _ExerciseSetterState extends State<ExerciseSetter> {
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Please enter your age';
+                }
+                if (value == '0') {
+                  return 'Age cannot be 0';
                 }
                 return null;
               },
