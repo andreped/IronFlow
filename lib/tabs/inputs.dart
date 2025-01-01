@@ -94,7 +94,7 @@ class ExerciseSetterState extends State<ExerciseSetter> {
 
   void _startTimer() {
     if (_lastExerciseTime != null) {
-      _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
         _updateTimeSinceLastExercise();
       });
     }
@@ -199,7 +199,7 @@ class ExerciseSetterState extends State<ExerciseSetter> {
               sets == null ||
               reps < 1 ||
               sets < 1) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
               content:
                   Text('Please enter valid values for weight, reps, and sets'),
               duration: Duration(seconds: 2),
