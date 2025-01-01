@@ -4,7 +4,7 @@ class AppThemes {
   static ThemeData lightTheme = ThemeData(
     brightness: Brightness.light,
     primarySwatch: Colors.blue,
-    iconTheme: IconThemeData(color: Colors.blue),
+    iconTheme: const IconThemeData(color: Colors.blue),
     colorScheme: ColorScheme.fromSeed(
       seedColor: Colors.blue,
       primary: Colors.blue,
@@ -31,14 +31,14 @@ class AppThemes {
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: ButtonStyle(
         foregroundColor: MaterialStateProperty.all(Colors.blue),
-        side: MaterialStateProperty.all(BorderSide(color: Colors.blue)),
+        side: MaterialStateProperty.all(const BorderSide(color: Colors.blue)),
       ),
     ),
   );
 
   static ThemeData darkTheme = ThemeData.dark().copyWith(
-    iconTheme: IconThemeData(color: Colors.purple),
-    colorScheme: ColorScheme.dark().copyWith(
+    iconTheme: const IconThemeData(color: Colors.purple),
+    colorScheme: const ColorScheme.dark().copyWith(
       primary: Colors.purple,
       secondary: Colors.purpleAccent,
     ),
@@ -63,7 +63,7 @@ class AppThemes {
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: ButtonStyle(
         foregroundColor: MaterialStateProperty.all(Colors.purple),
-        side: MaterialStateProperty.all(BorderSide(color: Colors.purple)),
+        side: MaterialStateProperty.all(const BorderSide(color: Colors.purple)),
       ),
     ),
   );
@@ -71,7 +71,7 @@ class AppThemes {
   static ThemeData pinkTheme = ThemeData(
     brightness: Brightness.light,
     primarySwatch: Colors.pink,
-    iconTheme: IconThemeData(color: Colors.pink),
+    iconTheme: const IconThemeData(color: Colors.pink),
     colorScheme: ColorScheme.fromSeed(
       seedColor: Colors.pink,
       primary: Colors.pink,
@@ -98,7 +98,7 @@ class AppThemes {
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: ButtonStyle(
         foregroundColor: MaterialStateProperty.all(Colors.pink),
-        side: MaterialStateProperty.all(BorderSide(color: Colors.pink)),
+        side: MaterialStateProperty.all(const BorderSide(color: Colors.pink)),
       ),
     ),
   );
@@ -106,7 +106,7 @@ class AppThemes {
   static ThemeData greenTheme = ThemeData(
     brightness: Brightness.light,
     primarySwatch: Colors.green,
-    iconTheme: IconThemeData(color: Colors.green),
+    iconTheme: const IconThemeData(color: Colors.green),
     colorScheme: ColorScheme.fromSeed(
       seedColor: Colors.green,
       primary: Colors.green,
@@ -133,7 +133,7 @@ class AppThemes {
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: ButtonStyle(
         foregroundColor: MaterialStateProperty.all(Colors.green),
-        side: MaterialStateProperty.all(BorderSide(color: Colors.green)),
+        side: MaterialStateProperty.all(const BorderSide(color: Colors.green)),
       ),
     ),
   );
@@ -141,7 +141,7 @@ class AppThemes {
   static ThemeData orangeTheme = ThemeData(
     brightness: Brightness.light,
     primarySwatch: Colors.orange,
-    iconTheme: IconThemeData(color: Colors.orange),
+    iconTheme: const IconThemeData(color: Colors.orange),
     colorScheme: ColorScheme.fromSeed(
       seedColor: Colors.orange,
       primary: Colors.orange,
@@ -168,7 +168,7 @@ class AppThemes {
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: ButtonStyle(
         foregroundColor: MaterialStateProperty.all(Colors.orange),
-        side: MaterialStateProperty.all(BorderSide(color: Colors.orange)),
+        side: MaterialStateProperty.all(const BorderSide(color: Colors.orange)),
       ),
     ),
   );
@@ -176,7 +176,7 @@ class AppThemes {
   static ThemeData redTheme = ThemeData(
     brightness: Brightness.light,
     primarySwatch: Colors.red,
-    iconTheme: IconThemeData(color: Colors.red),
+    iconTheme: const IconThemeData(color: Colors.red),
     colorScheme: ColorScheme.fromSeed(
       seedColor: Colors.red,
       primary: Colors.red,
@@ -203,7 +203,7 @@ class AppThemes {
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: ButtonStyle(
         foregroundColor: MaterialStateProperty.all(Colors.red),
-        side: MaterialStateProperty.all(BorderSide(color: Colors.red)),
+        side: MaterialStateProperty.all(const BorderSide(color: Colors.red)),
       ),
     ),
   );
