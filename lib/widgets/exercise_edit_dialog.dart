@@ -5,13 +5,13 @@ class ExerciseEditDialog extends StatefulWidget {
   final Map<String, dynamic> exerciseData;
   final bool isKg; // Add this parameter to manage unit selection
 
-  ExerciseEditDialog({required this.exerciseData, required this.isKg});
+  const ExerciseEditDialog({super.key, required this.exerciseData, required this.isKg});
 
   @override
-  _ExerciseEditDialogState createState() => _ExerciseEditDialogState();
+  ExerciseEditDialogState createState() => ExerciseEditDialogState();
 }
 
-class _ExerciseEditDialogState extends State<ExerciseEditDialog> {
+class ExerciseEditDialogState extends State<ExerciseEditDialog> {
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _exerciseController;
   late TextEditingController _weightController;
@@ -81,7 +81,7 @@ class _ExerciseEditDialogState extends State<ExerciseEditDialog> {
                       controller: _weightController,
                       decoration: const InputDecoration(labelText: 'Weight'),
                       keyboardType:
-                          TextInputType.numberWithOptions(decimal: true),
+                          const TextInputType.numberWithOptions(decimal: true),
                       inputFormatters: [
                         FilteringTextInputFormatter.allow(RegExp(r'^[\d,.]+$')),
                       ],
@@ -189,8 +189,8 @@ class _ExerciseEditDialogState extends State<ExerciseEditDialog> {
                 final reps = int.tryParse(_repsController.text);
                 final sets = int.tryParse(_setsController.text);
 
-                if (weight == null || reps == null || sets == null) {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                if (reps == null || sets == null) {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                     content: Text('Please enter valid values'),
                     duration: Duration(seconds: 2),
                     backgroundColor: Colors.red,
@@ -244,19 +244,19 @@ class _ExerciseEditDialogState extends State<ExerciseEditDialog> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(label, style: TextStyle(fontSize: 18)),
+                Text(label, style: const TextStyle(fontSize: 18)),
                 TextField(
                   focusNode: focusNode,
                   controller: localController,
                   keyboardType: isDouble
-                      ? TextInputType.numberWithOptions(decimal: true)
+                      ? const TextInputType.numberWithOptions(decimal: true)
                       : TextInputType.number,
                   inputFormatters: [
                     FilteringTextInputFormatter.allow(RegExp(r'^[\d,.]+$')),
                   ],
                   decoration: InputDecoration(
                     labelText: label,
-                    border: OutlineInputBorder(),
+                    border: const OutlineInputBorder(),
                   ),
                 ),
                 const SizedBox(height: 10),
@@ -273,14 +273,14 @@ class _ExerciseEditDialogState extends State<ExerciseEditDialog> {
                         controller.text = value.toString();
                       });
                     } else {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                         content: Text('Please enter a valid number'),
                         duration: Duration(seconds: 2),
                         backgroundColor: Colors.red,
                       ));
                     }
                   },
-                  child: Text('Done'),
+                  child: const Text('Done'),
                 ),
               ],
             ),

@@ -5,13 +5,13 @@ class FitnessEditDialog extends StatefulWidget {
   final Map<String, dynamic> fitnessData;
   final bool isKg; // Add this parameter to manage unit selection
 
-  FitnessEditDialog({required this.fitnessData, required this.isKg});
+  const FitnessEditDialog({super.key, required this.fitnessData, required this.isKg});
 
   @override
-  _FitnessEditDialogState createState() => _FitnessEditDialogState();
+  FitnessEditDialogState createState() => FitnessEditDialogState();
 }
 
-class _FitnessEditDialogState extends State<FitnessEditDialog> {
+class FitnessEditDialogState extends State<FitnessEditDialog> {
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _weightController;
   late TextEditingController _heightController;
@@ -68,7 +68,7 @@ class _FitnessEditDialogState extends State<FitnessEditDialog> {
                       controller: _weightController,
                       decoration: const InputDecoration(labelText: 'Weight'),
                       keyboardType:
-                          TextInputType.numberWithOptions(decimal: true),
+                          const TextInputType.numberWithOptions(decimal: true),
                       inputFormatters: [
                         FilteringTextInputFormatter.allow(RegExp(r'^[\d,.]+$')),
                       ],
@@ -176,8 +176,8 @@ class _FitnessEditDialogState extends State<FitnessEditDialog> {
                 final height = int.tryParse(_heightController.text);
                 final age = int.tryParse(_ageController.text);
 
-                if (weight == null || height == null || age == null) {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                if (height == null || age == null) {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                     content: Text('Please enter valid values'),
                     duration: Duration(seconds: 2),
                     backgroundColor: Colors.red,
@@ -230,19 +230,19 @@ class _FitnessEditDialogState extends State<FitnessEditDialog> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(label, style: TextStyle(fontSize: 18)),
+                Text(label, style: const TextStyle(fontSize: 18)),
                 TextField(
                   focusNode: focusNode,
                   controller: localController,
                   keyboardType: isDouble
-                      ? TextInputType.numberWithOptions(decimal: true)
+                      ? const TextInputType.numberWithOptions(decimal: true)
                       : TextInputType.number,
                   inputFormatters: [
                     FilteringTextInputFormatter.allow(RegExp(r'^[\d,.]+$')),
                   ],
                   decoration: InputDecoration(
                     labelText: label,
-                    border: OutlineInputBorder(),
+                    border: const OutlineInputBorder(),
                   ),
                 ),
                 const SizedBox(height: 10),
@@ -259,14 +259,14 @@ class _FitnessEditDialogState extends State<FitnessEditDialog> {
                         controller.text = value.toString();
                       });
                     } else {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                         content: Text('Please enter a valid number'),
                         duration: Duration(seconds: 2),
                         backgroundColor: Colors.red,
                       ));
                     }
                   },
-                  child: Text('Done'),
+                  child: const Text('Done'),
                 ),
               ],
             ),
