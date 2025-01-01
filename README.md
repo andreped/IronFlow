@@ -1,5 +1,5 @@
 <p align="center" width="100%">
-<img src="assets/icon/app_icon_transparent.png" width="20%" height="20%">
+<img src="assets/icon/wave_app_icon_transparent.png" width="30%" height="30%">
 <h1 align="center">IronFlow</h1>
 <h3 align="center">Cross-platform mobile app for strength training progress tracking.</h3>
 
