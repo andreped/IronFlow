@@ -94,11 +94,10 @@ class ExerciseSetterState extends State<ExerciseSetter> {
   }
 
   void _startTimer() {
-    if (_lastExerciseTime != null) {
-      _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-        _updateTimeSinceLastExercise();
-      });
-    }
+    _timer?.cancel();
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      _updateTimeSinceLastExercise();
+    });
   }
 
   void _updateTimeSinceLastExercise() {
