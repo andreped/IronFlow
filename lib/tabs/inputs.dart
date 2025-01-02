@@ -491,7 +491,8 @@ class ExerciseSetterState extends State<ExerciseSetter> {
                           onPressed: _addOrUpdateExercise,
                           child: const Text('Save'),
                         ),
-                        if (_timeSinceLastExercise.isNotEmpty) ...[
+                        if (_selectedLoggingType == 'Exercise' &&
+                            _timeSinceLastExercise.isNotEmpty) ...[
                           const SizedBox(width: 10),
                           Icon(Icons.timer,
                               color: Theme.of(context).colorScheme.primary),
