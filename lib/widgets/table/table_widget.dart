@@ -25,14 +25,14 @@ class TableWidget extends StatefulWidget {
 }
 
 class TableWidgetState extends State<TableWidget> {
-  String _sortColumn = 'timestamp';
+  String _sortColumn = 'Timestamp';
   bool _sortAscending = false;
   List<Map<String, dynamic>> _data = [];
   final ScrollController _verticalScrollController = ScrollController();
   final ScrollController _horizontalScrollController =
       ClampingScrollController();
   int _offset = 0;
-  final int _limit = 20;
+  final int _limit = 50;
   bool _isLoading = false;
   bool _hasMoreData = true;
   bool _isSyncing = false;
@@ -61,20 +61,35 @@ class TableWidgetState extends State<TableWidget> {
       _data = [];
       _offset = 0;
       _hasMoreData = true;
-      _sortColumn = 'timestamp';
+      _sortColumn = 'Timestamp';
       _sortAscending = false;
     });
     await _loadNextChunk();
   }
 
   Future<void> _loadNextChunk() async {
-    await loadNextChunk(widget.selectedTable, _isLoading, _hasMoreData, _data, _offset, _limit, _sortColumn, _sortAscending, widget.dbHelper, (newState) {
-      setState(() {
-        _data = newState['data'] ?? [];
-        _offset = newState['offset'] ?? _offset;
-        _isLoading = newState['isLoading'] ?? false;
-        _hasMoreData = newState['hasMoreData'] ?? false;
-      });
+    if (_isLoading || !_hasMoreData) return;
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    List<Map<String, dynamic>> newData = await loadNextChunk(
+      widget.selectedTable,
+      _offset,
+      _limit,
+      _sortColumn,
+      _sortAscending,
+      widget.dbHelper,
+    );
+
+    setState(() {
+      _data.addAll(newData);
+      _offset += newData.length;
+      _isLoading = false;
+      if (newData.length < _limit) {
+        _hasMoreData = false;
+      }
     });
   }
 
