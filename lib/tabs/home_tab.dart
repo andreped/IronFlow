@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import '../core/theme.dart';
-import 'visualization.dart';
-import 'inputs.dart';
-import 'summary.dart';
-import '../widgets/settings.dart';
-import '../widgets/table.dart';
-import '../widgets/records.dart';
+import 'visualization_tab.dart';
+import 'inputs_tab.dart';
+import 'summary_tab.dart';
+import '../widgets/settings/settings.dart';
+import 'table_tab.dart';
+import 'records_tab.dart';
 
 class ExerciseStoreApp extends StatelessWidget {
   final AppTheme appTheme;
