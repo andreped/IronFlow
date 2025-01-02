@@ -9,7 +9,7 @@ Future<List<Map<String, dynamic>>> loadNextChunk(
   DatabaseHelper dbHelper,
 ) async {
   List<Map<String, dynamic>> newData;
-  bool isNumeric = sortColumn == 'weight';
+  bool isNumeric = sortColumn == 'Weight';
 
   if (selectedTable == 'exercises') {
     newData = await dbHelper.getExercisesChunk(
@@ -18,7 +18,7 @@ Future<List<Map<String, dynamic>>> loadNextChunk(
       offset: offset,
       limit: limit,
       isNumeric: isNumeric,
-      isDateTime: sortColumn == 'timestamp',
+      isDateTime: sortColumn == 'Timestamp',
     );
   } else if (selectedTable == 'fitness') {
     newData = await dbHelper.getFitnessDataChunk(
@@ -27,7 +27,7 @@ Future<List<Map<String, dynamic>>> loadNextChunk(
       offset: offset,
       limit: limit,
       isNumeric: isNumeric,
-      isDateTime: sortColumn == 'timestamp',
+      isDateTime: sortColumn == 'Timestamp',
     );
   } else {
     newData = [];
