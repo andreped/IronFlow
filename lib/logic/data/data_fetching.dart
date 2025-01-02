@@ -1,4 +1,4 @@
-import '../../../core/database.dart';
+import '../../core/database.dart';
 
 Future<void> loadNextChunk(
   String selectedTable,
@@ -10,24 +10,25 @@ Future<void> loadNextChunk(
   String sortColumn,
   bool sortAscending,
   DatabaseHelper dbHelper,
-  Function setState,
+  Function(Map<String, dynamic>) setState,
 ) async {
   if (isLoading || !hasMoreData) return;
 
-  setState(() {
-    isLoading = true;
+  setState({
+    'isLoading': true,
   });
 
   List<Map<String, dynamic>> newData;
   try {
+    bool isNumeric = sortColumn == 'weight';
     if (selectedTable == 'exercises') {
       newData = await dbHelper.getExercisesChunk(
         sortColumn: sortColumn,
         ascending: sortAscending,
         offset: offset,
         limit: limit,
-        isNumeric: sortColumn == 'Weight',
-        isDateTime: sortColumn == 'Timestamp',
+        isNumeric: isNumeric,
+        isDateTime: sortColumn == 'timestamp',
       );
     } else if (selectedTable == 'fitness') {
       newData = await dbHelper.getFitnessDataChunk(
@@ -35,25 +36,23 @@ Future<void> loadNextChunk(
         ascending: sortAscending,
         offset: offset,
         limit: limit,
-        isNumeric: sortColumn == 'Weight',
-        isDateTime: sortColumn == 'Timestamp',
+        isNumeric: isNumeric,
+        isDateTime: sortColumn == 'timestamp',
       );
     } else {
       newData = [];
     }
 
-    setState(() {
-      data.addAll(newData);
-      offset += limit;
-      isLoading = false;
-      if (newData.length < limit) {
-        hasMoreData = false;
-      }
+    setState({
+      'data': data..addAll(newData),
+      'offset': offset + limit,
+      'isLoading': false,
+      'hasMoreData': newData.length >= limit,
     });
   } catch (e) {
-    setState(() {
-      isLoading = false;
-      hasMoreData = false;
+    setState({
+      'isLoading': false,
+      'hasMoreData': false,
     });
     // Handle error appropriately
     print('Error loading data: $e');

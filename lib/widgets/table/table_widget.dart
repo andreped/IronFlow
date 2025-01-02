@@ -64,11 +64,18 @@ class TableWidgetState extends State<TableWidget> {
       _sortColumn = 'timestamp';
       _sortAscending = false;
     });
-    await loadNextChunk(selectedTable, _isLoading, _hasMoreData, _data, _offset, _limit, _sortColumn, _sortAscending, widget.dbHelper, setState);
+    await _loadNextChunk();
   }
 
   Future<void> _loadNextChunk() async {
-    await loadNextChunk(widget.selectedTable, _isLoading, _hasMoreData, _data, _offset, _limit, _sortColumn, _sortAscending, widget.dbHelper, setState);
+    await loadNextChunk(widget.selectedTable, _isLoading, _hasMoreData, _data, _offset, _limit, _sortColumn, _sortAscending, widget.dbHelper, (newState) {
+      setState(() {
+        _data = newState['data'] ?? [];
+        _offset = newState['offset'] ?? _offset;
+        _isLoading = newState['isLoading'] ?? false;
+        _hasMoreData = newState['hasMoreData'] ?? false;
+      });
+    });
   }
 
   Future<void> _deleteRow(String table, int id) async {
