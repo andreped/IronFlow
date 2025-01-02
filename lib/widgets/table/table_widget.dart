@@ -53,6 +53,14 @@ class TableWidgetState extends State<TableWidget> {
   }
 
   @override
+  void didUpdateWidget(TableWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.selectedTable != oldWidget.selectedTable) {
+      loadData(widget.selectedTable);
+    }
+  }
+
+  @override
   void dispose() {
     _verticalScrollController.removeListener(
         () => onScroll(_verticalScrollController, _loadNextChunk));
