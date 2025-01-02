@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-void onScroll(ScrollController verticalScrollController, Function loadNextChunk) {
+void onScroll(
+    ScrollController verticalScrollController, Function loadNextChunk) {
   if (verticalScrollController.position.pixels >=
       verticalScrollController.position.maxScrollExtent - 200) {
     loadNextChunk();

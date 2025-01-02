@@ -42,16 +42,26 @@ class TableWidgetState extends State<TableWidget> {
   @override
   void initState() {
     super.initState();
-    _verticalScrollController.addListener(() => onScroll(_verticalScrollController, _loadNextChunk));
-    _horizontalScrollController.addListener(() => onHorizontalScroll(_horizontalScrollController, _rowControllers, _isSyncing, _activeRowController));
+    _verticalScrollController
+        .addListener(() => onScroll(_verticalScrollController, _loadNextChunk));
+    _horizontalScrollController.addListener(() => onHorizontalScroll(
+        _horizontalScrollController,
+        _rowControllers,
+        _isSyncing,
+        _activeRowController));
     loadData(widget.selectedTable);
   }
 
   @override
   void dispose() {
-    _verticalScrollController.removeListener(() => onScroll(_verticalScrollController, _loadNextChunk));
+    _verticalScrollController.removeListener(
+        () => onScroll(_verticalScrollController, _loadNextChunk));
     _verticalScrollController.dispose();
-    _horizontalScrollController.removeListener(() => onHorizontalScroll(_horizontalScrollController, _rowControllers, _isSyncing, _activeRowController));
+    _horizontalScrollController.removeListener(() => onHorizontalScroll(
+        _horizontalScrollController,
+        _rowControllers,
+        _isSyncing,
+        _activeRowController));
     _horizontalScrollController.dispose();
     super.dispose();
   }
@@ -94,15 +104,18 @@ class TableWidgetState extends State<TableWidget> {
   }
 
   Future<void> _deleteRow(String table, int id) async {
-    await deleteRow(table, id, context, widget.dbHelper, loadData, widget.selectedTable);
+    await deleteRow(
+        table, id, context, widget.dbHelper, loadData, widget.selectedTable);
   }
 
   void _showEditDialog(Map<String, dynamic> exercise) {
-    showEditDialog(context, exercise, widget.isKg, widget.dbHelper, loadData, widget.selectedTable);
+    showEditDialog(context, exercise, widget.isKg, widget.dbHelper, loadData,
+        widget.selectedTable);
   }
 
   void _showFitnessEditDialog(Map<String, dynamic> fitness) {
-    showFitnessEditDialog(context, fitness, widget.isKg, widget.dbHelper, loadData, widget.selectedTable);
+    showFitnessEditDialog(context, fitness, widget.isKg, widget.dbHelper,
+        loadData, widget.selectedTable);
   }
 
   void _sortTable(String column) {
@@ -136,7 +149,8 @@ class TableWidgetState extends State<TableWidget> {
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             controller: _horizontalScrollController,
-            physics: const NeverScrollableScrollPhysics(), // disable manual scrolling of header
+            physics:
+                const NeverScrollableScrollPhysics(), // disable manual scrolling of header
             child: Table(
               columnWidths: widget.selectedTable == 'exercises'
                   ? {
@@ -167,29 +181,40 @@ class TableWidgetState extends State<TableWidget> {
                 TableRow(
                   children: widget.selectedTable == 'exercises'
                       ? [
-                          tableHeader('Exercise', _sortColumn, _sortAscending, _sortTable, context, widget.isKg),
-                          tableHeader('Weight', _sortColumn, _sortAscending, _sortTable, context, widget.isKg),
-                          tableHeader('Reps', _sortColumn, _sortAscending, _sortTable, context, widget.isKg),
-                          tableHeader('Sets', _sortColumn, _sortAscending, _sortTable, context, widget.isKg),
-                          tableHeader('Timestamp', _sortColumn, _sortAscending, _sortTable, context, widget.isKg),
+                          tableHeader('Exercise', _sortColumn, _sortAscending,
+                              _sortTable, context, widget.isKg),
+                          tableHeader('Weight', _sortColumn, _sortAscending,
+                              _sortTable, context, widget.isKg),
+                          tableHeader('Reps', _sortColumn, _sortAscending,
+                              _sortTable, context, widget.isKg),
+                          tableHeader('Sets', _sortColumn, _sortAscending,
+                              _sortTable, context, widget.isKg),
+                          tableHeader('Timestamp', _sortColumn, _sortAscending,
+                              _sortTable, context, widget.isKg),
                           const TableCell(
                             child: Padding(
                               padding: EdgeInsets.all(8.0),
                               child: Text('Actions',
-                                  style: TextStyle(fontWeight: FontWeight.bold)),
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.bold)),
                             ),
                           ),
                         ]
                       : [
-                          tableHeader('Weight', _sortColumn, _sortAscending, _sortTable, context, widget.isKg),
-                          tableHeader('Height', _sortColumn, _sortAscending, _sortTable, context, widget.isKg),
-                          tableHeader('Age', _sortColumn, _sortAscending, _sortTable, context, widget.isKg),
-                          tableHeader('Timestamp', _sortColumn, _sortAscending, _sortTable, context, widget.isKg),
+                          tableHeader('Weight', _sortColumn, _sortAscending,
+                              _sortTable, context, widget.isKg),
+                          tableHeader('Height', _sortColumn, _sortAscending,
+                              _sortTable, context, widget.isKg),
+                          tableHeader('Age', _sortColumn, _sortAscending,
+                              _sortTable, context, widget.isKg),
+                          tableHeader('Timestamp', _sortColumn, _sortAscending,
+                              _sortTable, context, widget.isKg),
                           const TableCell(
                             child: Padding(
                               padding: EdgeInsets.all(8.0),
                               child: Text('Actions',
-                                  style: TextStyle(fontWeight: FontWeight.bold)),
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.bold)),
                             ),
                           ),
                         ],

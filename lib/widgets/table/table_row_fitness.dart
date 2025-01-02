@@ -24,19 +24,23 @@ class TableRowFitness extends TableRowBase {
     return [
       TableCell(
           child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 14.0),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 8, vertical: 14.0),
               child: Text(formatWeight(item['weight'] ?? '', isKg)))),
       TableCell(
           child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 14.0),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 8, vertical: 14.0),
               child: Text((item['height'] ?? 0).toString()))),
       TableCell(
           child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 14.0),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 8, vertical: 14.0),
               child: Text((item['age'] ?? 0).toString()))),
       TableCell(
           child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 14.0),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 8, vertical: 14.0),
               child: Text(formatDate(item['timestamp'] ?? '')))),
       TableCell(
         child: Padding(
@@ -44,14 +48,16 @@ class TableRowFitness extends TableRowBase {
           child: Row(
             children: [
               IconButton(
-                icon: Icon(Icons.edit, size: 18.0, color: Theme.of(context).colorScheme.secondary),
+                icon: Icon(Icons.edit,
+                    size: 18.0, color: Theme.of(context).colorScheme.secondary),
                 onPressed: () {
                   showFitnessEditDialog(item);
                 },
               ),
               const SizedBox(width: 0.0),
               IconButton(
-                icon: Icon(Icons.delete, size: 18.0, color: Theme.of(context).colorScheme.secondary),
+                icon: Icon(Icons.delete,
+                    size: 18.0, color: Theme.of(context).colorScheme.secondary),
                 onPressed: () async {
                   await deleteRow('fitness', item['id'] ?? 0);
                 },

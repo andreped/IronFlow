@@ -24,23 +24,28 @@ class TableRowExercises extends TableRowBase {
     return [
       TableCell(
           child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 14.0),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 8, vertical: 14.0),
               child: Text(item['exercise'] ?? ''))),
       TableCell(
           child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 14.0),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 8, vertical: 14.0),
               child: Text(formatWeight(item['weight'] ?? '', isKg)))),
       TableCell(
           child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 14.0),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 8, vertical: 14.0),
               child: Text((item['reps'] ?? 0).toString()))),
       TableCell(
           child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 14.0),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 8, vertical: 14.0),
               child: Text((item['sets'] ?? 0).toString()))),
       TableCell(
           child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 14.0),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 8, vertical: 14.0),
               child: Text(formatDate(item['timestamp'] ?? '')))),
       TableCell(
         child: Padding(
@@ -48,14 +53,16 @@ class TableRowExercises extends TableRowBase {
           child: Row(
             children: [
               IconButton(
-                icon: Icon(Icons.edit, size: 18.0, color: Theme.of(context).iconTheme.color),
+                icon: Icon(Icons.edit,
+                    size: 18.0, color: Theme.of(context).iconTheme.color),
                 onPressed: () {
                   showEditDialog(item);
                 },
               ),
               const SizedBox(width: 0.0),
               IconButton(
-                icon: Icon(Icons.delete, size: 18.0, color: Theme.of(context).iconTheme.color),
+                icon: Icon(Icons.delete,
+                    size: 18.0, color: Theme.of(context).iconTheme.color),
                 onPressed: () async {
                   await deleteRow('exercises', item['id'] ?? 0);
                 },
