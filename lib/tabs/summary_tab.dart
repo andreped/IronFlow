@@ -73,13 +73,17 @@ class SummaryTabState extends State<SummaryTab> {
       final latest = timestamps.last;
       final totalDuration = latest.difference(earliest);
 
-      setState(() {
-        _totalTrainingTime = totalDuration;
-      });
+      if (mounted) {
+        setState(() {
+          _totalTrainingTime = totalDuration;
+        });
+      }
     } else {
-      setState(() {
-        _totalTrainingTime = Duration.zero;
-      });
+      if (mounted) {
+        setState(() {
+          _totalTrainingTime = Duration.zero;
+        });
+      }
     }
   }
 
