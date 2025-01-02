@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'tabs/home.dart';
+import 'tabs/home_tab.dart';
 import 'core/theme.dart';
 
 void main() {
