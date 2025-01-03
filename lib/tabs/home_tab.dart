@@ -151,8 +151,8 @@ class ExerciseStoreHomePageState extends State<ExerciseStoreHomePage>
     return Scaffold(
       appBar: AppBar(
         title: Image.asset(
-          'assets/icon/wave_app_icon_transparent.png',
-          height: 40, // Adjust the height as needed
+          'assets/icon/wave_app_icon_transparent_thumbnail.png',
+          height: 45, // Adjust the height as needed
           fit: BoxFit.contain,
         ),
         centerTitle: true, // Center the logo in the AppBar
