@@ -138,6 +138,12 @@ class VisualizationTabState extends State<VisualizationTab> {
 
   Future<void> _fetchDataPoints(String? exerciseName) async {
     LoggerService.logger.info('Fetching data points for: $exerciseName');
+
+    // Clear existing data points
+    setState(() {
+      _dataPoints = [];
+    });
+
     List<dynamic> records = [];
 
     if (_selectedTable == 'Exercise') {
@@ -146,11 +152,7 @@ class VisualizationTabState extends State<VisualizationTab> {
       records = await _dataService.fetchFitnessData();
     }
 
-    records = _dataService.filterDataByDateRange(records, _selectedDateRange);
-
-    // Debugging: Print fetched records
-    print('Fetched records: ${records.length}');
-
+    // Filter records by exercise name if provided
     if (exerciseName != null) {
       if (_selectedTable == 'Exercise') {
         records =
@@ -161,12 +163,26 @@ class VisualizationTabState extends State<VisualizationTab> {
       }
     }
 
-    // Debugging: Print filtered records
-    print('Filtered records for $exerciseName: ${records.length}');
+    // Filter records by date range
+    List<dynamic> filteredRecords =
+        _dataService.filterDataByDateRange(records, _selectedDateRange);
+
+    // If no records are found within the selected date range, adjust the date range to include all records for the selected exercise
+    if (filteredRecords.isEmpty) {
+      if (records.isNotEmpty) {
+        final earliestRecordDate = records
+            .map((record) => record.timestamp)
+            .reduce((a, b) => a.isBefore(b) ? a : b);
+        _selectedDateRange =
+            DateTimeRange(start: earliestRecordDate, end: DateTime.now());
+        filteredRecords =
+            _dataService.filterDataByDateRange(records, _selectedDateRange);
+      }
+    }
 
     // Group records by day
     Map<DateTime, List<dynamic>> recordsByDay = {};
-    for (var record in records) {
+    for (var record in filteredRecords) {
       DateTime date = DateUtils.dateOnly(record.timestamp);
       if (!recordsByDay.containsKey(date)) {
         recordsByDay[date] = [];
@@ -202,8 +218,7 @@ class VisualizationTabState extends State<VisualizationTab> {
           break;
       }
 
-      double dayDifference =
-          date.difference(recordsByDay.keys.first).inDays.toDouble();
+      double dayDifference = date.difference(DateTime.now()).inDays.toDouble();
       double convertedValue = _convertValue(value);
 
       aggregatedDataPoints.add(ScatterSpot(
@@ -215,9 +230,6 @@ class VisualizationTabState extends State<VisualizationTab> {
         ),
       ));
     });
-
-    // Debugging: Print aggregated data points
-    print('Aggregated data points: ${aggregatedDataPoints.length}');
 
     // Calculate min and max y values dynamically
     double minY = aggregatedDataPoints.isNotEmpty
@@ -333,6 +345,7 @@ class VisualizationTabState extends State<VisualizationTab> {
                   onChanged: (newValue) {
                     if (newValue != null) {
                       setState(() {
+                        _dataPoints = []; // Clear the data points
                         _selectedExercise = newValue;
                       });
                       _fetchDataPoints(newValue);

@@ -80,15 +80,10 @@ class ExerciseSetterState extends State<ExerciseSetter> {
 
   Future<void> _fetchLastExerciseTime() async {
     final lastExercise = await _dbHelper.getLastLoggedExerciseTime();
-    if (lastExercise != null) {
+    if (lastExercise != null && mounted) {
       setState(() {
         _lastExerciseTime = lastExercise;
         _updateTimeSinceLastExercise();
-      });
-    } else {
-      setState(() {
-        _lastExerciseTime = null;
-        _timeSinceLastExercise = '';
       });
     }
   }
