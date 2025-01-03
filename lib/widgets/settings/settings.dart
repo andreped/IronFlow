@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/database.dart';
-import '../../core/theme.dart';
+import '../../core/theme/app_themes.dart';
 
 class SettingsModal extends StatefulWidget {
   final AppTheme appTheme;
