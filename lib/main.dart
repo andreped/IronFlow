@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'tabs/home_tab.dart';
-import 'core/theme.dart';
+import 'core/theme/app_themes.dart';
 
 void main() {
   runApp(const MyApp());
@@ -17,7 +17,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   AppTheme _appTheme = AppTheme.system; // Default to system theme
   bool _isKg = true; // Default unit system
-  bool _bodyweightEnabledGlobal = true;
+  bool _bodyweightEnabledGlobal = true; // Default bodyweight enabled
   String _aggregationMethod = 'Top3Avg'; // Default aggregation method
   String _plotType = 'Line'; // Default plot type
   bool _showSplash = true;
@@ -99,7 +99,7 @@ class _MyAppState extends State<MyApp> {
       return Colors.black; // Use black for dark mode
     } else {
       return themeData.colorScheme.primary
-          .withOpacity(0.1); // Lighten the color for light themes
+          .withAlpha(30); // Lighten the color for light themes
     }
   }
 
@@ -118,7 +118,7 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       title: 'IronFlow',
       theme: themeData,
-      darkTheme: AppThemes.darkTheme,
+      darkTheme: AppThemes.dark,
       themeMode: _appTheme == AppTheme.system
           ? ThemeMode.system
           : (_appTheme == AppTheme.dark ? ThemeMode.dark : ThemeMode.light),
@@ -153,7 +153,7 @@ class _MyAppState extends State<MyApp> {
                       children: [
                         Image.asset(
                           'assets/icon/wave_app_icon_transparent_thumbnail.png',
-                          height: 125, // Adjust the height as needed
+                          height: 100, // Adjust the height as needed
                           fit: BoxFit.contain,
                         ),
                         const SizedBox(height: 20),
@@ -162,7 +162,7 @@ class _MyAppState extends State<MyApp> {
                           style: TextStyle(
                             color: _getSplashTextColor(
                                 themeData), // Dynamic text color
-                            fontSize: 30,
+                            fontSize: 24,
                             fontWeight: FontWeight.bold,
                             decoration:
                                 TextDecoration.none, // Ensure no decoration

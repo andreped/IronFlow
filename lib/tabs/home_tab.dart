@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../core/theme.dart';
+import '../core/theme/app_themes.dart';
 import 'visualization_tab.dart';
 import 'inputs_tab.dart';
 import 'summary_tab.dart';
@@ -41,7 +41,7 @@ class ExerciseStoreApp extends StatelessWidget {
     return MaterialApp(
       title: 'IronFlow',
       theme: themeData,
-      darkTheme: AppThemes.darkTheme,
+      darkTheme: AppThemes.dark,
       themeMode: appTheme == AppTheme.system
           ? ThemeMode.system
           : (appTheme == AppTheme.dark ? ThemeMode.dark : ThemeMode.light),
