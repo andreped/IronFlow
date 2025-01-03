@@ -20,11 +20,12 @@ class _MyAppState extends State<MyApp> {
   bool _bodyweightEnabledGlobal = true;
   String _aggregationMethod = 'Top3Avg'; // Default aggregation method
   String _plotType = 'Line'; // Default plot type
+  late Future<void> _settingsLoaded;
 
   @override
   void initState() {
     super.initState();
-    _loadSettings();
+    _settingsLoaded = _loadSettings();
   }
 
   Future<void> _loadSettings() async {
@@ -86,29 +87,41 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    // Get current brightness
-    final brightness = MediaQuery.of(context).platformBrightness;
-    final themeData = AppThemes.getTheme(_appTheme, brightness);
+    return FutureBuilder<void>(
+      future: _settingsLoaded,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          // Show a loading indicator while waiting for settings to load
+          return const CircularProgressIndicator();
+        } else {
+          // Get current brightness
+          final brightness = MediaQuery.of(context).platformBrightness;
+          final themeData = AppThemes.getTheme(_appTheme, brightness);
 
-    return MaterialApp(
-      title: 'IronFlow',
-      theme: themeData,
-      darkTheme: AppThemes.darkTheme,
-      themeMode: _appTheme == AppTheme.system
-          ? ThemeMode.system
-          : (_appTheme == AppTheme.dark ? ThemeMode.dark : ThemeMode.light),
-      home: ExerciseStoreHomePage(
-        appTheme: _appTheme,
-        updateTheme: _toggleTheme,
-        isKg: _isKg,
-        bodyweightEnabledGlobal: _bodyweightEnabledGlobal,
-        toggleUnit: _toggleUnit,
-        toggleBodyweightEnabledGlobal: _toggleBodyweightEnabledGlobal,
-        aggregationMethod: _aggregationMethod,
-        setAggregationMethod: _setAggregationMethod,
-        plotType: _plotType,
-        setPlotType: _setPlotType,
-      ),
+          return MaterialApp(
+            title: 'IronFlow',
+            theme: themeData,
+            darkTheme: AppThemes.darkTheme,
+            themeMode: _appTheme == AppTheme.system
+                ? ThemeMode.system
+                : (_appTheme == AppTheme.dark
+                    ? ThemeMode.dark
+                    : ThemeMode.light),
+            home: ExerciseStoreHomePage(
+              appTheme: _appTheme,
+              updateTheme: _toggleTheme,
+              isKg: _isKg,
+              bodyweightEnabledGlobal: _bodyweightEnabledGlobal,
+              toggleUnit: _toggleUnit,
+              toggleBodyweightEnabledGlobal: _toggleBodyweightEnabledGlobal,
+              aggregationMethod: _aggregationMethod,
+              setAggregationMethod: _setAggregationMethod,
+              plotType: _plotType,
+              setPlotType: _setPlotType,
+            ),
+          );
+        }
+      },
     );
   }
 }
