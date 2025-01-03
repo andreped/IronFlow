@@ -21,11 +21,23 @@ class _MyAppState extends State<MyApp> {
   String _aggregationMethod = 'Top3Avg'; // Default aggregation method
   String _plotType = 'Line'; // Default plot type
   late Future<void> _settingsLoaded;
+  late Image _logoImage;
 
   @override
   void initState() {
     super.initState();
+    _logoImage = Image.asset(
+      'assets/icon/wave_app_icon_transparent_thumbnail.png',
+      height: 45, // Adjust the height as needed
+      fit: BoxFit.contain,
+    );
     _settingsLoaded = _loadSettings();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _precacheLogoImage();
   }
 
   Future<void> _loadSettings() async {
@@ -39,6 +51,10 @@ class _MyAppState extends State<MyApp> {
           prefs.getString('aggregationMethod') ?? _aggregationMethod;
       _plotType = prefs.getString('plotType') ?? _plotType;
     });
+  }
+
+  Future<void> _precacheLogoImage() async {
+    await precacheImage(_logoImage.image, context);
   }
 
   Future<void> _saveSettings() async {
@@ -104,9 +120,7 @@ class _MyAppState extends State<MyApp> {
             darkTheme: AppThemes.darkTheme,
             themeMode: _appTheme == AppTheme.system
                 ? ThemeMode.system
-                : (_appTheme == AppTheme.dark
-                    ? ThemeMode.dark
-                    : ThemeMode.light),
+                : (_appTheme == AppTheme.dark ? ThemeMode.dark : ThemeMode.light),
             home: ExerciseStoreHomePage(
               appTheme: _appTheme,
               updateTheme: _toggleTheme,
@@ -118,6 +132,7 @@ class _MyAppState extends State<MyApp> {
               setAggregationMethod: _setAggregationMethod,
               plotType: _plotType,
               setPlotType: _setPlotType,
+              logoImage: _logoImage, // Pass the preloaded logo image
             ),
           );
         }

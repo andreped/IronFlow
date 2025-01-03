@@ -18,6 +18,7 @@ class ExerciseStoreApp extends StatelessWidget {
   final ValueChanged<String> setAggregationMethod;
   final String plotType;
   final ValueChanged<String> setPlotType;
+  final Image logoImage;
 
   const ExerciseStoreApp({
     super.key,
@@ -31,6 +32,7 @@ class ExerciseStoreApp extends StatelessWidget {
     required this.setAggregationMethod,
     required this.plotType,
     required this.setPlotType,
+    required this.logoImage,
   });
 
   @override
@@ -56,6 +58,7 @@ class ExerciseStoreApp extends StatelessWidget {
         setAggregationMethod: setAggregationMethod,
         plotType: plotType,
         setPlotType: setPlotType,
+        logoImage: logoImage, // Pass the preloaded logo image
       ),
     );
   }
@@ -72,6 +75,7 @@ class ExerciseStoreHomePage extends StatefulWidget {
   final String plotType;
   final ValueChanged<String> setPlotType;
   final ValueChanged<bool> toggleBodyweightEnabledGlobal;
+  final Image logoImage;
 
   const ExerciseStoreHomePage({
     super.key,
@@ -85,6 +89,7 @@ class ExerciseStoreHomePage extends StatefulWidget {
     required this.setAggregationMethod,
     required this.plotType,
     required this.setPlotType,
+    required this.logoImage,
   });
 
   @override
@@ -150,11 +155,7 @@ class ExerciseStoreHomePageState extends State<ExerciseStoreHomePage>
 
     return Scaffold(
       appBar: AppBar(
-        title: Image.asset(
-          'assets/icon/wave_app_icon_transparent_thumbnail.png',
-          height: 45, // Adjust the height as needed
-          fit: BoxFit.contain,
-        ),
+        title: widget.logoImage, // Use the preloaded logo image
         centerTitle: true, // Center the logo in the AppBar
         actions: [
           IconButton(
