@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:intl/intl.dart';
 
 class ChartWidget extends StatelessWidget {
   final List<ScatterSpot> dataPoints;
@@ -39,14 +40,14 @@ class ChartWidget extends StatelessWidget {
           bottomTitles: AxisTitles(
             sideTitles: SideTitles(
               showTitles: true,
-              reservedSize: 35,
+              reservedSize: 45,
               getTitlesWidget: (value, meta) =>
                   _bottomTitleWidgets(value, meta),
             ),
             axisNameWidget: Padding(
               padding: const EdgeInsets.only(top: 12.0),
               child: Text(
-                'Days',
+                'Date',
                 style: TextStyle(
                   color: axisTextColor,
                   fontSize: 14,
@@ -134,14 +135,14 @@ class ChartWidget extends StatelessWidget {
           bottomTitles: AxisTitles(
             sideTitles: SideTitles(
               showTitles: true,
-              reservedSize: 35,
+              reservedSize: 45,
               getTitlesWidget: (value, meta) =>
                   _bottomTitleWidgets(value, meta),
             ),
             axisNameWidget: Padding(
               padding: const EdgeInsets.only(top: 12.0),
               child: Text(
-                'Days',
+                'Date',
                 style: TextStyle(
                   color: axisTextColor,
                   fontSize: 14,
@@ -221,30 +222,19 @@ class ChartWidget extends StatelessWidget {
   }
 
   Widget _bottomTitleWidgets(double value, TitleMeta meta) {
-    const style = TextStyle(
-      color: Colors.black,
-      fontWeight: FontWeight.bold,
-      fontSize: 12,
+    final style = TextStyle(
+      color: axisTextColor,
+      fontSize: 14, // Increased font size
     );
-    Widget text;
-    switch (value.toInt()) {
-      case 1:
-        text = const Text('1', style: style);
-        break;
-      case 2:
-        text = const Text('2', style: style);
-        break;
-      case 3:
-        text = const Text('3', style: style);
-        break;
-      default:
-        text = const Text('', style: style);
-        break;
-    }
+    final date = DateTime.fromMillisecondsSinceEpoch(value.toInt() * 86400000);
+    final formattedDate = DateFormat('dd/MM').format(date);
     return SideTitleWidget(
       axisSide: meta.axisSide,
-      space: 4.0,
-      child: text,
+      space: 12.0, // Increased space to move the labels downwards
+      child: Transform.rotate(
+        angle: 60 * 3.1415927 / 180,
+        child: Text(formattedDate, style: style),
+      ),
     );
   }
 }

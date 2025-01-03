@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../services/data_service.dart';
 import '../services/logger_service.dart';
-import '../utils/weight_utils.dart';
 import '../widgets/charts/chart_widget.dart';
 import '../widgets/dropdown/dropdown_widget.dart';
 import '../widgets/toggle/toggle_buttons_widget.dart';
