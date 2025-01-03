@@ -83,7 +83,6 @@ class VisualizationTabState extends State<VisualizationTab> {
       if (_selectedTable == 'Exercise') {
         // fetch recorded exercises
         List<Exercise> variables = await _dataService.fetchExercises();
-        print(variables);
         names = variables.map((entry) => entry.name).toSet();
       } else {
         // fetch fitness data
@@ -96,9 +95,6 @@ class VisualizationTabState extends State<VisualizationTab> {
       if (sortedNames.isNotEmpty) {
         sortedNames.sort();
       }
-
-      // Debugging: Print fetched exercise names
-      print('Fetched exercise names: $sortedNames');
 
       // update states
       setState(() {
@@ -190,9 +186,6 @@ class VisualizationTabState extends State<VisualizationTab> {
       recordsByDay[date]!.add(record);
     }
 
-    // Debugging: Print grouped records by day
-    print('Records grouped by day: ${recordsByDay.length}');
-
     // Aggregate data per day
     List<ScatterSpot> aggregatedDataPoints = [];
     recordsByDay.forEach((date, dailyRecords) {
@@ -254,9 +247,6 @@ class VisualizationTabState extends State<VisualizationTab> {
       _minY = minY;
       _maxY = maxY;
     });
-
-    // Debugging: Print final data points
-    print('Final data points: ${_dataPoints.length}');
   }
 
   double _convertValue(double value) {
