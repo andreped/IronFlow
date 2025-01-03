@@ -74,6 +74,23 @@ class VisualizationTabState extends State<VisualizationTab> {
     }
   }
 
+  Future<List<Map<String, dynamic>>> _fetchAllData() async {
+    if (_selectedTable == 'Exercise') {
+      return await _dbHelper.getExercises();
+    } else {
+      return await _dbHelper.getFitnessData();
+    }
+  }
+
+  List<Map<String, dynamic>> _filterDataByDateRange(List<Map<String, dynamic>> data, DateTimeRange? dateRange) {
+    if (dateRange == null) return data;
+    return data.where((record) {
+      final dateTime = DateUtils.dateOnly(DateTime.parse(record['timestamp']));
+      return dateTime.isAfter(dateRange.start.subtract(const Duration(days: 1))) &&
+            dateTime.isBefore(dateRange.end.add(const Duration(days: 1)));
+    }).toList();
+  }
+
   Future<void> _fetchExerciseNames() async {
     _logger.info('Fetching names from $_selectedTable table...');
     try {
@@ -132,203 +149,116 @@ class VisualizationTabState extends State<VisualizationTab> {
     return widget.isKg ? weightInKg : weightInKg * 2.20462;
   }
 
+  double _aggregateMax(List<Map<String, dynamic>> records) {
+    return records.map((record) => double.tryParse(record[_dataType.toLowerCase()].toString()) ?? 0.0).reduce((a, b) => a > b ? a : b);
+  }
+
+  double _aggregateAverage(List<Map<String, dynamic>> records) {
+    double totalWeight = 0.0;
+    double totalRepsSets = 0.0;
+
+    for (var record in records) {
+      final weight = double.tryParse(record['weight'].toString()) ?? 0.0;
+      final reps = double.tryParse(record['reps'].toString()) ?? 1.0;
+      final sets = double.tryParse(record['sets'].toString()) ?? 1.0;
+
+      totalWeight += (sets * reps) * weight;
+      totalRepsSets += sets * reps;
+    }
+
+    return totalRepsSets > 0 ? totalWeight / totalRepsSets : 0.0;
+  }
+
+  double _aggregateTotal(List<Map<String, dynamic>> records) {
+    return records.fold(0.0, (sum, record) {
+      final sets = double.tryParse(record['sets'].toString()) ?? 1.0;
+      final reps = double.tryParse(record['reps'].toString()) ?? 1.0;
+      final weight = double.tryParse(record['weight'].toString()) ?? 0.0;
+      return sum + (sets * reps * weight);
+    });
+  }
+
+  double _aggregateTop3Avg(List<Map<String, dynamic>> records) {
+    List<double> weights = records.map((record) => double.tryParse(record['weight'].toString()) ?? 0.0).toList();
+    weights.sort((a, b) => b.compareTo(a)); // Sort in descending order
+    List<double> top3Weights = weights.take(3).toList();
+    return top3Weights.isNotEmpty ? top3Weights.reduce((a, b) => a + b) / top3Weights.length : 0.0;
+  }
+
+  double _aggregateTop3Tot(List<Map<String, dynamic>> records) {
+    List<double> weights = records.map((record) => double.tryParse(record['weight'].toString()) ?? 0.0).toList();
+    weights.sort((a, b) => b.compareTo(a)); // Sort in descending order
+    List<double> top3Weights = weights.take(3).toList();
+    return top3Weights.isNotEmpty ? top3Weights.reduce((a, b) => a + b) : 0.0;
+  }
+
   Future<void> _fetchDataPoints(String? exerciseName) async {
     _logger.info('Fetching data points for: $exerciseName');
-    String currAggregationMethod = _aggregationMethod;
-    List<Map<String, dynamic>> records;
-    if (_selectedTable == 'Exercise') {
-      records = await _dbHelper.getExercises();
-    } else {
-      records = await _dbHelper.getFitnessData();
-      currAggregationMethod = 'Max';
-    }
+    List<Map<String, dynamic>> records = await _fetchAllData();
+    records = _filterDataByDateRange(records, _selectedDateRange);
 
-    final filteredRecords = exerciseName == null
-        ? records
-        : records
-            .where((record) => record['exercise'] == exerciseName)
-            .toList();
-
-    final groupedByDate = <DateTime, List<Map<String, dynamic>>>{};
-
-    // Group records by date
-    for (var record in filteredRecords) {
-      final dateTime = DateUtils.dateOnly(DateTime.parse(record['timestamp']));
-
-      if (_selectedDateRange == null ||
-          (dateTime.isAfter(_selectedDateRange!.start
-                  .subtract(const Duration(days: 1))) &&
-              dateTime.isBefore(
-                  _selectedDateRange!.end.add(const Duration(days: 1))))) {
-        if (groupedByDate.containsKey(dateTime)) {
-          groupedByDate[dateTime]!.add(record);
-        } else {
-          groupedByDate[dateTime] = [record];
-        }
-      }
-    }
-
-    final aggregatedDataPoints = <ScatterSpot>[];
-    final earliestDate =
-        DateUtils.dateOnly(DateTime.parse(filteredRecords.last['timestamp']));
-
-    final double bodyweight = await _dbHelper.getMostRecentBodyWeight();
-    int bodyweightEnabled = 1;
     if (exerciseName != null) {
-      bodyweightEnabled =
-          await _dbHelper.isBodyWeightEnabledForExercise(exerciseName);
+      records = records.where((record) => record['exercise'] == exerciseName).toList();
     }
-    double? minValue;
-    double? maxValue;
 
-    groupedByDate.forEach((date, recordsForDay) {
+    // Group records by day
+    Map<DateTime, List<Map<String, dynamic>>> recordsByDay = {};
+    for (var record in records) {
+      DateTime date = DateUtils.dateOnly(DateTime.parse(record['timestamp']));
+      if (!recordsByDay.containsKey(date)) {
+        recordsByDay[date] = [];
+      }
+      recordsByDay[date]!.add(record);
+    }
+
+    // Aggregate data per day
+    List<ScatterSpot> aggregatedDataPoints = [];
+    recordsByDay.forEach((date, dailyRecords) {
       double value;
-      switch (currAggregationMethod) {
+      switch (_aggregationMethod) {
         case 'Max':
-          value = recordsForDay
-              .map((record) =>
-                  double.tryParse(record[_dataType.toLowerCase()].toString()) ??
-                  0.0)
-              .reduce((a, b) => a > b ? a : b);
-          value += bodyweight *
-              bodyweightEnabled *
-              (widget.bodyweightEnabledGlobal ? 1.0 : 0.0);
+          value = _aggregateMax(dailyRecords);
           break;
-
         case 'Average':
-          // Weighted Average for this day
-          double totalWeight = 0.0;
-          double totalRepsSets = 0.0;
-
-          for (var record in recordsForDay) {
-            final weight = double.tryParse(record['weight'].toString()) ?? 0.0;
-            final reps = double.tryParse(record['reps'].toString()) ?? 1.0;
-            final sets = double.tryParse(record['sets'].toString()) ?? 1.0;
-
-            totalWeight += (sets * reps) *
-                (weight +
-                    bodyweight * (widget.bodyweightEnabledGlobal ? 1.0 : 0.0));
-            totalRepsSets += sets * reps;
-          }
-
-          value = totalRepsSets > 0 ? totalWeight / totalRepsSets : 0.0;
+          value = _aggregateAverage(dailyRecords);
           break;
-
         case 'Total':
-          value = recordsForDay.fold(0.0, (sum, record) {
-            final sets = double.tryParse(record['sets'].toString()) ?? 1.0;
-            final reps = double.tryParse(record['reps'].toString()) ?? 1.0;
-            final weight = double.tryParse(record['weight'].toString()) ?? 0.0;
-
-            // aggregate and include body weight, if relevant
-            final currTotal = (sets * reps * weight) +
-                bodyweight * (widget.bodyweightEnabledGlobal ? 1.0 : 0.0);
-            return sum + currTotal;
-          });
+          value = _aggregateTotal(dailyRecords);
           break;
-
         case 'Top3Avg':
-          // Sort records by weight in descending order
-          final sortedRecords = recordsForDay
-              .map((record) => {
-                    'weight':
-                        double.tryParse(record['weight'].toString()) ?? 0.0,
-                    'reps': double.tryParse(record['reps'].toString()) ?? 1.0,
-                    'sets': double.tryParse(record['sets'].toString()) ?? 1.0,
-                  })
-              .toList()
-            ..sort(
-                (a, b) => (b['weight'] ?? 0.0).compareTo(a['weight'] ?? 0.0));
-
-          // Take the top 3 records with the highest weights
-          final top3Records = sortedRecords.take(3).toList();
-
-          // Calculate the weighted average for the top 3 records
-          double top3TotalWeight = 0.0;
-          double top3TotalRepsSets = 0.0;
-
-          for (var record in top3Records) {
-            final weight = record['weight'] ?? 0.0;
-            final reps = record['reps'] ?? 1.0;
-            final sets = record['sets'] ?? 1.0;
-
-            top3TotalWeight += (sets * reps) *
-                (weight +
-                    bodyweight * (widget.bodyweightEnabledGlobal ? 1.0 : 0.0));
-            top3TotalRepsSets += sets * reps;
-          }
-
-          value =
-              top3TotalRepsSets > 0 ? top3TotalWeight / top3TotalRepsSets : 0.0;
+          value = _aggregateTop3Avg(dailyRecords);
           break;
-
         case 'Top3Tot':
-          // Sort records by weight in descending order
-          final sortedRecords = recordsForDay
-              .map((record) => {
-                    'weight':
-                        double.tryParse(record['weight'].toString()) ?? 0.0,
-                    'reps': double.tryParse(record['reps'].toString()) ?? 1.0,
-                    'sets': double.tryParse(record['sets'].toString()) ?? 1.0,
-                  })
-              .toList()
-            ..sort(
-                (a, b) => (b['weight'] ?? 0.0).compareTo(a['weight'] ?? 0.0));
-
-          // Take the top 3 records with the highest weights
-          final top3Records = sortedRecords.take(3).toList();
-
-          value = top3Records.fold(0.0, (sum, record) {
-            final sets = double.tryParse(record['sets'].toString()) ?? 1.0;
-            final reps = double.tryParse(record['reps'].toString()) ?? 1.0;
-            final weight = double.tryParse(record['weight'].toString()) ?? 0.0;
-
-            // aggregate and include body weight, if relevant
-            final currTotal = (sets * reps * weight) +
-                bodyweight * (widget.bodyweightEnabledGlobal ? 1.0 : 0.0);
-            return sum + currTotal;
-          });
+          value = _aggregateTop3Tot(dailyRecords);
           break;
-
         default:
-          value =
-              double.tryParse(recordsForDay.last[_dataType.toLowerCase()]) ??
-                  0.0;
+          value = 0.0;
           break;
       }
 
-      value = double.parse(value.toStringAsFixed(2));
-      final dayDifference = date.difference(earliestDate).inDays.toDouble();
-      final convertedValue = _convertWeight(value);
+      double dayDifference = date.difference(recordsByDay.keys.first).inDays.toDouble();
+      double convertedValue = _convertWeight(value);
 
       aggregatedDataPoints.add(ScatterSpot(
         dayDifference,
         convertedValue,
         dotPainter: FlDotCirclePainter(
-          color: Theme.of(context).colorScheme.secondary, // Use theme color
+          color: Theme.of(context).colorScheme.secondary,
           radius: 6,
         ),
       ));
-
-      // Update min and max values
-      if (minValue == null || convertedValue < (minValue as double))
-        minValue = convertedValue;
-      if (maxValue == null || convertedValue > (maxValue as double))
-        maxValue = convertedValue;
     });
+
+    // Calculate min and max y values dynamically
+    double minY = aggregatedDataPoints.map((point) => point.y).reduce((a, b) => a < b ? a : b);
+    double maxY = aggregatedDataPoints.map((point) => point.y).reduce((a, b) => a > b ? a : b);
 
     setState(() {
       _dataPoints = aggregatedDataPoints;
-      _minX =
-          _dataPoints.map((point) => point.x).reduce((a, b) => a < b ? a : b);
-      _maxX =
-          _dataPoints.map((point) => point.x).reduce((a, b) => a > b ? a : b);
-      _minY = minValue ?? 0.0;
-      _maxY = maxValue ?? 100.0; // Set default if no data
-
-      // Convert minY and maxY to the appropriate unit
-      _minY = _convertWeight(_minY);
-      _maxY = _convertWeight(_maxY);
+      _minX = _dataPoints.map((point) => point.x).reduce((a, b) => a < b ? a : b);
+      _maxX = _dataPoints.map((point) => point.x).reduce((a, b) => a > b ? a : b);
+      _minY = minY;
+      _maxY = maxY;
     });
   }
 
@@ -555,21 +485,6 @@ class VisualizationTabState extends State<VisualizationTab> {
     double _minY = _dataPoints.map((e) => e.y).reduce((a, b) => a < b ? a : b);
     double _maxY = _dataPoints.map((e) => e.y).reduce((a, b) => a > b ? a : b);
 
-    // Calculate the dynamic intervals
-    int nbLines = 6;
-    double horizontalRange = _maxY - _minY;
-    double verticalRange = _maxX - _minX;
-    double horizontalInterval = horizontalRange / nbLines;
-    double verticalInterval = verticalRange / nbLines;
-
-    // Ensure a maximum of x lines for each axis and that intervals are not zero
-    if (horizontalInterval == 0) {
-      horizontalInterval = 1;
-    }
-    if (verticalInterval == 0) {
-      verticalInterval = 1;
-    }
-
     final chartData = LineChartData(
       lineBarsData: [
         LineChartBarData(
@@ -619,7 +534,6 @@ class VisualizationTabState extends State<VisualizationTab> {
               );
             },
             reservedSize: 50,
-            interval: horizontalInterval,
           ),
           axisNameWidget: Padding(
             padding: const EdgeInsets.only(right: 8.0),
@@ -655,8 +569,6 @@ class VisualizationTabState extends State<VisualizationTab> {
         show: true,
         drawHorizontalLine: true,
         drawVerticalLine: true,
-        horizontalInterval: horizontalInterval,
-        verticalInterval: verticalInterval,
         getDrawingHorizontalLine: (value) {
           return const FlLine(
             color: Colors.grey,
@@ -718,7 +630,6 @@ class VisualizationTabState extends State<VisualizationTab> {
               );
             },
             reservedSize: 50,
-            interval: horizontalInterval,
           ),
           axisNameWidget: Padding(
             padding: const EdgeInsets.only(right: 8.0),
@@ -754,8 +665,6 @@ class VisualizationTabState extends State<VisualizationTab> {
         show: true,
         drawHorizontalLine: true,
         drawVerticalLine: true,
-        horizontalInterval: horizontalInterval,
-        verticalInterval: verticalInterval,
         getDrawingHorizontalLine: (value) {
           return const FlLine(
             color: Colors.grey,
