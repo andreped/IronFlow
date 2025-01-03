@@ -20,24 +20,21 @@ class _MyAppState extends State<MyApp> {
   bool _bodyweightEnabledGlobal = true;
   String _aggregationMethod = 'Top3Avg'; // Default aggregation method
   String _plotType = 'Line'; // Default plot type
-  late Future<void> _settingsLoaded;
-  late Image _logoImage;
+  bool _showSplash = true;
 
   @override
   void initState() {
     super.initState();
-    _logoImage = Image.asset(
-      'assets/icon/wave_app_icon_transparent_thumbnail.png',
-      height: 45, // Adjust the height as needed
-      fit: BoxFit.contain,
-    );
-    _settingsLoaded = _loadSettings();
+    _initializeApp();
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _precacheLogoImage();
+  Future<void> _initializeApp() async {
+    await _loadSettings();
+    await Future.delayed(
+        const Duration(seconds: 2)); // Hold splash screen for 1 second
+    setState(() {
+      _showSplash = false;
+    });
   }
 
   Future<void> _loadSettings() async {
@@ -51,10 +48,6 @@ class _MyAppState extends State<MyApp> {
           prefs.getString('aggregationMethod') ?? _aggregationMethod;
       _plotType = prefs.getString('plotType') ?? _plotType;
     });
-  }
-
-  Future<void> _precacheLogoImage() async {
-    await precacheImage(_logoImage.image, context);
   }
 
   Future<void> _saveSettings() async {
@@ -101,42 +94,88 @@ class _MyAppState extends State<MyApp> {
     _saveSettings();
   }
 
+  Color _getSplashBackgroundColor(ThemeData themeData) {
+    if (themeData.brightness == Brightness.dark) {
+      return Colors.black; // Use black for dark mode
+    } else {
+      return themeData.colorScheme.primary
+          .withOpacity(0.1); // Lighten the color for light themes
+    }
+  }
+
+  Color _getSplashTextColor(ThemeData themeData) {
+    return themeData.brightness == Brightness.dark
+        ? Colors.white
+        : Colors.black;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<void>(
-      future: _settingsLoaded,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          // Show a loading indicator while waiting for settings to load
-          return const CircularProgressIndicator();
-        } else {
-          // Get current brightness
-          final brightness = MediaQuery.of(context).platformBrightness;
-          final themeData = AppThemes.getTheme(_appTheme, brightness);
+    // Get current brightness
+    final brightness = MediaQuery.of(context).platformBrightness;
+    final themeData = AppThemes.getTheme(_appTheme, brightness);
 
-          return MaterialApp(
-            title: 'IronFlow',
-            theme: themeData,
-            darkTheme: AppThemes.darkTheme,
-            themeMode: _appTheme == AppTheme.system
-                ? ThemeMode.system
-                : (_appTheme == AppTheme.dark ? ThemeMode.dark : ThemeMode.light),
-            home: ExerciseStoreHomePage(
-              appTheme: _appTheme,
-              updateTheme: _toggleTheme,
-              isKg: _isKg,
-              bodyweightEnabledGlobal: _bodyweightEnabledGlobal,
-              toggleUnit: _toggleUnit,
-              toggleBodyweightEnabledGlobal: _toggleBodyweightEnabledGlobal,
-              aggregationMethod: _aggregationMethod,
-              setAggregationMethod: _setAggregationMethod,
-              plotType: _plotType,
-              setPlotType: _setPlotType,
-              logoImage: _logoImage, // Pass the preloaded logo image
+    return MaterialApp(
+      title: 'IronFlow',
+      theme: themeData,
+      darkTheme: AppThemes.darkTheme,
+      themeMode: _appTheme == AppTheme.system
+          ? ThemeMode.system
+          : (_appTheme == AppTheme.dark ? ThemeMode.dark : ThemeMode.light),
+      home: Stack(
+        children: [
+          ExerciseStoreHomePage(
+            appTheme: _appTheme,
+            updateTheme: _toggleTheme,
+            isKg: _isKg,
+            bodyweightEnabledGlobal: _bodyweightEnabledGlobal,
+            toggleUnit: _toggleUnit,
+            toggleBodyweightEnabledGlobal: _toggleBodyweightEnabledGlobal,
+            aggregationMethod: _aggregationMethod,
+            setAggregationMethod: _setAggregationMethod,
+            plotType: _plotType,
+            setPlotType: _setPlotType,
+          ),
+          if (_showSplash)
+            Container(
+              color: Colors
+                  .white, // Add a white background behind the splash screen
+              child: AnimatedOpacity(
+                opacity: _showSplash ? 1.0 : 0.0,
+                duration:
+                    const Duration(seconds: 1), // Slower fade-out duration
+                child: Container(
+                  color: _getSplashBackgroundColor(
+                      themeData), // Use dynamic splash background color
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.asset(
+                          'assets/icon/wave_app_icon_transparent_thumbnail.png',
+                          height: 125, // Adjust the height as needed
+                          fit: BoxFit.contain,
+                        ),
+                        const SizedBox(height: 20),
+                        Text(
+                          'IronFlow',
+                          style: TextStyle(
+                            color: _getSplashTextColor(
+                                themeData), // Dynamic text color
+                            fontSize: 30,
+                            fontWeight: FontWeight.bold,
+                            decoration:
+                                TextDecoration.none, // Ensure no decoration
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
             ),
-          );
-        }
-      },
+        ],
+      ),
     );
   }
 }
