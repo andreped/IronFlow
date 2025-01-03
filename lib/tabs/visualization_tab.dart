@@ -82,12 +82,14 @@ class VisualizationTabState extends State<VisualizationTab> {
     }
   }
 
-  List<Map<String, dynamic>> _filterDataByDateRange(List<Map<String, dynamic>> data, DateTimeRange? dateRange) {
+  List<Map<String, dynamic>> _filterDataByDateRange(
+      List<Map<String, dynamic>> data, DateTimeRange? dateRange) {
     if (dateRange == null) return data;
     return data.where((record) {
       final dateTime = DateUtils.dateOnly(DateTime.parse(record['timestamp']));
-      return dateTime.isAfter(dateRange.start.subtract(const Duration(days: 1))) &&
-            dateTime.isBefore(dateRange.end.add(const Duration(days: 1)));
+      return dateTime
+              .isAfter(dateRange.start.subtract(const Duration(days: 1))) &&
+          dateTime.isBefore(dateRange.end.add(const Duration(days: 1)));
     }).toList();
   }
 
@@ -150,7 +152,10 @@ class VisualizationTabState extends State<VisualizationTab> {
   }
 
   double _aggregateMax(List<Map<String, dynamic>> records) {
-    return records.map((record) => double.tryParse(record[_dataType.toLowerCase()].toString()) ?? 0.0).reduce((a, b) => a > b ? a : b);
+    return records
+        .map((record) =>
+            double.tryParse(record[_dataType.toLowerCase()].toString()) ?? 0.0)
+        .reduce((a, b) => a > b ? a : b);
   }
 
   double _aggregateAverage(List<Map<String, dynamic>> records) {
@@ -179,14 +184,20 @@ class VisualizationTabState extends State<VisualizationTab> {
   }
 
   double _aggregateTop3Avg(List<Map<String, dynamic>> records) {
-    List<double> weights = records.map((record) => double.tryParse(record['weight'].toString()) ?? 0.0).toList();
+    List<double> weights = records
+        .map((record) => double.tryParse(record['weight'].toString()) ?? 0.0)
+        .toList();
     weights.sort((a, b) => b.compareTo(a)); // Sort in descending order
     List<double> top3Weights = weights.take(3).toList();
-    return top3Weights.isNotEmpty ? top3Weights.reduce((a, b) => a + b) / top3Weights.length : 0.0;
+    return top3Weights.isNotEmpty
+        ? top3Weights.reduce((a, b) => a + b) / top3Weights.length
+        : 0.0;
   }
 
   double _aggregateTop3Tot(List<Map<String, dynamic>> records) {
-    List<double> weights = records.map((record) => double.tryParse(record['weight'].toString()) ?? 0.0).toList();
+    List<double> weights = records
+        .map((record) => double.tryParse(record['weight'].toString()) ?? 0.0)
+        .toList();
     weights.sort((a, b) => b.compareTo(a)); // Sort in descending order
     List<double> top3Weights = weights.take(3).toList();
     return top3Weights.isNotEmpty ? top3Weights.reduce((a, b) => a + b) : 0.0;
@@ -198,7 +209,9 @@ class VisualizationTabState extends State<VisualizationTab> {
     records = _filterDataByDateRange(records, _selectedDateRange);
 
     if (exerciseName != null) {
-      records = records.where((record) => record['exercise'] == exerciseName).toList();
+      records = records
+          .where((record) => record['exercise'] == exerciseName)
+          .toList();
     }
 
     // Group records by day
@@ -236,7 +249,8 @@ class VisualizationTabState extends State<VisualizationTab> {
           break;
       }
 
-      double dayDifference = date.difference(recordsByDay.keys.first).inDays.toDouble();
+      double dayDifference =
+          date.difference(recordsByDay.keys.first).inDays.toDouble();
       double convertedValue = _convertWeight(value);
 
       aggregatedDataPoints.add(ScatterSpot(
@@ -250,13 +264,19 @@ class VisualizationTabState extends State<VisualizationTab> {
     });
 
     // Calculate min and max y values dynamically
-    double minY = aggregatedDataPoints.map((point) => point.y).reduce((a, b) => a < b ? a : b);
-    double maxY = aggregatedDataPoints.map((point) => point.y).reduce((a, b) => a > b ? a : b);
+    double minY = aggregatedDataPoints
+        .map((point) => point.y)
+        .reduce((a, b) => a < b ? a : b);
+    double maxY = aggregatedDataPoints
+        .map((point) => point.y)
+        .reduce((a, b) => a > b ? a : b);
 
     setState(() {
       _dataPoints = aggregatedDataPoints;
-      _minX = _dataPoints.map((point) => point.x).reduce((a, b) => a < b ? a : b);
-      _maxX = _dataPoints.map((point) => point.x).reduce((a, b) => a > b ? a : b);
+      _minX =
+          _dataPoints.map((point) => point.x).reduce((a, b) => a < b ? a : b);
+      _maxX =
+          _dataPoints.map((point) => point.x).reduce((a, b) => a > b ? a : b);
       _minY = minY;
       _maxY = maxY;
     });
