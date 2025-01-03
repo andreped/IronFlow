@@ -226,13 +226,13 @@ class ChartWidget extends StatelessWidget {
       color: axisTextColor,
       fontSize: 14, // Increased font size
     );
-    final date = DateTime.fromMillisecondsSinceEpoch(value.toInt() * 86400000);
-    final formattedDate = DateFormat('dd/MM').format(date);
+    final date = DateTime.now().add(Duration(days: value.toInt()));
+    final formattedDate = DateFormat('MM/dd').format(date);
     return SideTitleWidget(
       axisSide: meta.axisSide,
-      space: 12.0, // Increased space to move the labels downwards
+      space: 8.0, // Increased space to move the labels downwards
       child: Transform.rotate(
-        angle: 60 * 3.1415927 / 180,
+        angle: -45 * 3.1415927 / 180,
         child: Text(formattedDate, style: style),
       ),
     );
