@@ -20,12 +20,21 @@ class _MyAppState extends State<MyApp> {
   bool _bodyweightEnabledGlobal = true;
   String _aggregationMethod = 'Top3Avg'; // Default aggregation method
   String _plotType = 'Line'; // Default plot type
-  late Future<void> _settingsLoaded;
+  late Future<void> _initialization;
+  bool _showSplash = true;
 
   @override
   void initState() {
     super.initState();
-    _settingsLoaded = _loadSettings();
+    _initialization = _initializeApp();
+  }
+
+  Future<void> _initializeApp() async {
+    await _loadSettings();
+    await Future.delayed(const Duration(seconds: 2)); // Hold splash screen for 1 second
+    setState(() {
+      _showSplash = false;
+    });
   }
 
   Future<void> _loadSettings() async {
@@ -88,11 +97,40 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<void>(
-      future: _settingsLoaded,
+      future: _initialization,
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          // Show a loading indicator while waiting for settings to load
-          return const CircularProgressIndicator();
+        if (snapshot.connectionState == ConnectionState.waiting || _showSplash) {
+          // Show a splash screen while waiting for initialization
+          return MaterialApp(
+            home: Scaffold(
+              backgroundColor: Colors.black,
+              body: AnimatedOpacity(
+                opacity: _showSplash ? 1.0 : 0.0,
+                duration: const Duration(seconds: 2), // Slower fade-out duration
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(
+                        'assets/icon/wave_app_icon_transparent_thumbnail.png',
+                        height: 100, // Adjust the height as needed
+                        fit: BoxFit.contain,
+                      ),
+                      const SizedBox(height: 20),
+                      const Text(
+                        'IronFlow',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
         } else {
           // Get current brightness
           final brightness = MediaQuery.of(context).platformBrightness;
