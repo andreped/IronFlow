@@ -30,7 +30,8 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> _initializeApp() async {
     await _loadSettings();
-    await Future.delayed(const Duration(seconds: 2)); // Hold splash screen for 1 second
+    await Future.delayed(
+        const Duration(seconds: 2)); // Hold splash screen for 1 second
     setState(() {
       _showSplash = false;
     });
@@ -97,12 +98,15 @@ class _MyAppState extends State<MyApp> {
     if (themeData.brightness == Brightness.dark) {
       return Colors.black; // Use black for dark mode
     } else {
-      return themeData.colorScheme.primary.withOpacity(0.1); // Lighten the color for light themes
+      return themeData.colorScheme.primary
+          .withOpacity(0.1); // Lighten the color for light themes
     }
   }
 
   Color _getSplashTextColor(ThemeData themeData) {
-    return themeData.brightness == Brightness.dark ? Colors.white : Colors.black;
+    return themeData.brightness == Brightness.dark
+        ? Colors.white
+        : Colors.black;
   }
 
   @override
@@ -134,12 +138,15 @@ class _MyAppState extends State<MyApp> {
           ),
           if (_showSplash)
             Container(
-              color: Colors.white, // Add a white background behind the splash screen
+              color: Colors
+                  .white, // Add a white background behind the splash screen
               child: AnimatedOpacity(
                 opacity: _showSplash ? 1.0 : 0.0,
-                duration: const Duration(seconds: 1), // Slower fade-out duration
+                duration:
+                    const Duration(seconds: 1), // Slower fade-out duration
                 child: Container(
-                  color: _getSplashBackgroundColor(themeData), // Use dynamic splash background color
+                  color: _getSplashBackgroundColor(
+                      themeData), // Use dynamic splash background color
                   child: Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -153,10 +160,12 @@ class _MyAppState extends State<MyApp> {
                         Text(
                           'IronFlow',
                           style: TextStyle(
-                            color: _getSplashTextColor(themeData), // Dynamic text color
+                            color: _getSplashTextColor(
+                                themeData), // Dynamic text color
                             fontSize: 30,
                             fontWeight: FontWeight.bold,
-                            decoration: TextDecoration.none, // Ensure no decoration
+                            decoration:
+                                TextDecoration.none, // Ensure no decoration
                           ),
                         ),
                       ],
