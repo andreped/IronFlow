@@ -7,7 +7,8 @@ class DropdownWidget extends StatelessWidget {
   final String hint;
   final ThemeData theme;
 
-  DropdownWidget({
+  const DropdownWidget({
+    super.key,
     required this.value,
     required this.items,
     required this.onChanged,

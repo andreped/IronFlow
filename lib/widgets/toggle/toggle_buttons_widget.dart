@@ -5,7 +5,8 @@ class ToggleButtonsWidget extends StatelessWidget {
   final ValueChanged<int> onPressed;
   final List<Icon> icons;
 
-  ToggleButtonsWidget({
+  const ToggleButtonsWidget({
+    super.key,
     required this.isSelected,
     required this.onPressed,
     required this.icons,

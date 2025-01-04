@@ -311,7 +311,7 @@ class VisualizationTabState extends State<VisualizationTab> {
             children: [
               DropdownWidget(
                 value: _selectedTable,
-                items: ['Exercise', 'Fitness'],
+                items: const ['Exercise', 'Fitness'],
                 onChanged: (newValue) {
                   if (newValue != null && newValue != _selectedTable) {
                     setState(() {
@@ -347,7 +347,7 @@ class VisualizationTabState extends State<VisualizationTab> {
               if (_selectedTable == 'Fitness')
                 DropdownWidget(
                   value: _dataType,
-                  items: ['Weight', 'Height', 'Age'],
+                  items: const ['Weight', 'Height', 'Age'],
                   onChanged: (newValue) {
                     if (newValue != null) {
                       setState(() {
@@ -391,7 +391,13 @@ class VisualizationTabState extends State<VisualizationTab> {
                     width: 110,
                     child: DropdownWidget(
                       value: _aggregationMethod,
-                      items: ['Max', 'Average', 'Total', 'Top3Avg', 'Top3Tot'],
+                      items: const [
+                        'Max',
+                        'Average',
+                        'Total',
+                        'Top3Avg',
+                        'Top3Tot'
+                      ],
                       onChanged: (newValue) {
                         if (newValue != null) {
                           setState(() {
