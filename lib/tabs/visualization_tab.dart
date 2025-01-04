@@ -35,10 +35,6 @@ class VisualizationTabState extends State<VisualizationTab> {
   String _dataType = 'Weight'; // Default data type for Fitness table
   List<String> _exerciseNames = [];
   List<ScatterSpot> _dataPoints = [];
-  double _minX = 0.0;
-  double _maxX = 0.0;
-  double _minY = 0.0;
-  double _maxY = 100.0;
   DateTimeRange? _selectedDateRange;
 
   final DataService _dataService = DataService();
@@ -224,28 +220,8 @@ class VisualizationTabState extends State<VisualizationTab> {
       ));
     });
 
-    // Calculate min and max y values dynamically
-    double minY = aggregatedDataPoints.isNotEmpty
-        ? aggregatedDataPoints
-            .map((point) => point.y)
-            .reduce((a, b) => a < b ? a : b)
-        : 0.0;
-    double maxY = aggregatedDataPoints.isNotEmpty
-        ? aggregatedDataPoints
-            .map((point) => point.y)
-            .reduce((a, b) => a > b ? a : b)
-        : 100.0;
-
     setState(() {
       _dataPoints = aggregatedDataPoints;
-      _minX = _dataPoints.isNotEmpty
-          ? _dataPoints.map((point) => point.x).reduce((a, b) => a < b ? a : b)
-          : 0.0;
-      _maxX = _dataPoints.isNotEmpty
-          ? _dataPoints.map((point) => point.x).reduce((a, b) => a > b ? a : b)
-          : 0.0;
-      _minY = minY;
-      _maxY = maxY;
     });
   }
 
