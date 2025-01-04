@@ -8,13 +8,13 @@ abstract class TableRowBase extends StatelessWidget {
   final Function(String, int) deleteRow;
 
   const TableRowBase({
-    Key? key,
+    super.key,
     required this.item,
     required this.isKg,
     required this.showEditDialog,
     required this.showFitnessEditDialog,
     required this.deleteRow,
-  }) : super(key: key);
+  });
 
   List<TableCell> buildCells(BuildContext context);
 

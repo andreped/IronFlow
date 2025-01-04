@@ -10,7 +10,8 @@ class ChartWidget extends StatelessWidget {
   final Color axisTextColor;
   final bool isKg;
 
-  ChartWidget({
+  const ChartWidget({
+    super.key,
     required this.dataPoints,
     required this.chartType,
     required this.scatterColor,

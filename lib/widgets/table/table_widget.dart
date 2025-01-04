@@ -35,7 +35,7 @@ class TableWidgetState extends State<TableWidget> {
   final int _limit = 50;
   bool _isLoading = false;
   bool _hasMoreData = true;
-  bool _isSyncing = false;
+  final bool _isSyncing = false;
   ScrollController? _activeRowController;
   final List<ScrollController> _rowControllers = [];
 

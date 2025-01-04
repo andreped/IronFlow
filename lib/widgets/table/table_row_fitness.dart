@@ -4,20 +4,13 @@ import '../../core/convert.dart';
 
 class TableRowFitness extends TableRowBase {
   const TableRowFitness({
-    Key? key,
-    required Map<String, dynamic> item,
-    required bool isKg,
-    required Function(Map<String, dynamic>) showEditDialog,
-    required Function(Map<String, dynamic>) showFitnessEditDialog,
-    required Function(String, int) deleteRow,
-  }) : super(
-          key: key,
-          item: item,
-          isKg: isKg,
-          showEditDialog: showEditDialog,
-          showFitnessEditDialog: showFitnessEditDialog,
-          deleteRow: deleteRow,
-        );
+    super.key,
+    required super.item,
+    required super.isKg,
+    required super.showEditDialog,
+    required super.showFitnessEditDialog,
+    required super.deleteRow,
+  });
 
   @override
   List<TableCell> buildCells(BuildContext context) {
