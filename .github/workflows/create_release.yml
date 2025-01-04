@@ -20,7 +20,7 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.22.2'
+          flutter-version: '3.27.1'
 
       - name: Configure build
         run: flutter clean && flutter pub get
@@ -60,7 +60,7 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.22.2'
+          flutter-version: '3.27.1'
           architecture: x64
 
       - name: Build iOS
