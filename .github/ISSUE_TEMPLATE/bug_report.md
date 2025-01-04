@@ -30,7 +30,7 @@ If applicable, add logs/screenshots to give more information about the issue.
 **Desktop (if you are developing IronFlow):** 
  - OS: [e.g., macOS]
  - Version: [e.g., 14 Sonoma]
- - Flutter: [e.g., 3.22.0]
+ - Flutter: [e.g., 3.27.1]
  - Dart: [e.g., 1.24.3]
 
 **Additional context**
