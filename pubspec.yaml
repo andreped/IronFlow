@@ -61,6 +61,7 @@ dependencies:
 
   # logging framework
   logging: ^1.0.2
+  intl: ^0.19.0
 
 dev_dependencies:
   flutter_test:
