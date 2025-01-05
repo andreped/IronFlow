@@ -35,21 +35,34 @@ class TableWidgetState extends State<TableWidget> {
   final int _limit = 50;
   bool _isLoading = false;
   bool _hasMoreData = true;
-  final bool _isSyncing = false;
+  bool _isSyncing = false;
   ScrollController? _activeRowController;
   final List<ScrollController> _rowControllers = [];
   String _searchQuery = ''; // Add search query state
+  double _globalHorizontalScrollPosition =
+      0.0; // Global horizontal scroll position
 
   @override
   void initState() {
     super.initState();
     _verticalScrollController
         .addListener(() => onScroll(_verticalScrollController, _loadNextChunk));
-    _horizontalScrollController.addListener(() => onHorizontalScroll(
-        _horizontalScrollController,
-        _rowControllers,
-        _isSyncing,
-        _activeRowController));
+    _horizontalScrollController.addListener(() {
+      _globalHorizontalScrollPosition =
+          _horizontalScrollController.position.pixels;
+      onHorizontalScroll(_horizontalScrollController, _rowControllers,
+          _isSyncing, _activeRowController);
+    });
+
+    // Add listener to sync horizontal scroll position on vertical scroll
+    _verticalScrollController.addListener(() {
+      for (final rowController in _rowControllers) {
+        if (rowController.hasClients) {
+          rowController.jumpTo(_horizontalScrollController.position.pixels);
+        }
+      }
+    });
+
     loadData(widget.selectedTable);
   }
 
@@ -109,6 +122,13 @@ class TableWidgetState extends State<TableWidget> {
       _isLoading = false;
       if (newData.length < _limit) {
         _hasMoreData = false;
+      }
+
+      // Add new row controllers and set their scroll position immediately
+      for (int i = _data.length - newData.length; i < _data.length; i++) {
+        final rowController = ClampingScrollController();
+        _rowControllers.add(rowController);
+        rowController.jumpTo(_horizontalScrollController.position.pixels);
       }
     });
   }
