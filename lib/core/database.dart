@@ -168,6 +168,7 @@ class DatabaseHelper {
     required int limit,
     bool isNumeric = false,
     bool isDateTime = false,
+    String searchQuery = '',
   }) async {
     final orderBy = isNumeric
         ? 'CAST($sortColumn AS REAL) ${ascending ? 'ASC' : 'DESC'}'
@@ -176,8 +177,14 @@ class DatabaseHelper {
             : '$sortColumn ${ascending ? 'ASC' : 'DESC'}';
 
     final db = await database;
+
+    // add WHERE clause if searchQuery is not empty
+    final whereClause =
+        searchQuery.isNotEmpty ? "WHERE exercise LIKE '%$searchQuery%'" : '';
+
     final List<Map<String, dynamic>> result = await db.rawQuery('''
       SELECT * FROM exercises
+      $whereClause
       ORDER BY $orderBy
       LIMIT $limit OFFSET $offset
     ''');

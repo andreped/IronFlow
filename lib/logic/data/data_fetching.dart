@@ -7,6 +7,7 @@ Future<List<Map<String, dynamic>>> loadNextChunk(
   String sortColumn,
   bool sortAscending,
   DatabaseHelper dbHelper,
+  String searchQuery,
 ) async {
   List<Map<String, dynamic>> newData;
   bool isNumeric = sortColumn == 'Weight';
@@ -19,6 +20,7 @@ Future<List<Map<String, dynamic>>> loadNextChunk(
       limit: limit,
       isNumeric: isNumeric,
       isDateTime: sortColumn == 'Timestamp',
+      searchQuery: searchQuery,
     );
   } else if (selectedTable == 'fitness') {
     newData = await dbHelper.getFitnessDataChunk(
