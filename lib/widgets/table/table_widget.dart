@@ -38,6 +38,7 @@ class TableWidgetState extends State<TableWidget> {
   final bool _isSyncing = false;
   ScrollController? _activeRowController;
   final List<ScrollController> _rowControllers = [];
+  String _searchQuery = ''; // Add search query state
 
   @override
   void initState() {
@@ -99,6 +100,7 @@ class TableWidgetState extends State<TableWidget> {
       _sortColumn,
       _sortAscending,
       widget.dbHelper,
+      _searchQuery, // Pass the search query
     );
 
     setState(() {
@@ -141,6 +143,16 @@ class TableWidgetState extends State<TableWidget> {
 
       _loadNextChunk();
     });
+  }
+
+  void filterData(String query) {
+    setState(() {
+      _searchQuery = query;
+      _data = [];
+      _offset = 0;
+      _hasMoreData = true;
+    });
+    _loadNextChunk();
   }
 
   @override
