@@ -275,7 +275,7 @@ class VisualizationTabState extends State<VisualizationTab> {
     // Initialize the date range to the last month if not already set
     if (_selectedDateRange == null) {
       final now = DateTime.now();
-      final lastMonth = DateTime(now.year, now.month - 1, now.day);
+      final lastMonth = DateTime(now.year, now.month - 12, now.day);
       _selectedDateRange = DateTimeRange(start: lastMonth, end: now);
     }
 
