@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import '../core/database.dart';
 import 'package:logging/logging.dart';
-
-// Initialize the logger
-final Logger _logger = Logger('RecordsLogger');
+import '../components/search/search_bar.dart' as custom;
+import '../widgets/records/records_table.dart';
+import '../repositories/records_repository.dart';
 
 class RecordsTab extends StatefulWidget {
   final bool isKg;
@@ -22,37 +22,36 @@ class RecordsTabState extends State<RecordsTab> {
   List<Map<String, dynamic>> _filteredWeights = [];
   bool _isSortedByWeight = true;
   bool _isAscending = false;
-  bool _isLoading = true; // Track loading state
-  String? _errorMessage; // Track error message
+  bool _isLoading = true;
+  String? _errorMessage;
   bool _isSearching = false;
   final TextEditingController _searchController = TextEditingController();
 
   Future<void> _fetchAndSortRecords() async {
     setState(() {
-      _isLoading = true; // Start loading
-      _errorMessage = null; // Clear previous errors
+      _isLoading = true;
+      _errorMessage = null;
     });
 
     try {
-      final data = await _dbHelper.getMaxWeightsForExercises();
+      final data =
+          await RecordsRepository(_dbHelper).getMaxWeightsForExercises();
       setState(() {
         _maxWeights = data;
         _filteredWeights = data;
         _sortRecords();
-        _isLoading = false; // Finished loading
+        _isLoading = false;
       });
     } catch (e) {
       setState(() {
-        _isLoading = false; // Finished loading
-        _errorMessage =
-            'Failed to load data. Please try again later.'; // Set error message
+        _isLoading = false;
+        _errorMessage = 'Failed to load data. Please try again later.';
       });
-      _logger.severe('Error fetching records: $e');
+      Logger('RecordsLogger').severe('Error fetching records: $e');
     }
   }
 
   void _sortRecords() {
-    // Ensure that _filteredWeights is a modifiable list
     _filteredWeights = List<Map<String, dynamic>>.from(_filteredWeights);
 
     if (_isSortedByWeight) {
@@ -65,7 +64,6 @@ class RecordsTabState extends State<RecordsTab> {
         final repsB = b['reps'] != null ? int.parse(b['reps'].toString()) : 0;
 
         if (maxWeightA == maxWeightB) {
-          // If weights are equal, sort by reps
           return _isAscending ? repsA.compareTo(repsB) : repsB.compareTo(repsA);
         }
         return _isAscending
@@ -143,16 +141,14 @@ class RecordsTabState extends State<RecordsTab> {
     return Scaffold(
       appBar: AppBar(
         title: _isSearching
-            ? TextField(
-                controller: _searchController,
-                autofocus: true,
-                decoration: InputDecoration(
-                  hintText: 'Search for exercises...',
-                  hintStyle: TextStyle(color: textColor.withOpacity(0.6)),
-                  border: InputBorder.none,
-                ),
-                style: TextStyle(color: textColor),
+            ? custom.SearchBar(
+                searchController: _searchController,
                 onChanged: _filterRecords,
+                textColor: textColor,
+                onClear: () {
+                  _searchController.clear();
+                  _filterRecords('');
+                },
               )
             : const Text('Records'),
         leading: _isSearching
@@ -189,110 +185,14 @@ class RecordsTabState extends State<RecordsTab> {
                   )
                 : _filteredWeights.isEmpty
                     ? const Center(child: Text('No data available'))
-                    : LayoutBuilder(
-                        builder: (context, constraints) {
-                          return SingleChildScrollView(
-                            scrollDirection: Axis.vertical,
-                            child: ConstrainedBox(
-                              constraints: BoxConstraints(
-                                minWidth: constraints.maxWidth,
-                              ),
-                              child: DataTable(
-                                columnSpacing: 64.0, // Increase column spacing
-                                dataRowHeight:
-                                    65.0, // Set the height of each row
-                                columns: [
-                                  DataColumn(
-                                    label: Expanded(
-                                      child: GestureDetector(
-                                        onTap: () => _toggleSorting(false),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          children: [
-                                            const Text('Exercise',
-                                                style: TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.bold)),
-                                            if (!_isSortedByWeight)
-                                              Row(
-                                                children: [
-                                                  const SizedBox(width: 4.0),
-                                                  Icon(
-                                                    _isAscending
-                                                        ? Icons.arrow_upward
-                                                        : Icons.arrow_downward,
-                                                    size: 16.0,
-                                                    color: arrowColor,
-                                                  ),
-                                                ],
-                                              ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  DataColumn(
-                                    label: Expanded(
-                                      child: GestureDetector(
-                                        onTap: () => _toggleSorting(true),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.end,
-                                          children: [
-                                            Text(
-                                                'Weight [${widget.isKg ? 'kg' : 'lbs'}]',
-                                                style: const TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.bold)),
-                                            if (_isSortedByWeight)
-                                              Row(
-                                                children: [
-                                                  const SizedBox(width: 4.0),
-                                                  Icon(
-                                                    _isAscending
-                                                        ? Icons.arrow_upward
-                                                        : Icons.arrow_downward,
-                                                    size: 16.0,
-                                                    color: arrowColor,
-                                                  ),
-                                                ],
-                                              ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                                rows: _filteredWeights.map((record) {
-                                  final exercise = record['exercise'] as String;
-                                  final weight = record['weight'];
-                                  final reps = record['reps'];
-                                  final displayWeight = _convertWeight(
-                                      weight is String
-                                          ? double.parse(weight)
-                                          : weight);
-
-                                  return DataRow(cells: [
-                                    DataCell(Text(exercise)),
-                                    DataCell(
-                                      Container(
-                                        alignment: Alignment.centerRight,
-                                        padding:
-                                            const EdgeInsets.only(right: 16.0),
-                                        child: Text(
-                                          '${displayWeight.toStringAsFixed(1)} x $reps reps',
-                                          softWrap: false,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ),
-                                    ),
-                                  ]);
-                                }).toList(),
-                              ),
-                            ),
-                          );
-                        },
+                    : RecordsTable(
+                        filteredWeights: _filteredWeights,
+                        isSortedByWeight: _isSortedByWeight,
+                        isAscending: _isAscending,
+                        arrowColor: arrowColor,
+                        toggleSorting: _toggleSorting,
+                        convertWeight: _convertWeight,
+                        isKg: widget.isKg,
                       ),
       ),
     );
