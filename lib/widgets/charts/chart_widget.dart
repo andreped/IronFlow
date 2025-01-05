@@ -228,7 +228,7 @@ class ChartWidget extends StatelessWidget {
       fontSize: 14, // Increased font size
     );
     final date = DateTime.now().add(Duration(days: value.toInt()));
-    final formattedDate = DateFormat('MM/dd').format(date);
+    final formattedDate = DateFormat('dd/MM').format(date);
     return SideTitleWidget(
       axisSide: meta.axisSide,
       space: 8.0, // Increased space to move the labels downwards
