@@ -604,7 +604,7 @@ class DatabaseHelper {
         file_path = '${directory.path}/backup_database.db';
       } else if (Platform.isAndroid) {
         file_path = '/storage/emulated/0/Download/backup_database.db';
-          
+
         // Use file picker to select the backup file
         FilePickerResult? result = await FilePicker.platform.pickFiles(
           type: FileType.any,
@@ -620,7 +620,7 @@ class DatabaseHelper {
       } else {
         throw Exception('Unsupported platform');
       }
-      
+
       // Check if the backup file exists
       File selectedFile = File(file_path);
       if (!await selectedFile.exists()) {
