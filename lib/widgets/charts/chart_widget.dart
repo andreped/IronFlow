@@ -119,9 +119,21 @@ class ChartWidget extends StatelessWidget {
             );
           },
         ),
-        lineTouchData: const LineTouchData(
+        lineTouchData: LineTouchData(
           enabled: true,
           handleBuiltInTouches: true,
+          touchTooltipData: LineTouchTooltipData(
+            tooltipMargin: 8,
+            tooltipHorizontalAlignment: FLHorizontalAlignment.left,
+            getTooltipItems: (List<LineBarSpot> touchedSpots) {
+              return touchedSpots.map((touchedSpot) {
+                return LineTooltipItem(
+                  _formatTooltip(touchedSpot.x, touchedSpot.y),
+                  TextStyle(color: Colors.white),
+                );
+              }).toList();
+            },
+          ),
         ),
       ),
     );
@@ -217,6 +229,16 @@ class ChartWidget extends StatelessWidget {
         scatterTouchData: ScatterTouchData(
           enabled: true,
           handleBuiltInTouches: true,
+          touchTooltipData: ScatterTouchTooltipData(
+            getTooltipColor: (ScatterSpot spot) => Colors.blueGrey,
+            tooltipHorizontalAlignment: FLHorizontalAlignment.left,
+            getTooltipItems: (ScatterSpot touchedSpot) {
+              return ScatterTooltipItem(
+                _formatTooltip(touchedSpot.x, touchedSpot.y),
+                textStyle: TextStyle(color: Colors.white),
+              );
+            },
+          ),
         ),
       ),
     );
@@ -237,5 +259,11 @@ class ChartWidget extends StatelessWidget {
         child: Text(formattedDate, style: style),
       ),
     );
+  }
+
+  String _formatTooltip(double x, double y) {
+    final date = DateTime.now().add(Duration(days: x.toInt()));
+    final formattedDate = DateFormat('dd/MM').format(date);
+    return 'x=$formattedDate\ny=${y.toStringAsFixed(2)}';
   }
 }

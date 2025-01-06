@@ -234,9 +234,7 @@ class SettingsModalState extends State<SettingsModal> {
                 value: _appTheme,
                 style: TextStyle(
                   fontSize: 14,
-                  color: isDarkMode
-                      ? Colors.purple
-                      : Colors.black,
+                  color: isDarkMode ? Colors.purple : Colors.black,
                 ),
                 items: const [
                   DropdownMenuItem(
@@ -287,9 +285,7 @@ class SettingsModalState extends State<SettingsModal> {
                 child: Text(
                   _isKg ? 'kg' : 'lbs',
                   style: TextStyle(
-                    color: Theme.of(context)
-                        .colorScheme
-                        .primary,
+                    color: Theme.of(context).colorScheme.primary,
                     fontSize: 16,
                   ),
                 ),
@@ -324,9 +320,7 @@ class SettingsModalState extends State<SettingsModal> {
                 value: _aggregationMethod,
                 style: TextStyle(
                   fontSize: 14,
-                  color: isDarkMode
-                      ? Colors.purple
-                      : Colors.black,
+                  color: isDarkMode ? Colors.purple : Colors.black,
                 ),
                 items: const [
                   DropdownMenuItem(
@@ -366,9 +360,7 @@ class SettingsModalState extends State<SettingsModal> {
                 value: _plotType,
                 style: TextStyle(
                   fontSize: 14,
-                  color: isDarkMode
-                      ? Colors.purple
-                      : Colors.black,
+                  color: isDarkMode ? Colors.purple : Colors.black,
                 ),
                 items: const [
                   DropdownMenuItem(

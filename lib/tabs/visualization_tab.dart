@@ -229,9 +229,7 @@ class VisualizationTabState extends State<VisualizationTab> {
     if (_selectedTable == 'Fitness') {
       switch (_dataType) {
         case 'Weight':
-          return widget.isKg
-              ? value
-              : value * 2.20462;
+          return widget.isKg ? value : value * 2.20462;
         case 'Height':
           return value; // Assuming height is already in the desired unit
         case 'Age':
