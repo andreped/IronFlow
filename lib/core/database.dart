@@ -598,12 +598,12 @@ class DatabaseHelper {
 
   Future<void> restoreDatabase(BuildContext context) async {
     try {
-      String file_path;
+      String filePath;
       if (Platform.isIOS) {
         final directory = await getApplicationDocumentsDirectory();
-        file_path = '${directory.path}/backup_database.db';
+        filePath = '${directory.path}/backup_database.db';
       } else if (Platform.isAndroid) {
-        file_path = '/storage/emulated/0/Download/backup_database.db';
+        filePath = '/storage/emulated/0/Download/backup_database.db';
 
         // Use file picker to select the backup file
         FilePickerResult? result = await FilePicker.platform.pickFiles(
@@ -616,13 +616,13 @@ class DatabaseHelper {
           return;
         }
 
-        file_path = result.files.single.path!;
+        filePath = result.files.single.path!;
       } else {
         throw Exception('Unsupported platform');
       }
 
       // Check if the backup file exists
-      File selectedFile = File(file_path);
+      File selectedFile = File(filePath);
       if (!await selectedFile.exists()) {
         print('File does not exist');
         await _showDialog(context, 'Restore Failed', 'File does not exist');
@@ -633,7 +633,7 @@ class DatabaseHelper {
       String dbPath = await _databasePath();
 
       // Open the backup database
-      Database backupDb = await openDatabase(file_path);
+      Database backupDb = await openDatabase(filePath);
 
       // Open the destination database
       Database destinationDb = await openDatabase(dbPath);
@@ -676,9 +676,9 @@ class DatabaseHelper {
       // Close the backup database after transferring records
       await backupDb.close();
 
-      print('Database restored successfully from $file_path');
+      print('Database restored successfully from $filePath');
       await _showDialog(context, 'Restore Successful',
-          'Database restored successfully from $file_path');
+          'Database restored successfully from $filePath');
     } catch (e) {
       print('Failed to restore database: $e');
       await _showDialog(
@@ -707,5 +707,106 @@ class DatabaseHelper {
         );
       },
     );
+  }
+
+  Future<double> getTotalWeightLifted() async {
+    final db = await database;
+    final result = await db.rawQuery('''
+      SELECT SUM(CAST(weight AS REAL) * reps * sets) as totalWeight
+      FROM exercises
+    ''');
+    return result.isNotEmpty ? result.first['totalWeight'] as double : 0.0;
+  }
+
+  Future<String> getMostCommonExercise() async {
+    final db = await database;
+    final result = await db.rawQuery('''
+      SELECT exercise, COUNT(*) as count
+      FROM exercises
+      GROUP BY exercise
+      ORDER BY count DESC
+      LIMIT 1
+    ''');
+    return result.isNotEmpty ? result.first['exercise'] as String : '';
+  }
+
+  Future<Map<String, double>> getPersonalRecords() async {
+    final db = await database;
+    final result = await db.rawQuery('''
+      SELECT exercise, MAX(CAST(weight AS REAL)) as maxWeight
+      FROM exercises
+      GROUP BY exercise
+      ORDER BY maxWeight DESC
+      LIMIT 3
+    ''');
+    
+    Map<String, double> personalRecords = {};
+    for (var row in result) {
+      personalRecords[row['exercise'] as String] = row['maxWeight'] as double;
+    }
+    
+    return personalRecords;
+  }
+
+  Future<List<Map<String, dynamic>>> getRecentActivity() async {
+    final db = await database;
+    final result = await db.rawQuery('''
+      SELECT exercise, weight, reps, sets, timestamp
+      FROM exercises
+      ORDER BY timestamp DESC
+      LIMIT 1
+    ''');
+    return result;
+  }
+
+  Future<List<Map<String, dynamic>>> getWeightProgress() async {
+    final db = await database;
+    final result = await db.rawQuery('''
+      SELECT timestamp, CAST(weight AS REAL) as weight
+      FROM fitness
+      ORDER BY timestamp ASC
+    ''');
+    return result;
+  }
+
+  Future<List<Map<String, dynamic>>> getExerciseFrequency() async {
+    final db = await database;
+    final result = await db.rawQuery('''
+      SELECT date(timestamp) as day, COUNT(*) as count
+      FROM exercises
+      GROUP BY day
+      ORDER BY day ASC
+    ''');
+    return result;
+  }
+
+  Future<List<Map<String, dynamic>>> getNewHighScores() async {
+    final db = await database;
+    final result = await db.rawQuery('''
+      SELECT exercise, MAX(CAST(weight AS REAL)) as maxWeight
+      FROM exercises
+      GROUP BY exercise
+      ORDER BY timestamp DESC
+      LIMIT 5
+    ''');
+    return result;
+  }
+
+  Future<double> getTotalTrainingTime() async {
+    final db = await database;
+    final result = await db.rawQuery('''
+      SELECT date(timestamp) as day, MIN(timestamp) as firstExercise, MAX(timestamp) as lastExercise
+      FROM exercises
+      GROUP BY day
+    ''');
+
+    double totalTrainingTime = 0.0;
+    for (var row in result) {
+      DateTime firstExercise = DateTime.parse(row['firstExercise'] as String);
+      DateTime lastExercise = DateTime.parse(row['lastExercise'] as String);
+      totalTrainingTime += lastExercise.difference(firstExercise).inHours;
+    }
+
+    return totalTrainingTime;
   }
 }

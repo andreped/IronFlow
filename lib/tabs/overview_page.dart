@@ -1,7 +1,67 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import '../core/database.dart'; // Import the database helper
 
-class OverviewPage extends StatelessWidget {
+class OverviewPage extends StatefulWidget {
+  const OverviewPage({super.key});
+
+  @override
+  OverviewPageState createState() => OverviewPageState();
+}
+
+class OverviewPageState extends State<OverviewPage> {
+  late Future<Map<String, dynamic>> _userProfileData;
+  late Future<Map<String, dynamic>> _exerciseSummaryData;
+  late Future<List<FlSpot>> _weightProgressData;
+  late Future<List<BarChartGroupData>> _exerciseFrequencyData;
+
+  @override
+  void initState() {
+    super.initState();
+    _userProfileData = _fetchUserProfileData();
+    _exerciseSummaryData = _fetchExerciseSummaryData();
+    _weightProgressData = _fetchWeightProgressData();
+    _exerciseFrequencyData = _fetchExerciseFrequencyData();
+  }
+
+  Future<Map<String, dynamic>> _fetchUserProfileData() async {
+    final db = DatabaseHelper();
+    final fitnessData = await db.getLastLoggedFitness();
+    return fitnessData ?? {};
+  }
+
+  Future<Map<String, dynamic>> _fetchExerciseSummaryData() async {
+    final db = DatabaseHelper();
+    final totalWeightLifted = await db.getTotalWeightLifted();
+    final mostCommonExercise = await db.getMostCommonExercise();
+    final personalRecords = await db.getPersonalRecords();
+    final totalTrainingTime = await db.getTotalTrainingTime();
+    return {
+      'totalWeightLifted': totalWeightLifted,
+      'mostCommonExercise': mostCommonExercise,
+      'personalRecords': personalRecords,
+      'totalTrainingTime': totalTrainingTime,
+    };
+  }
+
+  Future<List<FlSpot>> _fetchWeightProgressData() async {
+    final db = DatabaseHelper();
+    final weightProgress = await db.getWeightProgress();
+    return weightProgress.map((data) => FlSpot(
+      DateTime.parse(data['timestamp']).millisecondsSinceEpoch.toDouble(),
+      data['weight'] as double,
+    )).toList();
+  }
+
+  Future<List<BarChartGroupData>> _fetchExerciseFrequencyData() async {
+    final db = DatabaseHelper();
+    final exerciseFrequency = await db.getExerciseFrequency();
+    return exerciseFrequency.map((data) => BarChartGroupData(
+      x: DateTime.parse(data['day']).millisecondsSinceEpoch,
+      barRods: [BarChartRodData(toY: data['count'] as double, color: Colors.blue)],
+    )).toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -9,87 +69,114 @@ class OverviewPage extends StatelessWidget {
         title: const Text('Overview'),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(8.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // User Profile Section
-            _buildUserProfileSection(),
+            FutureBuilder<Map<String, dynamic>>(
+              future: _userProfileData,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const CircularProgressIndicator();
+                } else if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else {
+                  final data = snapshot.data!;
+                  return _buildUserProfileSection(data);
+                }
+              },
+            ),
             const SizedBox(height: 16),
             // Exercise Summary Section
-            _buildExerciseSummarySection(),
+            FutureBuilder<Map<String, dynamic>>(
+              future: _exerciseSummaryData,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const CircularProgressIndicator();
+                } else if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else {
+                  final data = snapshot.data!;
+                  return _buildExerciseSummarySection(data);
+                }
+              },
+            ),
             const SizedBox(height: 16),
             // Fitness Progress Section
-            _buildFitnessProgressSection(),
+            FutureBuilder<List<FlSpot>>(
+              future: _weightProgressData,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const CircularProgressIndicator();
+                } else if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else {
+                  final data = snapshot.data!;
+                  return _buildWeightProgressChart(data);
+                }
+              },
+            ),
             const SizedBox(height: 16),
-            // Achievements and Goals Section
-            _buildAchievementsAndGoalsSection(),
+            FutureBuilder<List<BarChartGroupData>>(
+              future: _exerciseFrequencyData,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const CircularProgressIndicator();
+                } else if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else {
+                  final data = snapshot.data!;
+                  return _buildExerciseFrequencyChart(data);
+                }
+              },
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildUserProfileSection() {
-    return const Card(
-      child: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('User Profile', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-            SizedBox(height: 8),
-            Text('Age: 25', style: TextStyle(fontSize: 18)),
-            Text('Weight: 70 kg', style: TextStyle(fontSize: 18)),
-            Text('Height: 175 cm', style: TextStyle(fontSize: 18)),
-            Text('Last Logged: 2023-10-01', style: TextStyle(fontSize: 18)),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildExerciseSummarySection() {
-    return const Card(
-      child: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Exercise Summary', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-            SizedBox(height: 8),
-            Text('Total Weight Lifted: 5000 kg', style: TextStyle(fontSize: 18)),
-            Text('Most Common Exercise: Squats', style: TextStyle(fontSize: 18)),
-            Text('Personal Records:', style: TextStyle(fontSize: 18)),
-            Text('  - Squats: 100 kg', style: TextStyle(fontSize: 18)),
-            Text('  - Bench Press: 80 kg', style: TextStyle(fontSize: 18)),
-            Text('Recent Activity:', style: TextStyle(fontSize: 18)),
-            Text('  - Squats: 80 kg, 5 reps, 3 sets', style: TextStyle(fontSize: 18)),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildFitnessProgressSection() {
+  Widget _buildUserProfileSection(Map<String, dynamic> data) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Fitness Progress', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            const Text('User Profile', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
-            _buildWeightProgressChart(),
-            const SizedBox(height: 16),
-            _buildExerciseFrequencyChart(),
+            Text('Age: ${data['age']}', style: const TextStyle(fontSize: 18)),
+            Text('Weight: ${data['weight']} kg', style: const TextStyle(fontSize: 18)),
+            Text('Height: ${data['height']} cm', style: const TextStyle(fontSize: 18)),
+            Text('Last Logged: ${data['timestamp']}', style: const TextStyle(fontSize: 18)),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildWeightProgressChart() {
+  Widget _buildExerciseSummarySection(Map<String, dynamic> data) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Exercise Summary', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            Text('Total Weight Lifted: ${data['totalWeightLifted']} kg', style: const TextStyle(fontSize: 18)),
+            Text('Most Common Exercise: ${data['mostCommonExercise']}', style: const TextStyle(fontSize: 18)),
+            const Text('Personal Records:', style: TextStyle(fontSize: 18)),
+            ...data['personalRecords'].entries.map<Widget>((entry) => Text('  - ${entry.key}: ${entry.value} kg', style: const TextStyle(fontSize: 18))),
+            Text('Total Training Time: ${data['totalTrainingTime']} hours', style: const TextStyle(fontSize: 18)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildWeightProgressChart(List<FlSpot> data) {
     return Container(
       height: 200,
       child: LineChart(
@@ -99,13 +186,7 @@ class OverviewPage extends StatelessWidget {
           borderData: FlBorderData(show: true),
           lineBarsData: [
             LineChartBarData(
-              spots: [
-                const FlSpot(0, 70),
-                const FlSpot(1, 72),
-                const FlSpot(2, 71),
-                const FlSpot(3, 73),
-                const FlSpot(4, 74),
-              ],
+              spots: data,
               isCurved: true,
               color: Colors.blue,
               barWidth: 4,
@@ -117,7 +198,7 @@ class OverviewPage extends StatelessWidget {
     );
   }
 
-  Widget _buildExerciseFrequencyChart() {
+  Widget _buildExerciseFrequencyChart(List<BarChartGroupData> data) {
     return Container(
       height: 200,
       child: BarChart(
@@ -125,33 +206,7 @@ class OverviewPage extends StatelessWidget {
           gridData: const FlGridData(show: true),
           titlesData: const FlTitlesData(show: true),
           borderData: FlBorderData(show: true),
-          barGroups: [
-            BarChartGroupData(x: 0, barRods: [BarChartRodData(toY: 5, color: Colors.blue)]),
-            BarChartGroupData(x: 1, barRods: [BarChartRodData(toY: 6, color: Colors.blue)]),
-            BarChartGroupData(x: 2, barRods: [BarChartRodData(toY: 8, color: Colors.blue)]),
-            BarChartGroupData(x: 3, barRods: [BarChartRodData(toY: 7, color: Colors.blue)]),
-            BarChartGroupData(x: 4, barRods: [BarChartRodData(toY: 9, color: Colors.blue)]),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildAchievementsAndGoalsSection() {
-    return const Card(
-      child: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Achievements and Goals', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-            SizedBox(height: 8),
-            Text('New High Scores:', style: TextStyle(fontSize: 18)),
-            Text('  - Squats: 100 kg', style: TextStyle(fontSize: 18)),
-            Text('Goals:', style: TextStyle(fontSize: 18)),
-            Text('  - Reach 75 kg body weight', style: TextStyle(fontSize: 18)),
-            Text('  - Squat 120 kg', style: TextStyle(fontSize: 18)),
-          ],
+          barGroups: data,
         ),
       ),
     );
