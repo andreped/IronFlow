@@ -6,6 +6,7 @@ import 'summary_tab.dart';
 import '../widgets/settings/settings.dart';
 import 'table_tab.dart';
 import 'records_tab.dart';
+import 'overview_page.dart';
 
 class ExerciseStoreApp extends StatelessWidget {
   final AppTheme appTheme;
@@ -163,45 +164,63 @@ class ExerciseStoreHomePageState extends State<ExerciseStoreHomePage>
           ),
         ],
       ),
-      body: PageStorage(
-        bucket: bucket,
-        child: PageView(
-          controller: _pageController,
-          physics: const NeverScrollableScrollPhysics(),
-          onPageChanged: (index) {
-            _tabController.animateTo(index);
-          },
-          children: [
-            RecordsTab(
-                isKg: widget.isKg,
-                bodyweightEnabledGlobal: widget.bodyweightEnabledGlobal),
-            SummaryTab(
-              selectedDay: _selectedDay,
-              onDateSelected: _onDateSelected,
-              isKg: widget.isKg,
-              bodyweightEnabledGlobal: widget.bodyweightEnabledGlobal,
+      body: Stack(
+        children: [
+          PageStorage(
+            bucket: bucket,
+            child: PageView(
+              controller: _pageController,
+              physics: const NeverScrollableScrollPhysics(),
+              onPageChanged: (index) {
+                _tabController.animateTo(index);
+              },
+              children: [
+                RecordsTab(
+                    isKg: widget.isKg,
+                    bodyweightEnabledGlobal: widget.bodyweightEnabledGlobal),
+                SummaryTab(
+                  selectedDay: _selectedDay,
+                  onDateSelected: _onDateSelected,
+                  isKg: widget.isKg,
+                  bodyweightEnabledGlobal: widget.bodyweightEnabledGlobal,
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: ExerciseSetter(
+                    isKg: widget.isKg,
+                    onExerciseAdded: () {
+                      setState(() {});
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: VisualizationTab(
+                    isKg: widget.isKg,
+                    bodyweightEnabledGlobal: widget.bodyweightEnabledGlobal,
+                    defaultAggregationMethod: widget.aggregationMethod,
+                    defaultChartType: widget.plotType,
+                  ),
+                ),
+                TableTab(isKg: widget.isKg),
+              ],
             ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: ExerciseSetter(
-                isKg: widget.isKg,
-                onExerciseAdded: () {
-                  setState(() {});
-                },
-              ),
+          ),
+          Positioned(
+            bottom: 10.0,
+            left: 30.0,
+            child: FloatingActionButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => OverviewPage()),
+                );
+              },
+              child: Icon(Icons.info_outline, color: Colors.white),
+              backgroundColor: theme.colorScheme.primary,
             ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: VisualizationTab(
-                isKg: widget.isKg,
-                bodyweightEnabledGlobal: widget.bodyweightEnabledGlobal,
-                defaultAggregationMethod: widget.aggregationMethod,
-                defaultChartType: widget.plotType,
-              ),
-            ),
-            TableTab(isKg: widget.isKg),
-          ],
-        ),
+          ),
+        ],
       ),
       bottomNavigationBar: BottomAppBar(
         child: TabBar(
