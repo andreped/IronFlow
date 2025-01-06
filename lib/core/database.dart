@@ -5,6 +5,7 @@ import 'package:path/path.dart';
 import '../common/constants.dart';
 import 'package:logging/logging.dart';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 
 // Initialize the logger
 final Logger _logger = Logger('DatabaseLogger');
@@ -577,7 +578,8 @@ class DatabaseHelper {
       if (Platform.isAndroid) {
         backupPath = '/storage/emulated/0/Download/backup_database.db';
       } else if (Platform.isIOS) {
-        throw Exception('Unsupported platform');
+        final directory = await getApplicationDocumentsDirectory();
+        backupPath = '${directory.path}/backup_database.db';
       } else {
         throw Exception('Unsupported platform');
       }
@@ -596,21 +598,31 @@ class DatabaseHelper {
 
   Future<void> restoreDatabase(BuildContext context) async {
     try {
-      // Use file picker to select the backup file
-      FilePickerResult? result = await FilePicker.platform.pickFiles(
-        type: FileType.any,
-      );
+      String file_path;
+      if (Platform.isIOS) {
+        final directory = await getApplicationDocumentsDirectory();
+        file_path = '${directory.path}/backup_database.db';
+      } else if (Platform.isAndroid) {
+        file_path = '/storage/emulated/0/Download/backup_database.db';
+          
+        // Use file picker to select the backup file
+        FilePickerResult? result = await FilePicker.platform.pickFiles(
+          type: FileType.any,
+        );
 
-      if (result == null) {
-        print('No file selected');
-        await _showDialog(context, 'Restore Failed', 'No file selected');
-        return;
+        if (result == null) {
+          print('No file selected');
+          await _showDialog(context, 'Restore Failed', 'No file selected');
+          return;
+        }
+
+        file_path = result.files.single.path!;
+      } else {
+        throw Exception('Unsupported platform');
       }
-
-      String selectedFilePath = result.files.single.path!;
-      File selectedFile = File(selectedFilePath);
-
+      
       // Check if the backup file exists
+      File selectedFile = File(file_path);
       if (!await selectedFile.exists()) {
         print('File does not exist');
         await _showDialog(context, 'Restore Failed', 'File does not exist');
@@ -621,7 +633,7 @@ class DatabaseHelper {
       String dbPath = await _databasePath();
 
       // Open the backup database
-      Database backupDb = await openDatabase(selectedFile.path);
+      Database backupDb = await openDatabase(file_path);
 
       // Open the destination database
       Database destinationDb = await openDatabase(dbPath);
@@ -664,9 +676,9 @@ class DatabaseHelper {
       // Close the backup database after transferring records
       await backupDb.close();
 
-      print('Database restored successfully from $selectedFilePath');
+      print('Database restored successfully from $file_path');
       await _showDialog(context, 'Restore Successful',
-          'Database restored successfully from $selectedFilePath');
+          'Database restored successfully from $file_path');
     } catch (e) {
       print('Failed to restore database: $e');
       await _showDialog(

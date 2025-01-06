@@ -428,29 +428,7 @@ class SettingsModalState extends State<SettingsModal> {
               trailing: IconButton(
                 icon: const Icon(Icons.backup, color: Colors.blueAccent),
                 onPressed: () async {
-                  if (Platform.isIOS) {
-                    // Show dialog informing the user that backup is only available on Android
-                    await showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: const Text('Backup Unavailable'),
-                          content: const Text(
-                              'This functionality is only available on Android.'),
-                          actions: <Widget>[
-                            TextButton(
-                              child: const Text('OK'),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  } else {
-                    await _dbHelper.backupDatabase(context);
-                  }
+                  await _dbHelper.backupDatabase(context);
                 },
               ),
             ),
