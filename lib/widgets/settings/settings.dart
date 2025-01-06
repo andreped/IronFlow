@@ -449,7 +449,7 @@ class SettingsModalState extends State<SettingsModal> {
                       },
                     );
                   } else {
-                    await _dbHelper.backupDatabase();
+                    await _dbHelper.backupDatabase(context);
                   }
                 },
               ),
@@ -465,7 +465,7 @@ class SettingsModalState extends State<SettingsModal> {
               trailing: IconButton(
                 icon: const Icon(Icons.restore, color: Colors.greenAccent),
                 onPressed: () async {
-                  await _dbHelper.restoreDatabase();
+                  await _dbHelper.restoreDatabase(context);
                 },
               ),
             )

@@ -4,6 +4,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import '../common/constants.dart';
 import 'package:logging/logging.dart';
+import 'package:flutter/material.dart';
 
 // Initialize the logger
 final Logger _logger = Logger('DatabaseLogger');
@@ -569,7 +570,7 @@ class DatabaseHelper {
         where: 'name = ?', whereArgs: [exerciseName]);
   }
 
-  Future<void> backupDatabase() async {
+  Future<void> backupDatabase(BuildContext context) async {
     try {
       // set backupPath for each OS, android and iOS
       String backupPath;
@@ -584,12 +585,16 @@ class DatabaseHelper {
       File databaseFile = File(dbPath);
       await databaseFile.copy(backupPath);
       print('Database backed up successfully to $backupPath');
+      await _showDialog(context, 'Backup Successful',
+          'Database backed up successfully to $backupPath');
     } catch (e) {
       print('Failed to back up database: $e');
+      await _showDialog(
+          context, 'Backup Failed', 'Failed to back up database: $e');
     }
   }
 
-  Future<void> restoreDatabase() async {
+  Future<void> restoreDatabase(BuildContext context) async {
     try {
       // Use file picker to select the backup file
       FilePickerResult? result = await FilePicker.platform.pickFiles(
@@ -598,6 +603,7 @@ class DatabaseHelper {
 
       if (result == null) {
         print('No file selected');
+        await _showDialog(context, 'Restore Failed', 'No file selected');
         return;
       }
 
@@ -607,6 +613,7 @@ class DatabaseHelper {
       // Check if the backup file exists
       if (!await selectedFile.exists()) {
         print('File does not exist');
+        await _showDialog(context, 'Restore Failed', 'File does not exist');
         return;
       }
 
@@ -619,27 +626,74 @@ class DatabaseHelper {
       // Open the destination database
       Database destinationDb = await openDatabase(dbPath);
 
-      // Read records from tables in the backup database
-      List<Map<String, dynamic>> exercises = await backupDb.query('exercises');
-      List<Map<String, dynamic>> fitness = await backupDb.query('fitness');
+      // Start a transaction
+      await destinationDb.transaction((txn) async {
+        // Read records from tables in the backup database
+        List<Map<String, dynamic>> exercises =
+            await backupDb.query('exercises');
+        List<Map<String, dynamic>> predefinedExercises =
+            await backupDb.query('predefined_exercises');
+        List<Map<String, dynamic>> fitness = await backupDb.query('fitness');
 
-      // Append records to the respective tables in the destination database
-      for (var record in exercises) {
-        await destinationDb.insert('exercises', record,
-            conflictAlgorithm: ConflictAlgorithm.ignore);
-      }
+        // Insert records into the respective tables in the destination database
+        for (var record in exercises) {
+          await txn.insert(
+            'exercises',
+            record,
+            conflictAlgorithm: ConflictAlgorithm.replace,
+          );
+        }
 
-      for (var record in fitness) {
-        await destinationDb.insert('fitness', record,
-            conflictAlgorithm: ConflictAlgorithm.ignore);
-      }
+        for (var record in predefinedExercises) {
+          await txn.insert(
+            'predefined_exercises',
+            record,
+            conflictAlgorithm: ConflictAlgorithm.replace,
+          );
+        }
+
+        for (var record in fitness) {
+          await txn.insert(
+            'fitness',
+            record,
+            conflictAlgorithm: ConflictAlgorithm.replace,
+          );
+        }
+      });
 
       // Close the backup database after transferring records
       await backupDb.close();
 
       print('Database restored successfully from $selectedFilePath');
+      await _showDialog(context, 'Restore Successful',
+          'Database restored successfully from $selectedFilePath');
     } catch (e) {
       print('Failed to restore database: $e');
+      await _showDialog(
+          context, 'Restore Failed', 'Failed to restore database: $e');
     }
+  }
+
+  Future<void> _showDialog(
+      BuildContext context, String title, String content) async {
+    await showDialog(
+      context: context,
+      useRootNavigator:
+          true, // Ensure the dialog is shown on top of any existing modals
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(content),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 }
