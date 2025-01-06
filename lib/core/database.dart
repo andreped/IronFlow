@@ -739,12 +739,12 @@ class DatabaseHelper {
       ORDER BY maxWeight DESC
       LIMIT 3
     ''');
-    
+
     Map<String, double> personalRecords = {};
     for (var row in result) {
       personalRecords[row['exercise'] as String] = row['maxWeight'] as double;
     }
-    
+
     return personalRecords;
   }
 
@@ -792,7 +792,7 @@ class DatabaseHelper {
     return result;
   }
 
-  Future<double> getTotalTrainingTime() async {
+  Future<Map<String, double>> getTotalAndAverageTrainingTime() async {
     final db = await database;
     final result = await db.rawQuery('''
       SELECT date(timestamp) as day, MIN(timestamp) as firstExercise, MAX(timestamp) as lastExercise
@@ -801,12 +801,21 @@ class DatabaseHelper {
     ''');
 
     double totalTrainingTime = 0.0;
+    int trainingDays = result.length;
+
     for (var row in result) {
       DateTime firstExercise = DateTime.parse(row['firstExercise'] as String);
       DateTime lastExercise = DateTime.parse(row['lastExercise'] as String);
-      totalTrainingTime += lastExercise.difference(firstExercise).inHours;
+      totalTrainingTime += lastExercise.difference(firstExercise).inMinutes /
+          60.0; // Convert minutes to hours
     }
 
-    return totalTrainingTime;
+    double averageTrainingTime =
+        trainingDays > 0 ? totalTrainingTime / trainingDays : 0.0;
+
+    return {
+      'totalTrainingTime': totalTrainingTime,
+      'averageTrainingTime': averageTrainingTime,
+    };
   }
 }

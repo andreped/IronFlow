@@ -213,7 +213,7 @@ class ExerciseStoreHomePageState extends State<ExerciseStoreHomePage>
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const OverviewPage()),
+                  MaterialPageRoute(builder: (context) => OverviewPage()),
                 );
               },
               backgroundColor: theme.colorScheme.primary,
