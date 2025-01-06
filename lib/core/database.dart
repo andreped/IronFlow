@@ -619,20 +619,38 @@ class DatabaseHelper {
       // Open the destination database
       Database destinationDb = await openDatabase(dbPath);
 
-      // Read records from tables in the backup database
-      List<Map<String, dynamic>> exercises = await backupDb.query('exercises');
-      List<Map<String, dynamic>> fitness = await backupDb.query('fitness');
+      // Start a transaction
+      await destinationDb.transaction((txn) async {
+        // Read records from tables in the backup database
+        List<Map<String, dynamic>> exercises = await backupDb.query('exercises');
+        List<Map<String, dynamic>> predefinedExercises = await backupDb.query('predefined_exercises');
+        List<Map<String, dynamic>> fitness = await backupDb.query('fitness');
 
-      // Append records to the respective tables in the destination database
-      for (var record in exercises) {
-        await destinationDb.insert('exercises', record,
-            conflictAlgorithm: ConflictAlgorithm.ignore);
-      }
+        // Insert records into the respective tables in the destination database
+        for (var record in exercises) {
+          await txn.insert(
+            'exercises',
+            record,
+            conflictAlgorithm: ConflictAlgorithm.replace,
+          );
+        }
 
-      for (var record in fitness) {
-        await destinationDb.insert('fitness', record,
-            conflictAlgorithm: ConflictAlgorithm.ignore);
-      }
+        for (var record in predefinedExercises) {
+          await txn.insert(
+            'predefined_exercises',
+            record,
+            conflictAlgorithm: ConflictAlgorithm.replace,
+          );
+        }
+
+        for (var record in fitness) {
+          await txn.insert(
+            'fitness',
+            record,
+            conflictAlgorithm: ConflictAlgorithm.replace,
+          );
+        }
+      });
 
       // Close the backup database after transferring records
       await backupDb.close();
