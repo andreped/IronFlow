@@ -42,8 +42,8 @@ class SettingsModalState extends State<SettingsModal> {
     _appTheme = widget.appTheme;
     _isKg = widget.isKg;
     _bodyweightEnabledGlobal = widget.bodyweightEnabledGlobal;
-    _aggregationMethod = 'Top3Avg'; // Default value
-    _plotType = 'Line'; // Default value
+    _aggregationMethod = 'Top3Avg';
+    _plotType = 'Line';
     _appVersion = _getAppVersion();
     _loadSettings();
   }
@@ -235,8 +235,8 @@ class SettingsModalState extends State<SettingsModal> {
                 style: TextStyle(
                   fontSize: 14,
                   color: isDarkMode
-                      ? Colors.purple // Use primary color for dark mode
-                      : Colors.black, // Set text color for light mode
+                      ? Colors.purple
+                      : Colors.black,
                 ),
                 items: const [
                   DropdownMenuItem(
@@ -289,7 +289,7 @@ class SettingsModalState extends State<SettingsModal> {
                   style: TextStyle(
                     color: Theme.of(context)
                         .colorScheme
-                        .primary, // Use theme primary color
+                        .primary,
                     fontSize: 16,
                   ),
                 ),
@@ -325,8 +325,8 @@ class SettingsModalState extends State<SettingsModal> {
                 style: TextStyle(
                   fontSize: 14,
                   color: isDarkMode
-                      ? Colors.purple // Use primary color for dark mode
-                      : Colors.black, // Set text color for light mode
+                      ? Colors.purple
+                      : Colors.black,
                 ),
                 items: const [
                   DropdownMenuItem(
@@ -367,8 +367,8 @@ class SettingsModalState extends State<SettingsModal> {
                 style: TextStyle(
                   fontSize: 14,
                   color: isDarkMode
-                      ? Colors.purple // Use primary color for dark mode
-                      : Colors.black, // Set text color for light mode
+                      ? Colors.purple
+                      : Colors.black,
                 ),
                 items: const [
                   DropdownMenuItem(
