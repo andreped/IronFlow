@@ -1,6 +1,4 @@
-import 'package:path_provider/path_provider.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'dart:io';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
@@ -573,65 +571,65 @@ class DatabaseHelper {
 
   Future<void> backupDatabase() async {
     try {
-      // Request storage permissions
-      if (await Permission.storage.request().isGranted) {
-        // Get the default directory (Downloads)
-        Directory? downloadsDirectory = await getDownloadsDirectory();
-        String defaultPath = downloadsDirectory?.path ?? '';
-
-        // Let the user choose the directory
-        String? selectedDirectory = await FilePicker.platform.getDirectoryPath(
-          dialogTitle: 'Select Backup Directory',
-          initialDirectory: defaultPath,
-        );
-
-        if (selectedDirectory != null) {
-          // Perform the backup operation
-          String dbPath = await _databasePath();
-          File databaseFile = File(dbPath);
-          String backupPath = '$selectedDirectory/backup_database.db';
-          await databaseFile.copy(backupPath);
-
-          _logger.info('Database backed up successfully to $backupPath');
-        } else {
-          _logger.info('Backup operation cancelled');
-        }
-      } else {
-        _logger.severe('Storage permission denied');
-      }
+      String backupPath = '/storage/emulated/0/Download/backup_database.db';
+      String dbPath = await _databasePath();
+      File databaseFile = File(dbPath);
+      await databaseFile.copy(backupPath);
+      print('Database backed up successfully to $backupPath');
     } catch (e) {
-      _logger.severe('Failed to back up database: $e');
+      print('Failed to back up database: $e');
     }
   }
-
+  
   Future<void> restoreDatabase() async {
-    try {
-      // Request storage permissions
-      if (await Permission.storage.request().isGranted) {
-        // Let the user select the backup file
-        FilePickerResult? result = await FilePicker.platform.pickFiles(
-          dialogTitle: 'Select Backup File',
-          type: FileType.custom,
-          allowedExtensions: ['db'],
-        );
+  try {
+    // Use file picker to select the backup file
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.any,
+    );
 
-        if (result != null && result.files.single.path != null) {
-          String selectedFilePath = result.files.single.path!;
-
-          // Perform the restore operation
-          String dbPath = await _databasePath();
-          File selectedFile = File(selectedFilePath);
-          await selectedFile.copy(dbPath);
-
-          _logger.info('Database restored successfully from $selectedFilePath');
-        } else {
-          _logger.info('Restore operation cancelled');
-        }
-      } else {
-        _logger.severe('Storage permission denied');
-      }
-    } catch (e) {
-      _logger.severe('Failed to restore database: $e');
+    if (result == null) {
+      print('No file selected');
+      return;
     }
+
+    String selectedFilePath = result.files.single.path!;
+    File selectedFile = File(selectedFilePath);
+
+    // Check if the backup file exists
+    if (!await selectedFile.exists()) {
+      print('File does not exist');
+      return;
+    }
+
+    // Get the destination database path
+    String dbPath = await _databasePath();
+
+    // Open the backup database
+    Database backupDb = await openDatabase(selectedFile.path);
+
+    // Open the destination database
+    Database destinationDb = await openDatabase(dbPath);
+
+    // Read records from tables in the backup database
+    List<Map<String, dynamic>> exercises = await backupDb.query('exercises');
+    List<Map<String, dynamic>> fitness = await backupDb.query('fitness');
+
+    // Append records to the respective tables in the destination database
+    for (var record in exercises) {
+      await destinationDb.insert('exercises', record, conflictAlgorithm: ConflictAlgorithm.ignore);
+    }
+
+    for (var record in fitness) {
+      await destinationDb.insert('fitness', record, conflictAlgorithm: ConflictAlgorithm.ignore);
+    }
+
+    // Close the backup database after transferring records
+    await backupDb.close();
+
+    print('Database restored successfully from $selectedFilePath');
+  } catch (e) {
+    print('Failed to restore database: $e');
   }
+}
 }
