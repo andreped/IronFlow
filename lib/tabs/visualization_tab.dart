@@ -29,10 +29,10 @@ class VisualizationTab extends StatefulWidget {
 
 class VisualizationTabState extends State<VisualizationTab> {
   String? _selectedExercise;
-  String _selectedTable = 'Exercise'; // Default selected table
+  String _selectedTable = 'Exercise';
   late String _aggregationMethod;
   late String _chartType;
-  String _dataType = 'Weight'; // Default data type for Fitness table
+  String _dataType = 'Weight';
   List<String> _exerciseNames = [];
   List<ScatterSpot> _dataPoints = [];
   DateTimeRange? _selectedDateRange;
@@ -44,7 +44,7 @@ class VisualizationTabState extends State<VisualizationTab> {
   void initState() {
     super.initState();
     _initializeDefaults();
-    _fetchExerciseNames(); // Fetch exercise names initially
+    _fetchExerciseNames();
   }
 
   void _initializeDefaults() {
@@ -231,7 +231,7 @@ class VisualizationTabState extends State<VisualizationTab> {
         case 'Weight':
           return widget.isKg
               ? value
-              : value * 2.20462; // Convert to lbs if needed
+              : value * 2.20462;
         case 'Height':
           return value; // Assuming height is already in the desired unit
         case 'Age':
@@ -269,6 +269,7 @@ class VisualizationTabState extends State<VisualizationTab> {
 
     // Get the height of the screen
     final screenHeight = MediaQuery.of(context).size.height;
+
     // Define the maximum height for the chart as 45% of the screen height
     final chartMaxHeight = screenHeight * 0.45;
 
@@ -291,13 +292,14 @@ class VisualizationTabState extends State<VisualizationTab> {
                 onChanged: (newValue) {
                   if (newValue != null && newValue != _selectedTable) {
                     setState(() {
+                      // reset
                       _selectedTable = newValue;
-                      _selectedExercise = null; // Reset the selected exercise
-                      _exerciseNames = []; // Clear the exercise names
-                      _dataPoints = []; // Clear the data points
-                      _dataType = 'Weight'; // Reset data type to default
+                      _selectedExercise = null;
+                      _exerciseNames = [];
+                      _dataPoints = [];
+                      _dataType = 'Weight';
                     });
-                    _fetchExerciseNames(); // Fetch the new exercise names if needed
+                    _fetchExerciseNames();
                   }
                 },
                 hint: 'Select Table',
@@ -311,7 +313,7 @@ class VisualizationTabState extends State<VisualizationTab> {
                   onChanged: (newValue) {
                     if (newValue != null) {
                       setState(() {
-                        _dataPoints = []; // Clear the data points
+                        _dataPoints = []; // reset
                         _selectedExercise = newValue;
                       });
                       _fetchDataPoints(newValue);
