@@ -213,11 +213,11 @@ class ExerciseStoreHomePageState extends State<ExerciseStoreHomePage>
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => OverviewPage()),
+                  MaterialPageRoute(builder: (context) => const OverviewPage()),
                 );
               },
-              child: Icon(Icons.info_outline, color: Colors.white),
               backgroundColor: theme.colorScheme.primary,
+              child: const Icon(Icons.info_outline, color: Colors.white),
             ),
           ),
         ],

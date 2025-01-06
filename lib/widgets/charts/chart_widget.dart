@@ -129,7 +129,7 @@ class ChartWidget extends StatelessWidget {
               return touchedSpots.map((touchedSpot) {
                 return LineTooltipItem(
                   _formatTooltip(touchedSpot.x, touchedSpot.y),
-                  TextStyle(color: Colors.white),
+                  const TextStyle(color: Colors.white),
                 );
               }).toList();
             },
@@ -235,7 +235,7 @@ class ChartWidget extends StatelessWidget {
             getTooltipItems: (ScatterSpot touchedSpot) {
               return ScatterTooltipItem(
                 _formatTooltip(touchedSpot.x, touchedSpot.y),
-                textStyle: TextStyle(color: Colors.white),
+                textStyle: const TextStyle(color: Colors.white),
               );
             },
           ),

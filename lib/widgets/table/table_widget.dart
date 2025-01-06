@@ -35,12 +35,10 @@ class TableWidgetState extends State<TableWidget> {
   final int _limit = 50;
   bool _isLoading = false;
   bool _hasMoreData = true;
-  bool _isSyncing = false;
+  final bool _isSyncing = false;
   ScrollController? _activeRowController;
   final List<ScrollController> _rowControllers = [];
   String _searchQuery = ''; // Add search query state
-  double _globalHorizontalScrollPosition =
-      0.0; // Global horizontal scroll position
 
   @override
   void initState() {
@@ -48,8 +46,6 @@ class TableWidgetState extends State<TableWidget> {
     _verticalScrollController
         .addListener(() => onScroll(_verticalScrollController, _loadNextChunk));
     _horizontalScrollController.addListener(() {
-      _globalHorizontalScrollPosition =
-          _horizontalScrollController.position.pixels;
       onHorizontalScroll(_horizontalScrollController, _rowControllers,
           _isSyncing, _activeRowController);
     });
