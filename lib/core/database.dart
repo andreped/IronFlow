@@ -571,7 +571,15 @@ class DatabaseHelper {
 
   Future<void> backupDatabase() async {
     try {
-      String backupPath = '/storage/emulated/0/Download/backup_database.db';
+      // set backupPath for each OS, android and iOS
+      String backupPath;
+      if (Platform.isAndroid) {
+        backupPath = '/storage/emulated/0/Download/backup_database.db';
+      } else if (Platform.isIOS) {
+        throw Exception('Unsupported platform');
+      } else {
+        throw Exception('Unsupported platform');
+      }
       String dbPath = await _databasePath();
       File databaseFile = File(dbPath);
       await databaseFile.copy(backupPath);
@@ -580,56 +588,58 @@ class DatabaseHelper {
       print('Failed to back up database: $e');
     }
   }
-  
+
   Future<void> restoreDatabase() async {
-  try {
-    // Use file picker to select the backup file
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.any,
-    );
+    try {
+      // Use file picker to select the backup file
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+        type: FileType.any,
+      );
 
-    if (result == null) {
-      print('No file selected');
-      return;
+      if (result == null) {
+        print('No file selected');
+        return;
+      }
+
+      String selectedFilePath = result.files.single.path!;
+      File selectedFile = File(selectedFilePath);
+
+      // Check if the backup file exists
+      if (!await selectedFile.exists()) {
+        print('File does not exist');
+        return;
+      }
+
+      // Get the destination database path
+      String dbPath = await _databasePath();
+
+      // Open the backup database
+      Database backupDb = await openDatabase(selectedFile.path);
+
+      // Open the destination database
+      Database destinationDb = await openDatabase(dbPath);
+
+      // Read records from tables in the backup database
+      List<Map<String, dynamic>> exercises = await backupDb.query('exercises');
+      List<Map<String, dynamic>> fitness = await backupDb.query('fitness');
+
+      // Append records to the respective tables in the destination database
+      for (var record in exercises) {
+        await destinationDb.insert('exercises', record,
+            conflictAlgorithm: ConflictAlgorithm.ignore);
+      }
+
+      for (var record in fitness) {
+        await destinationDb.insert('fitness', record,
+            conflictAlgorithm: ConflictAlgorithm.ignore);
+      }
+
+      // Close the backup database after transferring records
+      await backupDb.close();
+
+      print('Database restored successfully from $selectedFilePath');
+    } catch (e) {
+      print('Failed to restore database: $e');
     }
-
-    String selectedFilePath = result.files.single.path!;
-    File selectedFile = File(selectedFilePath);
-
-    // Check if the backup file exists
-    if (!await selectedFile.exists()) {
-      print('File does not exist');
-      return;
-    }
-
-    // Get the destination database path
-    String dbPath = await _databasePath();
-
-    // Open the backup database
-    Database backupDb = await openDatabase(selectedFile.path);
-
-    // Open the destination database
-    Database destinationDb = await openDatabase(dbPath);
-
-    // Read records from tables in the backup database
-    List<Map<String, dynamic>> exercises = await backupDb.query('exercises');
-    List<Map<String, dynamic>> fitness = await backupDb.query('fitness');
-
-    // Append records to the respective tables in the destination database
-    for (var record in exercises) {
-      await destinationDb.insert('exercises', record, conflictAlgorithm: ConflictAlgorithm.ignore);
-    }
-
-    for (var record in fitness) {
-      await destinationDb.insert('fitness', record, conflictAlgorithm: ConflictAlgorithm.ignore);
-    }
-
-    // Close the backup database after transferring records
-    await backupDb.close();
-
-    print('Database restored successfully from $selectedFilePath');
-  } catch (e) {
-    print('Failed to restore database: $e');
   }
-}
 }
