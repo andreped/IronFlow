@@ -129,7 +129,7 @@ class ChartWidget extends StatelessWidget {
               return touchedSpots.map((touchedSpot) {
                 return LineTooltipItem(
                   _formatTooltip(touchedSpot.x, touchedSpot.y),
-                  TextStyle(color: Colors.white),
+                  const TextStyle(color: Colors.white),
                 );
               }).toList();
             },
@@ -235,7 +235,7 @@ class ChartWidget extends StatelessWidget {
             getTooltipItems: (ScatterSpot touchedSpot) {
               return ScatterTooltipItem(
                 _formatTooltip(touchedSpot.x, touchedSpot.y),
-                textStyle: TextStyle(color: Colors.white),
+                textStyle: const TextStyle(color: Colors.white),
               );
             },
           ),
@@ -251,9 +251,8 @@ class ChartWidget extends StatelessWidget {
     );
     final date = DateTime.now().add(Duration(days: value.toInt()));
     final formattedDate = DateFormat('dd/MM').format(date);
-    return SideTitleWidget(
-      axisSide: meta.axisSide,
-      space: 8.0, // Increased space to move the labels downwards
+    return Padding(
+      padding: const EdgeInsets.only(top: 8.0),
       child: Transform.rotate(
         angle: -45 * 3.1415927 / 180,
         child: Text(formattedDate, style: style),
