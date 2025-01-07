@@ -252,7 +252,7 @@ class ChartWidget extends StatelessWidget {
     final date = DateTime.now().add(Duration(days: value.toInt()));
     final formattedDate = DateFormat('dd/MM').format(date);
     return Padding(
-      padding: const EdgeInsets.only(top: 8.0), // Increased space to move the labels downwards
+      padding: const EdgeInsets.only(top: 8.0),
       child: Transform.rotate(
         angle: -45 * 3.1415927 / 180,
         child: Text(formattedDate, style: style),
