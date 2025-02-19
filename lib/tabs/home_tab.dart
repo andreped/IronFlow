@@ -170,7 +170,7 @@ class ExerciseStoreHomePageState extends State<ExerciseStoreHomePage>
             bucket: bucket,
             child: PageView(
               controller: _pageController,
-              physics: const NeverScrollableScrollPhysics(),
+              physics: const BouncingScrollPhysics(),
               onPageChanged: (index) {
                 _tabController.animateTo(index);
               },
