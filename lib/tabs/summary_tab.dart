@@ -164,6 +164,7 @@ class SummaryTabState extends State<SummaryTab> {
           );
         } else {
           return ListView.builder(
+            physics: const BouncingScrollPhysics(),
             itemCount: exercises.length,
             itemBuilder: (context, index) {
               final exercise = exercises[index];
