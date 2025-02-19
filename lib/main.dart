@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'components/scroll/custom_scroll_behavior.dart';
 import 'tabs/home_tab.dart';
 import 'core/theme/app_themes.dart';
 
@@ -122,6 +123,12 @@ class _MyAppState extends State<MyApp> {
       themeMode: _appTheme == AppTheme.system
           ? ThemeMode.system
           : (_appTheme == AppTheme.dark ? ThemeMode.dark : ThemeMode.light),
+      builder: (context, child) {
+        return ScrollConfiguration(
+          behavior: CustomScrollBehavior(),
+          child: child!,
+        );
+      },
       home: Stack(
         children: [
           ExerciseStoreHomePage(
