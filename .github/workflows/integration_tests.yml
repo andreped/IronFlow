@@ -59,7 +59,7 @@ jobs:
             -derivedDataPath ./
       
       - name: Launch iOS simulator
-        run: xcrun simctl boot "iPhone 14 Pro"
+        run: xcrun simctl boot "iPhone 16 Pro"
       
       - name: Install app on simulator
         run: xcrun simctl install booted ./Build/Products/Debug-iphonesimulator/Runner.app
