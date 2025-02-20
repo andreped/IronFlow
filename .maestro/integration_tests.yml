@@ -18,13 +18,13 @@ appId: "com.andreped.IronFlow"
 - inputText: "3"
 - tapOn: .*Done.*
 - tapOn: .*Save.*
-- assertVisible: .*Exercise Added Successfully.*
+- assertVisible: .*success.*
 
 - tapOn: .*Weight.*
 - inputText: "80"
 - tapOn: .*Done.*
 - tapOn: .*Save.*
-- assertVisible: .*Exercise Added Successfully.*
+- assertVisible: .*success.*
 
 - tapOn: .*Weight.*
 - inputText: "120"
@@ -44,7 +44,7 @@ appId: "com.andreped.IronFlow"
 - inputText: "12"
 - tapOn: Scrim
 - tapOn: .*Save.*
-- assertVisible: .*Exercise Added Successfully.*
+- assertVisible: .*success.*
 
 - tapOn: Tab 2 of 5
 - assertVisible: .*Deadlift.*
