@@ -206,20 +206,6 @@ class ExerciseStoreHomePageState extends State<ExerciseStoreHomePage>
               ],
             ),
           ),
-          Positioned(
-            bottom: 10.0,
-            left: 30.0,
-            child: FloatingActionButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => OverviewPage()),
-                );
-              },
-              backgroundColor: theme.colorScheme.primary,
-              child: const Icon(Icons.info_outline, color: Colors.white),
-            ),
-          ),
         ],
       ),
       bottomNavigationBar: BottomAppBar(
