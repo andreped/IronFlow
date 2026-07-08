@@ -28,7 +28,7 @@ jobs:
         run: flutter create --platforms=web --org com.andreped --project-name ironflow .
 
       - name: Build web
-        run: flutter build web --release
+        run: flutter build web --release --web-renderer html
 
       - name: Clean up build cache
         run: rm -rf .dart_tool
