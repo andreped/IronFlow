@@ -24,6 +24,9 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
+      - name: Setup sqflite web assets
+        run: dart run sqflite_common_ffi_web:setup
+
       - name: Add web platform support
         run: flutter create --platforms=web --org com.andreped --project-name ironflow .
 
