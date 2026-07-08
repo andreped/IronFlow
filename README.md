@@ -43,6 +43,7 @@ The app is compatible with both Android and iOS.
 | - | - |
 | **Build APK** | ![CI](https://github.com/andreped/IronFlow/workflows/Build%20APK/badge.svg) |
 | **Build IPA** | ![CI](https://github.com/andreped/IronFlow/workflows/Build%20IPA/badge.svg) |
+| **Build Web** | ![CI](https://github.com/andreped/IronFlow/workflows/Build%20%26%20Deploy%20Web/badge.svg) |
 | **Create Release** | ![CI](https://github.com/andreped/IronFlow/workflows/Create%20Release/badge.svg) |
 | **Integration tests** | ![CI](https://github.com/andreped/IronFlow/workflows/Integration%20Tests/badge.svg) |
 | **Linting** | ![CI](https://github.com/andreped/IronFlow/workflows/Linting/badge.svg) |
@@ -56,6 +57,53 @@ To run integration tests, run the command:
 ```bash
 maestro test .maestro/integration_tests.yml
 ```
+
+## [Development](https://github.com/andreped/IronFlow#Development)
+
+This project uses [fvm](https://fvm.app) to pin the Flutter version. Install it first:
+
+```bash
+brew tap leoafarias/fvm
+brew install fvm
+```
+
+Then install the pinned Flutter version and fetch dependencies:
+
+```bash
+fvm install
+fvm flutter pub get
+```
+
+### Run
+
+```bash
+# Mobile (Android/iOS emulator or device)
+fvm flutter run
+
+# Web (opens Chrome)
+fvm flutter run -d chrome
+```
+
+### Build
+
+```bash
+# Android
+fvm flutter build apk --release
+
+# Web
+fvm flutter build web --release
+```
+
+The web build output is in `build/web/`. Serve it locally with:
+
+```bash
+npx serve build/web
+```
+
+### Deploy web to GitHub Pages
+
+Push to `main` or trigger the **Build & Deploy Web** workflow manually from the Actions tab.
+The app will be live at `https://<your-username>.github.io/IronFlow/`.
 
 ## [Getting Started](https://github.com/andreped/IronFlow#Getting-Started)
 
