@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../core/database.dart';
@@ -337,6 +338,48 @@ class ExerciseSetterState extends State<ExerciseSetter> {
     widget.onExerciseAdded();
   }
 
+  Widget _buildNumberInput({
+    required TextEditingController controller,
+    required String label,
+    required bool isDouble,
+    required String? Function(String?) validator,
+  }) {
+    if (kIsWeb) {
+      return TextFormField(
+        controller: controller,
+        decoration: InputDecoration(
+          labelText: label,
+          border: const OutlineInputBorder(),
+        ),
+        keyboardType: isDouble
+            ? const TextInputType.numberWithOptions(decimal: true)
+            : TextInputType.number,
+        inputFormatters: [
+          FilteringTextInputFormatter.allow(RegExp(r'^[\d,.]+$')),
+        ],
+        validator: validator,
+      );
+    }
+    return GestureDetector(
+      onTap: () => _showNumberInputSheet(
+        controller: controller,
+        label: label,
+        initialValue: controller.text,
+        isDouble: isDouble,
+      ),
+      child: AbsorbPointer(
+        child: TextFormField(
+          controller: controller,
+          decoration: InputDecoration(
+            labelText: label,
+            border: const OutlineInputBorder(),
+          ),
+          validator: validator,
+        ),
+      ),
+    );
+  }
+
   void _showNumberInputSheet({
     required TextEditingController controller,
     required String label,
@@ -663,78 +706,42 @@ class ExerciseSetterState extends State<ExerciseSetter> {
         const SizedBox(height: 20),
         if (!_isAddingNewExercise) ...[
           // Weight Input
-          GestureDetector(
-            onTap: () => _showNumberInputSheet(
-              controller: _weightController,
-              label: 'Weight (${widget.isKg ? 'kg' : 'lbs'})',
-              initialValue: _weightController.text,
-              isDouble: true,
-            ),
-            child: AbsorbPointer(
-              child: TextFormField(
-                controller: _weightController,
-                decoration: InputDecoration(
-                  labelText: 'Weight (${widget.isKg ? 'kg' : 'lbs'})',
-                  border: const OutlineInputBorder(),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a weight';
-                  }
-                  return null;
-                },
-              ),
-            ),
+          _buildNumberInput(
+            controller: _weightController,
+            label: 'Weight (${widget.isKg ? 'kg' : 'lbs'})',
+            isDouble: true,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter a weight';
+              }
+              return null;
+            },
           ),
           const SizedBox(height: 20),
           // Reps Input
-          GestureDetector(
-            onTap: () => _showNumberInputSheet(
-              controller: _repsController,
-              label: 'Reps',
-              initialValue: _repsController.text,
-              isDouble: false,
-            ),
-            child: AbsorbPointer(
-              child: TextFormField(
-                controller: _repsController,
-                decoration: const InputDecoration(
-                  labelText: 'Reps',
-                  border: OutlineInputBorder(),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter the number of reps';
-                  }
-                  return null;
-                },
-              ),
-            ),
+          _buildNumberInput(
+            controller: _repsController,
+            label: 'Reps',
+            isDouble: false,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter the number of reps';
+              }
+              return null;
+            },
           ),
           const SizedBox(height: 20),
           // Sets Input
-          GestureDetector(
-            onTap: () => _showNumberInputSheet(
-              controller: _setsController,
-              label: 'Sets',
-              initialValue: _setsController.text,
-              isDouble: false,
-            ),
-            child: AbsorbPointer(
-              child: TextFormField(
-                controller: _setsController,
-                decoration: const InputDecoration(
-                  labelText: 'Sets',
-                  border: OutlineInputBorder(),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter the number of sets';
-                  }
-                  return null;
-                },
-              ),
-            ),
+          _buildNumberInput(
+            controller: _setsController,
+            label: 'Sets',
+            isDouble: false,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter the number of sets';
+              }
+              return null;
+            },
           ),
           const SizedBox(height: 20),
         ] else ...[
@@ -771,87 +778,51 @@ class ExerciseSetterState extends State<ExerciseSetter> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // User Weight Input
-        GestureDetector(
-          onTap: () => _showNumberInputSheet(
-            controller: _userWeightController,
-            label: 'Weight (${widget.isKg ? 'kg' : 'lbs'})',
-            initialValue: _userWeightController.text,
-            isDouble: true,
-          ),
-          child: AbsorbPointer(
-            child: TextFormField(
-              controller: _userWeightController,
-              decoration: InputDecoration(
-                labelText: 'Weight (${widget.isKg ? 'kg' : 'lbs'})',
-                border: const OutlineInputBorder(),
-              ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter your weight';
-                }
-                if (value == '0.0') {
-                  return 'Weight cannot be 0';
-                }
-                return null;
-              },
-            ),
-          ),
+        _buildNumberInput(
+          controller: _userWeightController,
+          label: 'Weight (${widget.isKg ? 'kg' : 'lbs'})',
+          isDouble: true,
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please enter your weight';
+            }
+            if (value == '0.0') {
+              return 'Weight cannot be 0';
+            }
+            return null;
+          },
         ),
         const SizedBox(height: 20),
         // Height Input
-        GestureDetector(
-          onTap: () => _showNumberInputSheet(
-            controller: _heightController,
-            label: 'Height (cm)',
-            initialValue: _heightController.text,
-            isDouble: false,
-          ),
-          child: AbsorbPointer(
-            child: TextFormField(
-              controller: _heightController,
-              decoration: const InputDecoration(
-                labelText: 'Height (cm)',
-                border: OutlineInputBorder(),
-              ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter your height';
-                }
-                if (value == '0') {
-                  return 'Height cannot be 0';
-                }
-                return null;
-              },
-            ),
-          ),
+        _buildNumberInput(
+          controller: _heightController,
+          label: 'Height (cm)',
+          isDouble: false,
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please enter your height';
+            }
+            if (value == '0') {
+              return 'Height cannot be 0';
+            }
+            return null;
+          },
         ),
         const SizedBox(height: 20),
         // Age Input
-        GestureDetector(
-          onTap: () => _showNumberInputSheet(
-            controller: _ageController,
-            label: 'Age',
-            initialValue: _ageController.text,
-            isDouble: false,
-          ),
-          child: AbsorbPointer(
-            child: TextFormField(
-              controller: _ageController,
-              decoration: const InputDecoration(
-                labelText: 'Age',
-                border: OutlineInputBorder(),
-              ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter your age';
-                }
-                if (value == '0') {
-                  return 'Age cannot be 0';
-                }
-                return null;
-              },
-            ),
-          ),
+        _buildNumberInput(
+          controller: _ageController,
+          label: 'Age',
+          isDouble: false,
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please enter your age';
+            }
+            if (value == '0') {
+              return 'Age cannot be 0';
+            }
+            return null;
+          },
         ),
       ],
     );
