@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'components/scroll/custom_scroll_behavior.dart';
@@ -24,7 +25,7 @@ class _MyAppState extends State<MyApp> {
   bool _bodyweightEnabledGlobal = true; // Default bodyweight enabled
   String _aggregationMethod = 'Top3Avg'; // Default aggregation method
   String _plotType = 'Line'; // Default plot type
-  bool _showSplash = true;
+  bool _showSplash = !kIsWeb;
 
   @override
   void initState() {
