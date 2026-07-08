@@ -574,8 +574,8 @@ class DatabaseHelper {
 
   Future<void> backupDatabase(BuildContext context) async {
     if (kIsWeb) {
-      await _showDialog(context, 'Not Supported',
-          'Database backup is not available on web.');
+      await _showDialog(
+          context, 'Not Supported', 'Database backup is not available on web.');
       return;
     }
     try {
