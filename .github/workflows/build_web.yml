@@ -30,6 +30,9 @@ jobs:
       - name: Build web
         run: flutter build web --release
 
+      - name: Clean up build cache
+        run: rm -rf .dart_tool
+
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3
         with:
