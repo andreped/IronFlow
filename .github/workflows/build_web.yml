@@ -6,19 +6,12 @@ on:
     branches:
       - main
 
-# Required for GitHub Pages deployment
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-# Only allow one concurrent deployment
 concurrency:
-  group: pages
+  group: cloudflare-pages
   cancel-in-progress: true
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -32,25 +25,14 @@ jobs:
         run: flutter pub get
 
       - name: Add web platform support
-        run: flutter create --platforms=web .
+        run: flutter create --platforms=web --org com.andreped --project-name ironflow .
 
       - name: Build web
-        run: |
-          flutter build web --release \
-            --base-href "/${{ github.event.repository.name }}/"
+        run: flutter build web --release
 
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
         with:
-          path: build/web
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy build/web --project-name=ironflow --branch=main
