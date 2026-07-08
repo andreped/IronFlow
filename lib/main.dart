@@ -3,8 +3,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'components/scroll/custom_scroll_behavior.dart';
 import 'tabs/home_tab.dart';
 import 'core/theme/app_themes.dart';
+import 'core/database_init.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await initializeDatabaseFactory();
   runApp(const MyApp());
 }
 
