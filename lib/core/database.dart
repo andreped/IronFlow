@@ -1,5 +1,6 @@
 import 'package:file_picker/file_picker.dart';
 import 'dart:io';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import '../common/constants.dart';
@@ -572,6 +573,11 @@ class DatabaseHelper {
   }
 
   Future<void> backupDatabase(BuildContext context) async {
+    if (kIsWeb) {
+      await _showDialog(context, 'Not Supported',
+          'Database backup is not available on web.');
+      return;
+    }
     try {
       // set backupPath for each OS, android and iOS
       String backupPath;
@@ -597,6 +603,11 @@ class DatabaseHelper {
   }
 
   Future<void> restoreDatabase(BuildContext context) async {
+    if (kIsWeb) {
+      await _showDialog(context, 'Not Supported',
+          'Database restore is not available on web.');
+      return;
+    }
     try {
       String filePath;
       if (Platform.isIOS) {

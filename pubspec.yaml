@@ -19,6 +19,7 @@ dependencies:
 
   # storage
   sqflite: ^2.0.0+4
+  sqflite_common_ffi_web: ^0.4.3
   path: ^1.8.0
   path_provider: ^2.1.5
   file_picker: ^8.1.7
