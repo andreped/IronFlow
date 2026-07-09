@@ -45,6 +45,9 @@ class DatabaseHelper {
   }
 
   Future<String> _databasePath() async {
+    if (kIsWeb) {
+      return 'exercises.db';
+    }
     return join(await getDatabasesPath(), 'exercises.db');
   }
 
@@ -462,14 +465,15 @@ class DatabaseHelper {
     final db = await database;
     final List<Map<String, dynamic>> maxWeights = await db.rawQuery(
       '''
-      SELECT exercise, weight, reps, sets
-      FROM exercises
-      WHERE (exercise, weight) IN (
-        SELECT exercise, MAX(CAST(weight AS REAL)) as weight
+      SELECT e.exercise, e.weight, e.reps, e.sets
+      FROM exercises e
+      INNER JOIN (
+        SELECT exercise, MAX(CAST(weight AS REAL)) AS max_weight
         FROM exercises
         GROUP BY exercise
-      )
-      ORDER BY exercise, reps DESC
+      ) m ON e.exercise = m.exercise
+        AND CAST(e.weight AS REAL) = m.max_weight
+      ORDER BY e.exercise, e.reps DESC
       ''',
     );
 
