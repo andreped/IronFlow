@@ -27,7 +27,7 @@ class RecordsTabState extends State<RecordsTab> {
   bool _isSearching = false;
   final TextEditingController _searchController = TextEditingController();
 
-  Future<void> _fetchAndSortRecords() async {
+  Future<void> fetchAndSortRecords() async {
     setState(() {
       _isLoading = true;
       _errorMessage = null;
@@ -124,7 +124,7 @@ class RecordsTabState extends State<RecordsTab> {
   @override
   void initState() {
     super.initState();
-    _fetchAndSortRecords();
+    fetchAndSortRecords();
   }
 
   double _convertWeight(double weightInKg) {

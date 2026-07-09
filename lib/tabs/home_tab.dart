@@ -98,6 +98,8 @@ class ExerciseStoreHomePageState extends State<ExerciseStoreHomePage>
   late TabController _tabController;
   late PageController _pageController;
   final PageStorageBucket bucket = PageStorageBucket();
+  final GlobalKey<RecordsTabState> _recordsTabKey =
+      GlobalKey<RecordsTabState>();
 
   void _refreshTable() {
     setState(() {});
@@ -108,6 +110,9 @@ class ExerciseStoreHomePageState extends State<ExerciseStoreHomePage>
     super.initState();
     _tabController = TabController(length: 5, vsync: this, initialIndex: 2)
       ..addListener(() {
+        if (_tabController.index == 0) {
+          _recordsTabKey.currentState?.fetchAndSortRecords();
+        }
         if (_tabController.index == 4) {
           _refreshTable();
         }
@@ -176,6 +181,7 @@ class ExerciseStoreHomePageState extends State<ExerciseStoreHomePage>
               },
               children: [
                 RecordsTab(
+                    key: _recordsTabKey,
                     isKg: widget.isKg,
                     bodyweightEnabledGlobal: widget.bodyweightEnabledGlobal),
                 SummaryTab(
@@ -190,6 +196,7 @@ class ExerciseStoreHomePageState extends State<ExerciseStoreHomePage>
                     isKg: widget.isKg,
                     onExerciseAdded: () {
                       setState(() {});
+                      _recordsTabKey.currentState?.fetchAndSortRecords();
                     },
                   ),
                 ),

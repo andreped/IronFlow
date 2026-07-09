@@ -1,7 +1,7 @@
 <p align="center" width="100%">
 <img src="assets/icon/wave_app_icon_transparent.png" width="30%" height="30%">
 <h1 align="center">IronFlow</h1>
-<h3 align="center">Cross-platform mobile app for strength training progress tracking.</h3>
+<h3 align="center">Cross-platform app for strength training progress tracking.</h3>
 
 <h3 align="center"> 
 
@@ -12,14 +12,15 @@
 ![CI](https://github.com/andreped/IronFlow/workflows/Linting/badge.svg)
 </h3>
 
-**IronFlow** was developed to allow free, private, and seemless tracking of training progress and activities.
+**IronFlow** was developed to allow free, private, and seemless tracking of training progress and activities.  
+A live web demo is available at [andreped.pages.dev](https://andreped.pages.dev), deployed via Cloudflare Pages.
 </div>
 
 <img src="assets/showcase/mobile_app_mosaic.png" width="100%" height="100%"> 
 
 ## [Features](https://github.com/andreped/IronFlow#Features)
 
-The app is compatible with both Android and iOS.
+The app is compatible with Android, iOS, and web (demo).
 
 - [x] Ability to save individual exercises with weight and number of reps and sets.
 - [x] All data is stored in a private SQLite database on the device.
@@ -100,10 +101,10 @@ The web build output is in `build/web/`. Serve it locally with:
 npx serve build/web
 ```
 
-### Deploy web to GitHub Pages
+### Deploy web to Cloudflare Pages
 
 Push to `main` or trigger the **Build & Deploy Web** workflow manually from the Actions tab.
-The app will be live at `https://<your-username>.github.io/IronFlow/`.
+The app will be live at `https://andreped.pages.dev`.
 
 ## [Getting Started](https://github.com/andreped/IronFlow#Getting-Started)
 
