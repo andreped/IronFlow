@@ -13,7 +13,7 @@
 </h3>
 
 **IronFlow** was developed to allow free, private, and seemless tracking of training progress and activities.  
-A live web demo is available at [andreped.pages.dev](https://andreped.pages.dev), deployed via Cloudflare Pages.
+A live web demo is available at [andreos.pages.dev](https://andreos.pages.dev), deployed via Cloudflare Pages.
 </div>
 
 <img src="assets/showcase/mobile_app_mosaic.png" width="100%" height="100%"> 
@@ -104,7 +104,7 @@ npx serve build/web
 ### Deploy web to Cloudflare Pages
 
 Push to `main` or trigger the **Build & Deploy Web** workflow manually from the Actions tab.
-The app will be live at `https://andreped.pages.dev`.
+The app will be live at `https://andreos.pages.dev`.
 
 ## [Getting Started](https://github.com/andreped/IronFlow#Getting-Started)
 
