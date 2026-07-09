@@ -98,7 +98,8 @@ class ExerciseStoreHomePageState extends State<ExerciseStoreHomePage>
   late TabController _tabController;
   late PageController _pageController;
   final PageStorageBucket bucket = PageStorageBucket();
-  final GlobalKey<RecordsTabState> _recordsTabKey = GlobalKey<RecordsTabState>();
+  final GlobalKey<RecordsTabState> _recordsTabKey =
+      GlobalKey<RecordsTabState>();
 
   void _refreshTable() {
     setState(() {});
